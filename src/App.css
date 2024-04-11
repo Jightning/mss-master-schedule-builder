@@ -1,0 +1,116 @@
+/*
+  Formatting Conditions:
+  1. Teacher, periods, and classes are all in the same container
+  2. Classes must have a fixed position, with right: 0 (replace 0 with width of scrollbar if present)
+  3. Periods have there own container centered and with an independent overflow
+      a. This container (period-table) must have a width of ((100vw) - (the widths of classes and teacher columns, including their margins))
+*/
+
+.dnd-teacher-container {
+  /* border: solid white 2px; */
+  position: relative;
+  scrollbar-width: none;
+  overflow: auto;
+  height: 85vh;
+  width: 100vw;
+}
+
+.teacher-column {
+  border: white solid 2px;
+
+  width: 130px;
+  max-width: 130px;
+
+  margin: 5px;
+  padding: 5px;
+  padding-bottom: 0;
+
+  word-break: break-all;
+  text-align: center;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+.teacher-column-header {
+  border: solid 2px white;
+  border-radius: 15px;
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+.teacher-column-teacher {
+  border: white solid 2px;
+  margin: 5px 0;
+  padding: 5px;
+}
+
+.period-table {
+  width: calc(100vw - 280px);
+
+  display: inline-block;
+  overflow: auto;
+  white-space: nowrap;
+
+  margin: 0;
+  padding: 0;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+
+  text-align: center;
+}
+.period-column {
+  border: white solid 2px;
+
+  width: 100px;
+  max-width: 100px;
+
+  margin: 5px;
+  padding: 5px;
+  padding-bottom: 0;
+
+  word-break: break-all;
+  text-align: center;
+  display: inline-block;
+  
+}
+.period-column-header {
+  border: solid white 2px;
+  border-radius: 15px;
+  margin-bottom: 5px;
+  padding: 0 5px;
+
+}
+.period-table-element {
+  border: solid white 2px;
+  margin: 5px 0;
+  padding: 5px;
+}
+
+.class-column {
+  border: white solid 2px;
+
+  width: 130px;
+  max-width: 130px;
+
+  margin: 5px;
+  padding: 5px;
+  padding-bottom: 0;
+
+  word-break: break-all;
+  text-align: center;
+  display: inline-block;
+
+  position: fixed;
+  right: 0;
+}
+.school-class-header {
+  border: solid 2px white;
+  border-radius: 15px;
+  margin-bottom: 5px;
+  padding: 0 5px;
+}
+.school-class {
+  border: white solid 2px;
+  margin: 5px 0;
+  padding: 5px;  
+}
