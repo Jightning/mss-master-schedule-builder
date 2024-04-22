@@ -6,112 +6,207 @@
       a. This container (period-table) must have a width of ((100vw) - (the widths of classes and teacher columns, including their margins))
 */
 
-.dnd-teacher-container {
-  /* border: solid white 2px; */
-  position: relative;
-  scrollbar-width: none;
-  overflow: auto;
-  height: 85vh;
-  width: 100vw;
-}
+/* Setup */
 
-.teacher-column {
-  border: white solid 2px;
-
-  width: 130px;
-  max-width: 130px;
-
-  margin: 5px;
-  padding: 5px;
-  padding-bottom: 0;
-
-  word-break: break-all;
-  text-align: center;
-  display: inline-block;
-  position: absolute;
-  top: 0;
-}
-.teacher-column-header {
-  border: solid 2px white;
-  border-radius: 15px;
-  margin-bottom: 5px;
-  padding: 0 5px;
-}
-.teacher-column-teacher {
-  border: white solid 2px;
-  margin: 5px 0;
-  padding: 5px;
-}
-
-.period-table {
-  width: calc(100vw - 280px);
-
-  display: inline-block;
-  overflow: auto;
-  white-space: nowrap;
-
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-
-  text-align: center;
 }
-.period-column {
-  border: white solid 2px;
 
+body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: #000;
+  line-height: 1.5;
+  background: #fff;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* Containers */
+.dnd-teacher-container {
+  display: flex;
+}
+
+.main-container {
+  width: 87%;
+  height: 100vh;
+  display:flex;
+  flex-direction: column;
+}
+
+.class-container {
+  background-color: #00114b;
+  flex:1;
+}
+
+
+/* Header */
+.header {
+  padding: 10px;
+}
+
+.header .title {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Toolbar */
+.toolbar {
+  background-color: #e8e8e8;
+  border-radius: 15px;
+  padding: 5px 30px;
+  margin-bottom: 20px;
+}
+
+.toolbar ul {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.toolbar ul li {
+  padding: 0px 15px;
+  margin: 0px;
+}
+
+.toolbar ul li:not(:first-child) {
+  border-left: solid 1.5px #000;
+}
+
+.toolbar ul li p {
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 1rem;
+  font-weight: 500;
+
+}
+
+.toolbar ul li p:hover {
+  background-color: rgb(201, 201, 201);
+}
+
+/* DND Table */
+.dnd-table {
+  scrollbar-width: none;
+  overflow-y: auto;
+  flex: 1;
+
+  display: flex;  
+}
+
+/* Teacher */
+.teacher-column {
+  background-color: #ffc368;
   width: 130px;
+  min-width: 130px;
   max-width: 130px;
-
-  margin: 5px;
-  padding: 5px;
-  padding-bottom: 0;
+  height: fit-content;
 
   word-break: break-all;
   text-align: center;
-  display: inline-block;
-  
+  border-right: 1px solid #fff;
 }
-.period-column-header {
-  border: solid white 2px;
-  border-radius: 15px;
+
+.teacher-column-header {
+  background-color: #000;
+  color: #fff;
+  font-weight: 600;
+
   margin-bottom: 5px;
-  padding: 0 5px;
+  padding: 5px;
+}
+
+.teacher-column-teacher {
+  padding: 5px;
+  min-height: 70px;
+  border-top: 1px solid;
+  border-image: linear-gradient(to right, transparent 10%, #000 10%, #000 90%, transparent 90%) 100% 1;
+  display: flex;
+  align-items: center;
 
 }
-.period-table-element {
-  border: solid white 2px;
-  margin: 5px 0;
+
+.teacher-column-teacher p {
+  margin: auto;
+  font-weight: 500;
+}
+
+/* Period */  
+.period-table {
+  width: 100%;
+  overflow-x: auto; 
+  height: fit-content;
+  display: flex;
+}
+
+.period-column {
+  min-width: 100px;
+  flex: 1;
+  text-align: center;  
+}
+
+.period-column-header {
+  background-color: #000;
+  color: #fff;
+  font-weight: 600;
+
+  margin-bottom: 5px; 
   padding: 5px;
+}
+
+.period-table-element {
+  padding: 5px;
+  min-height: 70px;
+  border-top: 1px solid #d9d9d9;
+  display: flex;
+  align-items: center;
+}
+
+.period-column:not(:first-child) .period-table-element{
+  border-left: solid 1px #d9d9d9;
+}
+
+.period-table-element p {
+  margin: auto;
+}
+
+/* Class */
+.class-header {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.class-header h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(to right, transparent 20%, #fff 20%, #fff 80%, transparent 80%) 100% 1;
+
 }
 
 .class-column {
-  border: white solid 2px;
-
-  width: 130px;
-  max-width: 130px;
-
-  margin: 5px;
-  padding: 5px;
-  padding-bottom: 0;
-
-  word-break: break-all;
-  text-align: center;
-  display: inline-block;
-
-  position: fixed;
-  right: 0;
+  padding: 10px;
 }
-.school-class-header {
-  border: solid 2px white;
-  border-radius: 15px;
-  margin-bottom: 5px;
-  padding: 0 5px;
-}
+
 .school-class {
-  border: white solid 2px;
-  margin: 5px 0;
+  margin: 10px 0px;
   padding: 5px;  
   cursor: pointer;
+  border-radius: 10px;
+  background-color: #d7dfff;
 }

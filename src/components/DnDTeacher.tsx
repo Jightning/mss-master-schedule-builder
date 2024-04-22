@@ -59,7 +59,7 @@ const DnDTeacher = () => {
         return -1
     }
     
-    createEffect(() => {
+    createEffect(() => {   
         let allHeights: any = []
         // Set all heights based on teacher row height
         teachers().forEach((teacher) => {
@@ -120,17 +120,45 @@ const DnDTeacher = () => {
                     onDragOver={onDragOver}>
                 <DragDropSensors />
 
-                <TeacherColumn teachers={teachers()} />
-    
-                <PeriodSchedule 
-                            teachers={teachers()}
-                            periods={periods()}
-                            heights={heights()}/>
+                <div class="main-container">
+                    <div class="header">
+                    <h1 class="title">Manhasset Master Schedule Builder</h1>
+                    </div>
 
-                <SchoolClassList schoolClasses={schoolClasses()}/>
+                    <div class="toolbar">
+                    <ul>
+                        <li>
+                            <p>Import</p>
+                        </li>
+                        <li>
+                            <p>Export</p>
+                        </li>
+                        <li>
+                            <p>Auto-Generate</p>
+                        </li>
+                    </ul>
+                    </div>
+
+                    <div class="dnd-table">
+                        <TeacherColumn teachers={teachers()} />
+        
+                        <PeriodSchedule 
+                                teachers={teachers()}
+                                periods={periods()}
+                                heights={heights()}/>
+                    </div>
+                
+                </div>  
+
+                <div class="class-container">
+                    <div class="class-header">
+                        <h4>Classes</h4>
+                    </div>
+                    <SchoolClassList schoolClasses={schoolClasses()}/>
+                </div>
             </DragDropProvider> 
         </div>
     );
 };
 
-export default DnDTeacher
+export default DnDTeacher   

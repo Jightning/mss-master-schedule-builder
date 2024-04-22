@@ -14,8 +14,7 @@ function App() {
 
   return (
     <div class="w-full h-full">
-      <p class="font-bold h-fit w-full m-auto mt-8 mb-4 self-center text-center">Manhasset Master Schedule Builder</p>
-      <DnDTeacher/>
+        <DnDTeacher/>
     </div>
 
   );

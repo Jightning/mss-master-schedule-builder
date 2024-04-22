@@ -12,7 +12,9 @@ const TeacherColumn = (props:
             <For each={props.teachers}>
                 {(teacher, index) => {
                     return (
-                        <div class="teacher-column-teacher" id={`row-id-${teacher.id}`}>{teacher.name}</div>
+                        <div class="teacher-column-teacher" id={`row-id-${teacher.id}`}>
+                            <p>{teacher.name}</p>
+                        </div>
                     )
                 }}
             </For>

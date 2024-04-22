@@ -9,12 +9,11 @@ const SchoolClassList = (props:
     
     return (
         <div class="class-column">
-            <div class="school-class-header">Classes</div>
             <For each={props.schoolClasses}>
                 {(schoolClass, index) => {
                     const draggable = createDraggable(schoolClass.id, {schoolClass: schoolClass});
                     
-                    return (
+                    return (    
                         <div 
                             class="school-class"
                             use:draggable>

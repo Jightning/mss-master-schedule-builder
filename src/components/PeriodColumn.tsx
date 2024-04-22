@@ -30,7 +30,7 @@ const PeriodColumn = (props:
                             }}
                             use:droppable>
                                         
-                            {teacher.classes[props.period.id].name}
+                            <p>{teacher.classes[props.period.id].name}</p>
  
                         </div>
                     )
