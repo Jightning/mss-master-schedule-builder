@@ -1,0 +1,9 @@
+/* Header */
+.header {
+  padding: 10px;
+}
+
+.header .title {
+  font-size: 2rem;
+  font-weight: 600;
+}
