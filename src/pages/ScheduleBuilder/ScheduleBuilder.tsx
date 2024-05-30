@@ -4,21 +4,21 @@ import {
     DndContext,
     DragOverlay
 } from '@dnd-kit/core'
-import { restrictToWindowEdges } from '@dnd-kit/modifiers'
+import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 import { useDraggable } from "react-use-draggable-scroll";
 import { useRef } from 'react';
 
-import Rows from './components/Rows'
-import ScheduleTable from './components/ScheduleTable'
-import SelectionColumn from './components/SelectionColumn'
-import Selection from './components/Selection'
+import Rows from './components/builder/Rows'
+import ScheduleTable from './components/builder/ScheduleTable'
+import SelectionColumn from './components/builder/SelectionColumn'
+import Selection from './components/builder/Selection'
 import { 
     Selection as SelectionInterface, 
     Column, 
     Row 
 } from './types'
-
+import Popup from '../../components/Popup';
 
 const ScheduleBuilder = () => {
     const [rows, setRows] = useState<Array<Row>>([
@@ -93,6 +93,8 @@ const ScheduleBuilder = () => {
 
     const [activeSelection, setActiveSelection] = useState<SelectionInterface | null>(null);
     const [heights, setHeights] = useState<Array<number>>([])
+
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
 
     // Auto Adjusts the heights of each row in the table
     // To match up the column row heights and the row column heights
@@ -186,14 +188,28 @@ const ScheduleBuilder = () => {
     const drag_scroll_ref = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
     const { events } = useDraggable(drag_scroll_ref)
 
+    const handlePopupToggle = () => {
+        setIsPopupOpen((popupOpen) => (!popupOpen))
+    }
+
     return (
         <div id="sb-container">
+            {isPopupOpen ? 
+            (<Popup closePopup={setIsPopupOpen}>
+                
+            </Popup>)
+            : null}
             <DndContext onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
                         modifiers={[restrictToWindowEdges]}>
                 <div id="main-container">
                     <div className="header">
                         <h1 className="title">Manhasset Master Schedule Builder</h1>
+                        
+                        <span className="trash">
+                            {/* <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" version="1.1" x="0px" y="0px" viewBox="0 -70 100 100" width="400px" height="400px"><path d="M80,20L60,20L60,15C60,12.239,57.761,10,55,10L45,10C42.239,10,40,12.239,40,15L40,20L20,20C17.239,20,15,22.239,15,25L15,30L85,30L85,25C85,22.239,82.761,20,80,20ZM45,20L45,15L55,15L55,20L45,20Z" stroke="none"></path><path d="M20,90L80,90L80,35L20,35L20,90ZM65,40L70,40L70,85L65,85L65,40ZM47.5,40L52.5,40L52.5,85L47.5,85L47.5,40ZM30,40L35,40L35,85L30,85L30,40Z" stroke="none"></path></svg> */}
+                            {/* <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" version="1.1" x="0px" y="0px" viewBox="0 30 100 100" width="400px" height="400px"><path d="M80,20L60,20L60,15C60,12.239,57.761,10,55,10L45,10C42.239,10,40,12.239,40,15L40,20L20,20C17.239,20,15,22.239,15,25L15,30L85,30L85,25C85,22.239,82.761,20,80,20ZM45,20L45,15L55,15L55,20L45,20Z" stroke="none"></path><path d="M20,90L80,90L80,35L20,35L20,90ZM65,40L70,40L70,85L65,85L65,40ZM47.5,40L52.5,40L52.5,85L47.5,85L47.5,40ZM30,40L35,40L35,85L30,85L30,40Z" stroke="none"></path></svg> */}
+                        </span>
                     </div>
                     <div className="toolbar">
                         <ul>
@@ -201,7 +217,7 @@ const ScheduleBuilder = () => {
                             <li className='export-btn'>Export</li>
                             <span/><span/>
                             <li className='search-box'>Search</li>
-                            <li className='settings'>Settings</li>
+                            <li className='settings' onClick={handlePopupToggle}>Settings</li>
                         </ul>
                     </div>
 

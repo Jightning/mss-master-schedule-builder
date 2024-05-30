@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row } from '../types'
+import { Row } from '../../types'
 
 // Rows on the right side of the table (teacher rows)
 const Rows = (props: {heights: Array<number>, rows: Array<Row>, rowsName: string}) => {

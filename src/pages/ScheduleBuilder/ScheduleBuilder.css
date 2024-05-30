@@ -29,16 +29,16 @@ img {
 
 
 /* \Setup */
-
+/* Entire schedule builder */
 #sb-container {
     height: 100vh;
     width: 100vw;
     display: flex;
     flex-flow: row nowrap;
 }
-
+/* Left portion */
 #main-container {
-    width: 87%;
+    width: calc(100vw - 170px);
     height: 100vh;
     display: flex;
     flex-flow: column nowrap;
@@ -94,6 +94,7 @@ img {
 .schedule-container {
     width: 100%;
     height: 100%;
+    flex: 1;
     background-color: #fff;
     border-top: solid;
     display: flex;
@@ -108,9 +109,9 @@ img {
 /* Rows Column */
 
 .rows-container {
-    min-width: 13vw;
-    width: 13vw;
-    max-width: 13vw;
+    min-width: 170px;
+    width: 170px;
+    max-width: 170px;
     height: fit-content;
 
     border-right: solid;
@@ -178,8 +179,8 @@ img {
 }
 
 .column-container {
-    min-width: 13vw;
-    width: 13vw;
+    min-width: 170px;
+    width: 170px;
     flex: 1;
     text-align: center; 
     display: unset; 
@@ -193,7 +194,7 @@ img {
 }
 .column-header {
     display: inline-block;
-    width: 13vw;
+    width: 170px;
 
     background-color: #000;
     color: #fff;
@@ -232,7 +233,7 @@ img {
 /* Selections Column */
 
 .selections-container {
-    width: 13vw;
+    width: 170px;
     border-left: solid;
     background-color: #00114b;
 }
@@ -252,7 +253,7 @@ img {
 }
 
 .selections-column-container {
-    width: calc(13vw - 10px);
+    width: 160px;
     height: calc(100% - 60px - 1.3rem);
     
     overflow-y: auto;
@@ -267,6 +268,7 @@ img {
     word-break: break-all;
     text-align: center;
     display: inline-block;
+    flex: 1;
     
     z-index: 1;
 }
@@ -289,3 +291,15 @@ img {
 }
 
 /* \Selections Column */
+
+/* Trashcan */
+
+.trash-lid, .trash-base {
+    filter:drop-shadow(3px 3px red);
+    display: inline;
+}
+.trash-lid {
+
+}
+
+/* \Trashcan */

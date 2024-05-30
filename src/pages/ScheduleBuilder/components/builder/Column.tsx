@@ -5,7 +5,7 @@ import {
     Column as ColumnInterface, 
     Row,
     Selection as SelectionInterface
-} from '../types'
+} from '../../types'
 import { DragOverlay } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import Selection from './Selection'
-import { Selection as SelectionInterface } from '../types'
+import { Selection as SelectionInterface } from '../../types'
 
 const SelectionColumn = (props: { selections: Array<SelectionInterface> }) => {
     return ( 

@@ -1,6 +1,6 @@
 export interface Selection {
     name: string,
-    id: number | string
+    id: number | string,
 }
 
 export interface Column {
