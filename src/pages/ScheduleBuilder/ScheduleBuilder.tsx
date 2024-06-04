@@ -13,6 +13,7 @@ import Rows from './components/Rows'
 import ScheduleTable from './components/ScheduleTable'
 import SelectionColumn from './components/SelectionColumn'
 import Selection from './components/Selection'
+import Toolbar from './components/Toolbar/Toolbar'
 import { 
     Selection as SelectionInterface, 
     Column, 
@@ -195,16 +196,13 @@ const ScheduleBuilder = () => {
                     <div className="header">
                         <h1 className="title">Manhasset Master Schedule Builder</h1>
                     </div>
-                    <div className="toolbar">
-                        <ul>
-                            <li className='import-btn'>Import</li>
-                            <li className='export-btn'>Export</li>
-                            <span/><span/>
-                            <li className='search-box'>Search</li>
-                            <li className='settings'>Settings</li>
-                        </ul>
-                    </div>
 
+                    <Toolbar rows={rows} 
+                             setRows={setRows}
+                             columns={columns}
+                             setColumns={setColumns}
+                             selections={selections}
+                             setSelections={setSelections} />
                     <div className='schedule-container' {...(activeSelection ? null : {...events})} ref={drag_scroll_ref}>
                         <Rows heights={heights} rows={rows} rowsName={rowsName} />
                         <ScheduleTable activeSelection={activeSelection} heights={heights} columns={columns} rows={rows} />
