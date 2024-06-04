@@ -1,4 +1,5 @@
 import React from 'react'
+import Import from './Import'
 import Export from './Export'
 import { 
     Row, 
@@ -19,7 +20,9 @@ const Toolbar = (props: {
     return (
     <div className="toolbar">
         <ul>
-            <li className='import-btn'>Import</li>
+            <Import setRows={props.setRows}
+                    setColumns={props.setColumns}
+                    setSelections={props.setSelections} />
             <Export rows={props.rows}
                     columns={props.columns}
                     selections={props.selections} />
