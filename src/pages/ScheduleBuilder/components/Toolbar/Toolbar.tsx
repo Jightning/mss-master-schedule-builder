@@ -20,7 +20,9 @@ const Toolbar = (props: {
     <div className="toolbar">
         <ul>
             <li className='import-btn'>Import</li>
-            <li className='import-btn'>Export</li>
+            <Export rows={props.rows}
+                    columns={props.columns}
+                    selections={props.selections} />
             <span/><span/>
             <li className='search-box'>Search</li>
             <li className='settings'>Settings</li>
