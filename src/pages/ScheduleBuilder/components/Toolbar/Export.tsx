@@ -14,8 +14,10 @@ const Export = (props: {
 }) => {
     
     const exportCSV = () => {
-        const csv = "1,2,3,4,5,5\n2,3,4,5,6,7\n3,3,2,2,3,4"
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const header = "," + props.columns.map((it) => it.name).toString();
+        const rows = props.rows.map((it) => it.name + "," + Object.values(it.columns).map((x) => x.name).toString()).join("\n");
+        const table = header + "\n" + rows;
+        const blob = new Blob([table], { type: 'text/csv;charset=utf-8;' });
 
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
