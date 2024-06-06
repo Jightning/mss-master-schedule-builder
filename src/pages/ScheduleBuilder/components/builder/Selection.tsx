@@ -9,6 +9,8 @@ import {
 const Selection = (props: 
     { 
         selection: SelectionInterface | null,
+        rowIndex?: number,
+        columnId?: string | number,
         classNames?: string 
     }) => {
 
@@ -20,6 +22,8 @@ const Selection = (props:
         id: 'selection-' + props.selection.id,
         data: { 
             selection: props.selection,
+            rowIndex: props.rowIndex,
+            columnId: props.columnId
         }
     });
 
@@ -28,7 +32,7 @@ const Selection = (props:
     };
 
     return (
-        <div className={'selection-container' + ' ' + props.classNames}
+        <div className={'selection-container' + ' ' + (props.classNames ? props.classNames : "")}
             id={'selection-' + props.selection.id}
             ref={setNodeRef} 
             style={style} 

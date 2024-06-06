@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import Selection from './Selection'
 import { 
@@ -14,11 +14,11 @@ const Column = (props: {
     activeSelection: SelectionInterface | null, 
     column: ColumnInterface, 
     rows: Array<Row>, 
-    heights: Array<number>
+    heights: Array<number>,
+    setRows: React.Dispatch<React.SetStateAction<Array<Row>>>
 }) => {
     return (
         <div>  
-            {/* <div className='column-header'>{props.column.name}</div> */}
             {props.rows && props.rows.map((row: Row, index: number) => {
                 const {setNodeRef, isOver} = useDroppable({
                     id: props.column.id + "-" + row.id,
@@ -29,8 +29,25 @@ const Column = (props: {
                 })
 
                 const style = {
-                    color: isOver ? "green" : undefined,
+                    color: "rgba(0, 0, 0, " + (isOver ? 0.4 : 1) + ")",
                 }
+
+                useEffect(() => {
+                    if (isOver) {
+                        // dumbass way to signal the useEffect which changes the height on hover over
+                        // don't want to manually do so, so I'm just going to trigger the already made one by changing rows
+                        // (useEffect checks row changes -> it works ok)
+                        // maybe make this better later  
+                        props.setRows((prevRows) => {
+                            const toChange = index;
+                            let row = {...prevRows[toChange]}
+                
+                            return [...prevRows.slice(0, toChange), 
+                                    row, 
+                                    ...prevRows.slice(toChange + 1)];
+                        })
+                    }        
+                }, [isOver])
 
                 return (
                     <div
@@ -43,9 +60,16 @@ const Column = (props: {
                             height: `${props.heights[index]}px`
                         }} >
 
-                            <Selection selection={
-                                {...row.columns[props.column.id],
-                                    id: props.column.id + "-" + row.id}} />
+                            <Selection 
+                                selection={
+                                    {...(isOver && props.activeSelection 
+                                    ? props.activeSelection 
+                                    : row.columns[props.column.id]),
+
+                                    id: props.column.id + "-" + row.id}
+                                }
+                                rowIndex={index}
+                                columnId={props.column.id} />
                     </div>
                 )
             })}

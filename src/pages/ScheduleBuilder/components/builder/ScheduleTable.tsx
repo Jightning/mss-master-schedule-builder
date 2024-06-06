@@ -9,6 +9,7 @@ const ScheduleTable = (props: {
     columns: Array<ColumnInterface>, 
     rows: Array<Row>, 
     heights: Array<number>,
+    setRows: React.Dispatch<React.SetStateAction<Array<Row>>>,
     activeSelection: SelectionInterface | null
 }) => {
     
@@ -25,7 +26,12 @@ const ScheduleTable = (props: {
             <div className='schedule-table-columns'>
                 {props.columns && props.columns.map((column: ColumnInterface) => (
                     <div key={column.id} className='column-container'>  
-                        <Column activeSelection={props.activeSelection} column={column} rows={props.rows} heights={props.heights} />
+                        <Column 
+                            activeSelection={props.activeSelection} 
+                            column={column} 
+                            rows={props.rows} 
+                            heights={props.heights}
+                            setRows={props.setRows} />
                     </div>
                 ))}
             </div>

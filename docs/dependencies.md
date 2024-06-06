@@ -10,7 +10,7 @@ Allows the developer to instill conditions when the start and stop dragging.
 
 #### onDragStart:
 Function which takes in draggable.\
-Draggable looks like so:\
+Draggable looks like so:
 ```
 {
     active: {
@@ -24,7 +24,7 @@ id and data are set up in the draggable component
 
 #### onDragEnd:
 Function which takes in an object representing draggable and droppable.\
-Object looks like so:\
+Object looks like so:
 ```
 {
     active: {

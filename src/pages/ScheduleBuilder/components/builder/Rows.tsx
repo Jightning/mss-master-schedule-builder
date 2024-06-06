@@ -14,7 +14,7 @@ const Rows = (props: {heights: Array<number>, rows: Array<Row>, rowsName: string
                         height: `${props.heights[index]}px`
                     }}>
 
-                        {row.name}
+                        <p>{row.name}</p>
 
                 </div>
             ))}
