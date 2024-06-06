@@ -29,7 +29,8 @@ const Selection = (props:
 
     const style = {
         transform: CSS.Translate.toString(transform),
-    };
+        display: (props.selection.name === 'none' ? "none" : "block")
+    }
 
     return (
         <div className={'selection-container' + ' ' + (props.classNames ? props.classNames : "")}

@@ -4,14 +4,15 @@ import Selection from './Selection'
 import { 
     Column as ColumnInterface, 
     Row,
-    Selection as SelectionInterface
+    Selection as SelectionInterface,
+    ActiveSelectionInterface
 } from '../../types'
 import { DragOverlay } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 
 
 const Column = (props: {
-    activeSelection: SelectionInterface | null, 
+    activeSelection: ActiveSelectionInterface | null, 
     column: ColumnInterface, 
     rows: Array<Row>, 
     heights: Array<number>,
@@ -31,7 +32,8 @@ const Column = (props: {
                 const style = {
                     color: "rgba(0, 0, 0, " + (isOver ? 0.4 : 1) + ")",
                 }
-
+                
+                // BUG -> Fid a  way to make the the tile only change height when the shade is higher to prevent overflow
                 useEffect(() => {
                     if (isOver) {
                         // dumbass way to signal the useEffect which changes the height on hover over
@@ -63,7 +65,7 @@ const Column = (props: {
                             <Selection 
                                 selection={
                                     {...(isOver && props.activeSelection 
-                                    ? props.activeSelection 
+                                    ? props.activeSelection.selection
                                     : row.columns[props.column.id]),
 
                                     id: props.column.id + "-" + row.id}
@@ -76,7 +78,7 @@ const Column = (props: {
 
             <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                 {props.activeSelection ? (
-                    <Selection selection={{...props.activeSelection, id: props.activeSelection.id + "-overlay"}}
+                    <Selection selection={{...props.activeSelection.selection, id: props.activeSelection.selection.id + "-overlay"}}
                             classNames={"selection-overlay"}  />
                 ): null}
             </DragOverlay>

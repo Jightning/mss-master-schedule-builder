@@ -18,7 +18,8 @@ import Selection from './components/builder/Selection'
 import { 
     Selection as SelectionInterface, 
     Column, 
-    Row 
+    Row,
+    ActiveSelectionInterface
 } from './types'
 import Settings from './components/toolbar/Settings';
 
@@ -97,7 +98,7 @@ const ScheduleBuilder = () => {
     const [rowsName, setRowsName] = useState("Teachers")
     const [selectionsName, setSelectionsName] = useState("Classes")
 
-    const [activeSelection, setActiveSelection] = useState<SelectionInterface | null>(null);
+    const [activeSelection, setActiveSelection] = useState<ActiveSelectionInterface | null>(null);
     const [heights, setHeights] = useState<Array<number>>([])
     const [originalRowHeights, setOriginalRowHeights] = useState<Array<number>>([])
 
@@ -123,7 +124,9 @@ const ScheduleBuilder = () => {
             setOriginalRowHeights(rowHeights)
         }
     }, [])
-
+    useEffect(() => {
+        console.log("HEIGHTS: " + heights)
+    }, [heights])
 
     // Auto Adjusts the heights of each row in the table
     // To match up the column row heights and the row column heights
@@ -140,8 +143,14 @@ const ScheduleBuilder = () => {
                         height = selection?.offsetHeight + 10
                     }
                 })
-                // Adds heighest height or 0 if there are none
-                allHeights.push((height ? height : 0))
+                // Checks if the user is hovering with a selection over this row
+                // if they are, only add the tallest height, since we dont want to be switching between large and small with the smaller selection
+                if (index == activeSelection?.currentRowIndex) {
+                    allHeights.push(height > heights[index] ? (height ? height : 0) : heights[index])
+                } else {
+                    // otherwise, just push normally if height exists
+                    allHeights.push((height ? height : 0))
+                }
             })  
             setHeights(allHeights)
         }
@@ -151,7 +160,7 @@ const ScheduleBuilder = () => {
     const handleDragStart = (draggable: any) => {
         if (draggable.active) {
             // So the overlay gets shown
-            setActiveSelection(draggable.active.data.current.selection)
+            setActiveSelection({selection: draggable.active.data.current.selection, currentRowIndex: null})
 
             let selectionElement = document.getElementById(`${draggable.active.id}`);
             
@@ -265,7 +274,7 @@ const ScheduleBuilder = () => {
 
         if (rectIntersectionCollisions.length > 0) {
             const trash = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id === 'trash-droppable')
-            console.log(trash)
+
             if (trash.length > 0) {
                 // The trash is intersecting, return early
                 return trash;
@@ -280,11 +289,20 @@ const ScheduleBuilder = () => {
             }   
         }
 
-        // default return for a droppable -> place into closest corner 
+        // default return for a droppable -> collision algo
         const closest = rectIntersection({
             ...args,
             droppableRects: droppableRects,
             droppableContainers: droppableContainers.filter(({id}: {id: SelectionInterface["id"]}) => id !== 'trash-droppable' && id.toString().substring(0, 15) !== 'cover-droppable')
+        })
+        // store index of row over to update height -> if over row, then only update height if its taller than the heights[index]
+
+        setActiveSelection((prevActiveSelection: ActiveSelectionInterface | null) => {
+            if (closest[0].data && prevActiveSelection)
+                prevActiveSelection["currentRowIndex"] = closest[0].data.droppableContainer.data.current.rowIndex
+            
+            console.log(prevActiveSelection)
+            return prevActiveSelection
         })
 
         return closest
@@ -356,7 +374,7 @@ const ScheduleBuilder = () => {
                     Overlay is what is show when dragging */}
                 <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                     {activeSelection ? (
-                        <Selection selection={activeSelection}
+                        <Selection selection={activeSelection.selection}
                                    classNames={"selection-overlay"} />
                     ): null}
                 </DragOverlay>

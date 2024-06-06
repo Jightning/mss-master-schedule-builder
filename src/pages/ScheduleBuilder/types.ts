@@ -18,3 +18,8 @@ export interface Row {
     id: number,
     columns: Record<Column["id"], Tile>
 }
+
+export interface ActiveSelectionInterface {
+    selection: Selection,
+    currentRowIndex: number | null
+} 

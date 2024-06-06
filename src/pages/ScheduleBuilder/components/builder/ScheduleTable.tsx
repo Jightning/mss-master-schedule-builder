@@ -2,7 +2,8 @@ import Column from './Column'
 import { 
     Row, 
     Column as ColumnInterface,
-    Selection as SelectionInterface 
+    Selection as SelectionInterface,
+    ActiveSelectionInterface
 } from '../../types'
 
 const ScheduleTable = (props: {
@@ -10,7 +11,7 @@ const ScheduleTable = (props: {
     rows: Array<Row>, 
     heights: Array<number>,
     setRows: React.Dispatch<React.SetStateAction<Array<Row>>>,
-    activeSelection: SelectionInterface | null
+    activeSelection: ActiveSelectionInterface | null
 }) => {
     
     return (
