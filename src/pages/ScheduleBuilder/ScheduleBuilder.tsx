@@ -124,9 +124,6 @@ const ScheduleBuilder = () => {
             setOriginalRowHeights(rowHeights)
         }
     }, [])
-    useEffect(() => {
-        console.log("HEIGHTS: " + heights)
-    }, [heights])
 
     // Auto Adjusts the heights of each row in the table
     // To match up the column row heights and the row column heights
@@ -145,6 +142,7 @@ const ScheduleBuilder = () => {
                 })
                 // Checks if the user is hovering with a selection over this row
                 // if they are, only add the tallest height, since we dont want to be switching between large and small with the smaller selection
+                console.log(activeSelection, height, heights, index)
                 if (index == activeSelection?.currentRowIndex) {
                     allHeights.push(height > heights[index] ? (height ? height : 0) : heights[index])
                 } else {
@@ -257,6 +255,7 @@ const ScheduleBuilder = () => {
                 setAutoScroll(true)
         } else {
             setAutoScroll(false)
+            setRows((prevRows) => prevRows)
         }
     }
 
@@ -280,7 +279,7 @@ const ScheduleBuilder = () => {
                 return trash;
             } else {
                 // Otherwise, we're intersecting with the cover, return the cover to ignore the selection
-                const coverDroppable = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id.toString().substring(0, 15) === 'cover-droppable')
+                const coverDroppable: any = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id.toString().substring(0, 15) === 'cover-droppable')
                 for (let cover of coverDroppable) {
                     if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
                         return coverDroppable
@@ -298,10 +297,9 @@ const ScheduleBuilder = () => {
         // store index of row over to update height -> if over row, then only update height if its taller than the heights[index]
 
         setActiveSelection((prevActiveSelection: ActiveSelectionInterface | null) => {
-            if (closest[0].data && prevActiveSelection)
+            if (closest[0]?.data && closest[0].data.droppableContainer.data && prevActiveSelection)
                 prevActiveSelection["currentRowIndex"] = closest[0].data.droppableContainer.data.current.rowIndex
             
-            console.log(prevActiveSelection)
             return prevActiveSelection
         })
 
