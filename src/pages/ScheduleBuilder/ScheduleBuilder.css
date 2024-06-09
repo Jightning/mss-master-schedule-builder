@@ -77,8 +77,22 @@ img {
 }
 .toolbar ul span {
    flex-grow: 1;
-    
 }
+
+.toolbar ul li div {
+    margin: 0;
+    padding: 0;
+}
+
+.toolbar .export-btn .dropdown-content {
+    position: absolute;
+    margin: 0;
+    z-index: 50;
+
+    background-color: white;
+    display: block;
+}
+
 .toolbar .search-box {
     width: 50%;
 }

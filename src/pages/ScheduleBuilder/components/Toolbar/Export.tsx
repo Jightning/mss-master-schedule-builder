@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { 
     Row, 
     Column,
@@ -12,6 +12,11 @@ const Export = (props: {
     columns: Array<Column>,
     selections: Array<SelectionInterface>,
 }) => {
+
+    const [dropdown, setDropdown] = useState(false);
+
+    const toggleDropdown = () => setDropdown(!dropdown);
+    const deactivateDropdown = () => setDropdown(false);
     
     const exportCSV = () => {
         const header = "," + props.columns.map((it) => it.name).toString();
@@ -31,8 +36,36 @@ const Export = (props: {
         console.log("hello");
     }
     
+    const exportJSON = () => {
+        const obj = {rows: props.rows, 
+                     columns: props.columns, 
+                     selections: props.selections};
+        const json = JSON.stringify(obj);
+        const blob = new Blob([json], { type: 'text/json' });
+
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', 'data.json');
+    
+        document.body.appendChild(link);
+        link.click();
+    
+        document.body.removeChild(link);
+        console.log("hello");
+
+    }
+
     return (
-    <li className="export-btn" onClick={exportCSV}>Export</li>
+    <li className="export-btn" onMouseLeave={deactivateDropdown}>
+        <div onClick={toggleDropdown}>Export</div>
+        {dropdown && (
+        <div className="dropdown-content">
+            <div onClick={exportCSV}>Export to CSV</div>
+            <div onClick={exportJSON}>Export to JSON</div>
+        </div>
+        )}
+    </li>
 )
 }
 
