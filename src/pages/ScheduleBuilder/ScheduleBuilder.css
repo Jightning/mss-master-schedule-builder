@@ -58,7 +58,6 @@ img {
 }
 .toolbar ul li {
     margin: 0.35rem;
-    padding: 0.2rem 0.25rem;
 
     cursor: pointer;
     border: solid;
@@ -81,7 +80,7 @@ img {
 
 .toolbar ul li div {
     margin: 0;
-    padding: 0;
+    padding: 0.2rem 0.25rem;
 }
 
 .toolbar .export-btn .dropdown-content {
