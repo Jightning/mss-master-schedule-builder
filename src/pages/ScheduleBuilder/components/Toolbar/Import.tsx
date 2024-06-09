@@ -23,12 +23,32 @@ const Import = (props: {
     const toggleDropdown = () => setDropdown(!dropdown);
     const deactivateDropdown = () => setDropdown(false);
     
-    const importCSV = () => {
+    const importCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target;
 
     }
     
-    const importJSON = () => {
-
+    const importJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files![0];
+        if (!file || file.type !== 'application/json') {
+            console.error("Invalid JSON File.");
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            if (ev.target && typeof ev.target.result === 'string') {
+                try {
+                    const json = JSON.parse(ev.target.result);
+                    props.setRows(json.rows);
+                    props.setColumns(json.columns);
+                    props.setSelections(json.selections);
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                }
+            }
+        }
+        reader.readAsText(file);
     }
     
     return (
