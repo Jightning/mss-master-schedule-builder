@@ -1,8 +1,8 @@
 import React from 'react'
 import { Row } from '../../types'
-
+import { ActiveSelectionInterface } from '../../types'
 // Rows on the right side of the table (teacher rows)
-const Rows = (props: {heights: Array<number>, rows: Array<Row>, rowsName: string}) => {
+const Rows = (props: {heights: Array<number>, rows: Array<Row>, rowsName: string, activeSelection: ActiveSelectionInterface | null}) => {
     return (
         <div className='rows-container'>
             <div className={"rows-header"}>{props.rowsName}</div>
@@ -11,7 +11,8 @@ const Rows = (props: {heights: Array<number>, rows: Array<Row>, rowsName: string
                     key={row.id}
                     id={"row-" + row.id}
                     style={{
-                        height: `${props.heights[index]}px`
+                        height: `${props.heights[index]}px`,
+                        color: props.activeSelection?.currentRowIndex == index ? "blue" : "black"
                     }}>
 
                         <p>{row.name}</p>

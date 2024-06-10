@@ -2,7 +2,6 @@ import Column from './Column'
 import { 
     Row, 
     Column as ColumnInterface,
-    Selection as SelectionInterface,
     ActiveSelectionInterface
 } from '../../types'
 
@@ -18,7 +17,11 @@ const ScheduleTable = (props: {
         <div className="schedule-table-container">
             <div className='schedule-table-headers' >
                 {props.columns && props.columns.map((column: ColumnInterface) => (
-                    <div key={column.id} className='column-header'>
+                    <div key={column.id} className='column-header' style={{
+                        borderRight: column.oddEven && column.name.includes("Even") ? "solid" : "none",
+                        borderLeft: column.oddEven && column.name.includes("Odd") ? "solid" : "none",
+                        borderWidth: "1px"
+                    }}>
                         {column.name}
                     </div>
                 ))}

@@ -18,6 +18,7 @@ const Column = (props: {
     heights: Array<number>,
     setRows: React.Dispatch<React.SetStateAction<Array<Row>>>
 }) => {
+
     return (
         <div>  
             {props.rows && props.rows.map((row: Row, index: number) => {
@@ -40,14 +41,7 @@ const Column = (props: {
                         // don't want to manually do so, so I'm just going to trigger the already made one by changing rows
                         // (useEffect checks row changes -> it works ok)
                         // maybe make this better later  
-                        props.setRows((prevRows) => {
-                            const toChange = index;
-                            let row = {...prevRows[toChange]}
-                
-                            return [...prevRows.slice(0, toChange), 
-                                    row, 
-                                    ...prevRows.slice(toChange + 1)];
-                        })
+                        props.setRows((prevRows) => ([...prevRows]))
                     }        
                 }, [isOver])
 
@@ -67,7 +61,7 @@ const Column = (props: {
                                     {...(isOver && props.activeSelection 
                                     ? props.activeSelection.selection
                                     : row.columns[props.column.id]),
-
+                                    
                                     id: props.column.id + "-" + row.id}
                                 }
                                 rowIndex={index}

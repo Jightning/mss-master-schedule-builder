@@ -5,17 +5,18 @@ export interface Selection {
 
 export interface Column {
     name: string,
-    id: string
+    id: string,
+    oddEven: boolean
 }
 
 export interface Tile {
     name: string,
-    id: number
+    id: number | string,
 }
 export interface Row {
     name: string,
     subject: string,
-    id: number,
+    id: number | string,
     columns: Record<Column["id"], Tile>
 }
 
