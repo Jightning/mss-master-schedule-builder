@@ -20,6 +20,7 @@ const Export = (props: {
     
     const exportCSV = () => {
         const header = "," + props.columns.map((it) => it.name).toString();
+        // TODO: order is not guaranteed, should use order of props.columns to determine orders of items in rows
         const rows = props.rows.map((it) => it.name + "," + Object.values(it.columns).map((x) => x.name).toString()).join("\n");
         const table = header + "\n" + rows;
         const blob = new Blob([table], { type: 'text/csv;charset=utf-8;' });
