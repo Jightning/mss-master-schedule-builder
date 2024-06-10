@@ -85,7 +85,7 @@ const Import = (props: {
     }
     
     return (
-        <li className="export-btn" onMouseLeave={deactivateDropdown}>
+        <li className="import-btn" onMouseLeave={deactivateDropdown}>
         <div onClick={toggleDropdown}>Import</div>
         {dropdown && (
         <div className="dropdown-content">
