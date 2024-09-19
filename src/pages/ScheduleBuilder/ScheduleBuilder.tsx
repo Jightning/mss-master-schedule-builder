@@ -20,15 +20,21 @@ import {
     Row,
     ActiveSelectionInterface,
     Tile
-} from './types'
+} from '@/types'
 import Settings from './components/toolbar/Settings';
 
 import Popup from '../../components/Popup';
 import Trash from './components/builder/Trash';
 import Cover from './components/builder/Cover';
 
+import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { useAppSelector } from '@/lib/hooks';
+
 // TODO Make it so that columns are always odd/even split -> but if odd and even are the same, they display as just one
 // TODO Make a toggle button which seperates manually into odd/even, already does automatically
+// TODO Possibly introduce a memo system (useMemo)
 
 const ScheduleBuilder = () => {
     const [rows, setRows] = useState<Array<Row>>([
@@ -42,17 +48,18 @@ const ScheduleBuilder = () => {
         { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "I. Teacher", subject: "math", id: 10349, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
     ]);
+    
 
     const [columns, setColumns] = useState<Array<Column>>([
-        { name: "Period 1", id: "period_1", oddEven: false },
-        { name: "Period 2", id: "period_2", oddEven: false },
-        { name: "Period 3", id: "period_3", oddEven: false },
-        { name: "Period 4", id: "period_4", oddEven: false },
-        { name: "Period 5", id: "period_5", oddEven: false },
-        { name: "Period 6", id: "period_6", oddEven: false },
-        { name: "Period 7", id: "period_7", oddEven: false },
-        { name: "Period 8", id: "period_8", oddEven: false },
-        { name: "Period 9", id: "period_9", oddEven: false }
+        { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
+        { name: "Period 2", id: "period_2", oddEven: false, subcolumns: [{name: "Odd", id:"period_2_odd"}, {name: "Even", id:"period_2_even"}] },
+        { name: "Period 3", id: "period_3", oddEven: false, subcolumns: [{name: "Odd", id:"period_3_odd"}, {name: "Even", id:"period_3_even"}] },
+        { name: "Period 4", id: "period_4", oddEven: false, subcolumns: [{name: "Odd", id:"period_4_odd"}, {name: "Even", id:"period_4_even"}] },
+        { name: "Period 5", id: "period_5", oddEven: false, subcolumns: [{name: "Odd", id:"period_5_odd"}, {name: "Even", id:"period_5_even"}] },
+        { name: "Period 6", id: "period_6", oddEven: false, subcolumns: [{name: "Odd", id:"period_6_odd"}, {name: "Even", id:"period_6_even"}] },
+        { name: "Period 7", id: "period_7", oddEven: false, subcolumns: [{name: "Odd", id:"period_7_odd"}, {name: "Even", id:"period_7_even"}] },
+        { name: "Period 8", id: "period_8", oddEven: false, subcolumns: [{name: "Odd", id:"period_8_odd"}, {name: "Even", id:"period_8_even"}] },
+        { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
     ]);  
 
     const [selections, setSelections] = useState<Array<SelectionInterface>>([
@@ -66,6 +73,7 @@ const ScheduleBuilder = () => {
         { name: "AP Physics 7", id: 334398 },
         { name: "AP Physics 8", id: 334868 },
         { name: "AP Physics 9", id: 334548 },
+        { name: "A", id: 130039239 },
         { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", id: 332448 },
         { name: "AP Physics 11", id: 33443 },
         { name: "AP Physics 12", id: 33428 },

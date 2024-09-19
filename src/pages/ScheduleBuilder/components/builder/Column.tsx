@@ -6,10 +6,9 @@ import {
     Row,
     Selection as SelectionInterface,
     ActiveSelectionInterface
-} from '../../types'
+} from '@/types'
 import { DragOverlay } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
-
 
 const Column = (props: {
     activeSelection: ActiveSelectionInterface | null, 

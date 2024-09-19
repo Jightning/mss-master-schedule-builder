@@ -4,7 +4,7 @@ import { CSS } from "@dnd-kit/utilities"
 
 import { 
     Selection as SelectionInterface
-} from '../../types'
+} from '@/types'
 
 const Selection = (props: 
     { 

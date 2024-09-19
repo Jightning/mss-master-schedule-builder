@@ -3,7 +3,7 @@ import {
     Row, 
     Column as ColumnInterface,
     ActiveSelectionInterface
-} from '../../types'
+} from '@/types'
 
 const ScheduleTable = (props: {
     columns: Array<ColumnInterface>, 

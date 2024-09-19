@@ -5,13 +5,15 @@ export interface Selection {
 
 export interface Column {
     name: string,
-    id: string,
-    oddEven: boolean
+    id: string | number,
+    oddEven: boolean,
+    subcolumns?: Omit<Column, 'oddEven'>[]
 }
 
 export interface Tile {
     name: string,
     id: number | string,
+    
 }
 export interface Row {
     name: string,
