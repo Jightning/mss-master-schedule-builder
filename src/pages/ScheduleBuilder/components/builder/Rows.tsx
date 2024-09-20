@@ -1,7 +1,13 @@
-import React from 'react'
 import { Row, ActiveSelectionInterface } from '@/types'
 // Rows on the right side of the table (teacher rows)
-const Rows = (props: {heights: Array<number>, rows: Array<Row>, rowsName: string, activeSelection: ActiveSelectionInterface | null}) => {
+const Rows = (
+    props: {   
+        heights: Array<number>, 
+        rows: Array<Row>, 
+        rowsName: string, 
+        activeSelection: ActiveSelectionInterface | null
+    }) => {
+
     return (
         <div className='rows-container'>
             <div className={"rows-header"}>{props.rowsName}</div>

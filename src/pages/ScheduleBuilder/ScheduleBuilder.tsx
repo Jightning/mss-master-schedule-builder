@@ -119,6 +119,19 @@ const ScheduleBuilder = () => {
 
     const [isOddEvenAutoAssign, setIsOddEvenAutoAssign] = useState(true)
 
+    // To check for window resize
+    const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
+    useEffect(() => {
+        function changeDims() {
+            setWindowDims([window.innerWidth, window.innerHeight])
+        }
+        window.addEventListener('resize', changeDims)
+
+        return () => {
+            window.removeEventListener('resize', changeDims)
+        }
+    }, [])
+
     // Sets original heights of rows in case large elements are removed
     // Height creation function after this only adds height, when larger selection is removed, row height remains the same, causing it to be bigger than it should be
     // Row heights should be checked off original height
@@ -166,7 +179,7 @@ const ScheduleBuilder = () => {
 
             setHeights(allHeights)
         }
-    }, [rows, originalRowHeights])
+    }, [rows, originalRowHeights, windowDims])
 
     const assignOddEven = (columnId: Column["id"], rowIndex: Row["id"], evenSelection: Tile) => {
         setRows((prevRows: Array<Row>) => {
@@ -426,7 +439,7 @@ const ScheduleBuilder = () => {
                 </div>
 
                 {/* To allow the selection to drag over its current div
-                    Overlay is what is show when dragging */}
+                    Overlay is what is shown when dragging */}
                 <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                     {activeSelection ? (
                         <Selection selection={activeSelection.selection}
