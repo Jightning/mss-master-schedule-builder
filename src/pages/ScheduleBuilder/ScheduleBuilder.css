@@ -259,7 +259,9 @@ img {
 /* Selections Column */
 
 .selections-container {
-    width: 170px;
+    min-width: 170px;
+    width: 10vw;
+
     border-left: solid;
     background-color: #00114b;
 }
@@ -279,7 +281,8 @@ img {
 }
 
 .selections-column-container {
-    width: 160px;
+    min-width: 160px;
+    width: calc(10vw - 20px);
     height: calc(100% - 60px - 1.3rem);
     
     overflow-y: auto;

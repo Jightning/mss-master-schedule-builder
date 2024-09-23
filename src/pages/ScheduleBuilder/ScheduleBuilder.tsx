@@ -181,12 +181,15 @@ const ScheduleBuilder = () => {
         }
     }, [rows, originalRowHeights, windowDims])
 
-    const assignOddEven = (columnId: Column["id"], rowIndex: Row["id"], evenSelection: Tile) => {
+    // use -1 and null for the last two parameters 
+    // Coresponding row is found via the id
+    const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
         setRows((prevRows: Array<Row>) => {
             for (let i = 0; i < prevRows.length; i++) {
+                // prevRows[i].columns[columnId] = prevRows[i].columns[columnId]
                 prevRows[i].columns[columnId] = prevRows[i].columns[columnId]
                 prevRows[i].columns[columnId + '-odd'] = prevRows[i].columns[columnId]
-                prevRows[i].columns[columnId + '-even'] = i == rowIndex ? evenSelection : prevRows[i].columns[columnId] 
+                prevRows[i].columns[columnId + '-even'] = (evenSelection && i == rowIndex) ? evenSelection : prevRows[i].columns[columnId] 
             }
     
             return prevRows
@@ -231,6 +234,8 @@ const ScheduleBuilder = () => {
         const draggable = element.active
         const droppable = element.over
 
+        console.log("DRAGGABLE: ", draggable)
+
         // Revaluating row heights in case we return before being able to do so
         setRows((prevRows: Row[]) => [...prevRows])
 
@@ -250,7 +255,7 @@ const ScheduleBuilder = () => {
         // Show element again
         selectionElement.style.zIndex = "1" 
         selectionElement.style.opacity = "1"
-        console.log(droppable, draggable)
+
         if (!droppable || droppable.id.toString().substring(0, 15) === 'cover-droppable' || droppable.disabled === true) {
             return
         } else if (droppable.id == "trash-droppable") {
@@ -303,6 +308,8 @@ const ScheduleBuilder = () => {
 
             // row.columns[columnId] is the selection to change
             // setting selection of respective row in respective column to new draggable selection
+            console.log(draggable.data.current.selection)
+            // row.columns[columnId] = draggable.data.current.selection
             row.columns[columnId] = draggable.data.current.selection
 
             return [...prevRows.slice(0, toChange), 
@@ -427,7 +434,11 @@ const ScheduleBuilder = () => {
                             heights={heights}
                             setRows={setRows}
                             columns={columns} 
-                            rows={rows} />
+                            rows={rows}
+                            isOddEvenAutoAssign={isOddEvenAutoAssign}
+                            setColumns={setColumns}
+                            assignOddEven={assignOddEven}
+                             />
                     </div> 
                 </div>
 
