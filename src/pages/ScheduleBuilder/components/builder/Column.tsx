@@ -59,10 +59,9 @@ const Column = (props: {
                                 selection={
                                     {...(isOver && props.activeSelection 
                                     ? props.activeSelection.selection
-                                    : row.columns[props.column.id]),
-                                    
-                                    id: props.column.id + "-" + row.id}
+                                    : row.columns[props.column.id])}
                                 }
+                                selectionId={props.column.id + "-" + row.id}
                                 rowIndex={index}
                                 columnId={props.column.id} />
                     </div>
@@ -71,7 +70,8 @@ const Column = (props: {
 
             <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                 {props.activeSelection ? (
-                    <Selection selection={{...props.activeSelection.selection, id: props.activeSelection.selection.id + "-overlay"}}
+                    <Selection selection={{...props.activeSelection.selection, id: props.activeSelection.selection.id}}
+                            selectionId={props.activeSelection.selection.id + "-overlay"}
                             classNames={"selection-overlay"}  />
                 ): null}
             </DragOverlay>

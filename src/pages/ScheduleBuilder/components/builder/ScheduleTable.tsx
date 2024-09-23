@@ -28,8 +28,6 @@ const ScheduleTable = (props: {
 
         for (let i = 0; i < props.rows.length; i++) {
             if (props.rows[i].columns[columnId + '-odd'].id !== props.rows[i].columns[columnId + '-even'].id) {
-                console.log("NO MERGE: ", props.rows[i].columns[columnId + '-odd'], props.rows[i].columns[columnId + '-even'])
-                console.log(props.rows)
                 return
             } else {
                 props.rows[i].columns[columnId] = props.rows[i].columns[columnId + '-odd']
@@ -40,7 +38,6 @@ const ScheduleTable = (props: {
             for (let i = 0; i < prevColumns.length; i++) {
                 if (prevColumns[i].id == columnId  + "-odd") {
                     if (!prevColumns[i].oddEven) break;
-                    console.log(prevColumns, props.rows)
                     prevColumns.splice(i + 1, 1)
                     prevColumns[i] = {...prevColumns[i], id: prevColumns[i].id.toString().substring(0, prevColumns[i].id.toString().length - 4), name: prevColumns[i].name.substring(0, prevColumns[i].name.length - 4), oddEven: false};
                     

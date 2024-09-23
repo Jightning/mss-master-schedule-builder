@@ -234,8 +234,6 @@ const ScheduleBuilder = () => {
         const draggable = element.active
         const droppable = element.over
 
-        console.log("DRAGGABLE: ", draggable)
-
         // Revaluating row heights in case we return before being able to do so
         setRows((prevRows: Row[]) => [...prevRows])
 
@@ -308,8 +306,6 @@ const ScheduleBuilder = () => {
 
             // row.columns[columnId] is the selection to change
             // setting selection of respective row in respective column to new draggable selection
-            console.log(draggable.data.current.selection)
-            // row.columns[columnId] = draggable.data.current.selection
             row.columns[columnId] = draggable.data.current.selection
 
             return [...prevRows.slice(0, toChange), 
@@ -453,7 +449,9 @@ const ScheduleBuilder = () => {
                     Overlay is what is shown when dragging */}
                 <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                     {activeSelection ? (
-                        <Selection selection={activeSelection.selection}
+                        <Selection 
+                                   selectionId={activeSelection.selection.id}
+                                   selection={activeSelection.selection}
                                    classNames={"selection-overlay"} />
                     ): null}
                 </DragOverlay>
