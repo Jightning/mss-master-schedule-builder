@@ -3,8 +3,7 @@ import "./ScheduleBuilder.css"
 import { 
     DndContext,
     DragOverlay,
-    rectIntersection,
-    closestCorners
+    rectIntersection
 } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
@@ -19,18 +18,27 @@ import {
     Selection as SelectionInterface, 
     Column, 
     Row,
-    ActiveSelectionInterface
-} from './types'
+    ActiveSelectionInterface,
+    Tile
+} from '@/types'
 import Settings from './components/toolbar/Settings';
 
 import Popup from '../../components/Popup';
 import Trash from './components/builder/Trash';
 import Cover from './components/builder/Cover';
 
+import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { useAppSelector } from '@/lib/hooks';
+
+// TODO Make it so that columns are always odd/even split -> but if odd and even are the same, they display as just one
+// TODO Possibly introduce a memo system (useMemo)
+
 const ScheduleBuilder = () => {
     const [rows, setRows] = useState<Array<Row>>([
         { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "B. Teacher", subject: "math", id: 10324, columns: {"period_1": {name: "none", id: 1234 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "B. Teacher", subject: "math", id: 10324, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "C. Teacher", subject: "math", id: 10395, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "D. Teacher", subject: "math", id: 10396, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "E. Teacher", subject: "math", id: 10397, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
@@ -39,17 +47,18 @@ const ScheduleBuilder = () => {
         { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "I. Teacher", subject: "math", id: 10349, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
     ]);
+    
 
     const [columns, setColumns] = useState<Array<Column>>([
-        { name: "Period 1", id: "period_1" },
-        { name: "Period 2", id: "period_2" },
-        { name: "Period 3", id: "period_3" },
-        { name: "Period 4", id: "period_4" },
-        { name: "Period 5", id: "period_5" },
-        { name: "Period 6", id: "period_6" },
-        { name: "Period 7", id: "period_7" },
-        { name: "Period 8", id: "period_8" },
-        { name: "Period 9", id: "period_9" }
+        { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
+        { name: "Period 2", id: "period_2", oddEven: false, subcolumns: [{name: "Odd", id:"period_2_odd"}, {name: "Even", id:"period_2_even"}] },
+        { name: "Period 3", id: "period_3", oddEven: false, subcolumns: [{name: "Odd", id:"period_3_odd"}, {name: "Even", id:"period_3_even"}] },
+        { name: "Period 4", id: "period_4", oddEven: false, subcolumns: [{name: "Odd", id:"period_4_odd"}, {name: "Even", id:"period_4_even"}] },
+        { name: "Period 5", id: "period_5", oddEven: false, subcolumns: [{name: "Odd", id:"period_5_odd"}, {name: "Even", id:"period_5_even"}] },
+        { name: "Period 6", id: "period_6", oddEven: false, subcolumns: [{name: "Odd", id:"period_6_odd"}, {name: "Even", id:"period_6_even"}] },
+        { name: "Period 7", id: "period_7", oddEven: false, subcolumns: [{name: "Odd", id:"period_7_odd"}, {name: "Even", id:"period_7_even"}] },
+        { name: "Period 8", id: "period_8", oddEven: false, subcolumns: [{name: "Odd", id:"period_8_odd"}, {name: "Even", id:"period_8_even"}] },
+        { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
     ]);  
 
     const [selections, setSelections] = useState<Array<SelectionInterface>>([
@@ -63,6 +72,7 @@ const ScheduleBuilder = () => {
         { name: "AP Physics 7", id: 334398 },
         { name: "AP Physics 8", id: 334868 },
         { name: "AP Physics 9", id: 334548 },
+        { name: "A", id: 130039239 },
         { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", id: 332448 },
         { name: "AP Physics 11", id: 33443 },
         { name: "AP Physics 12", id: 33428 },
@@ -106,6 +116,21 @@ const ScheduleBuilder = () => {
     const [isAnimating, setIsAnimating] = useState(false)
     const [autoScroll, setAutoScroll] = useState(true)
 
+    const [isOddEvenAutoAssign, setIsOddEvenAutoAssign] = useState(true)
+
+    // To check for window resize
+    const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
+    useEffect(() => {
+        function changeDims() {
+            setWindowDims([window.innerWidth, window.innerHeight])
+        }
+        window.addEventListener('resize', changeDims)
+
+        return () => {
+            window.removeEventListener('resize', changeDims)
+        }
+    }, [])
+
     // Sets original heights of rows in case large elements are removed
     // Height creation function after this only adds height, when larger selection is removed, row height remains the same, causing it to be bigger than it should be
     // Row heights should be checked off original height
@@ -127,9 +152,10 @@ const ScheduleBuilder = () => {
 
     // Auto Adjusts the heights of each row in the table
     // To match up the column row heights and the row column heights
-    useEffect(() => {   
+    useEffect(() => {  
         if (rows && rows.length > 0 && originalRowHeights) {
             let allHeights: Array<number> = []
+
             // Set all heights based on row height
             rows.forEach((row: Row, index: number) => {
                 let height = originalRowHeights[index];
@@ -142,7 +168,6 @@ const ScheduleBuilder = () => {
                 })
                 // Checks if the user is hovering with a selection over this row
                 // if they are, only add the tallest height, since we dont want to be switching between large and small with the smaller selection
-                console.log(activeSelection, height, heights, index)
                 if (index == activeSelection?.currentRowIndex) {
                     allHeights.push(height > heights[index] ? (height ? height : 0) : heights[index])
                 } else {
@@ -150,10 +175,41 @@ const ScheduleBuilder = () => {
                     allHeights.push((height ? height : 0))
                 }
             })  
+
             setHeights(allHeights)
         }
-    }, [rows, originalRowHeights])
+    }, [rows, originalRowHeights, windowDims])
 
+    // use -1 and null for the last two parameters 
+    // Coresponding row is found via the id
+    const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
+        setRows((prevRows: Array<Row>) => {
+            for (let i = 0; i < prevRows.length; i++) {
+                // prevRows[i].columns[columnId] = prevRows[i].columns[columnId]
+                prevRows[i].columns[columnId] = prevRows[i].columns[columnId]
+                prevRows[i].columns[columnId + '-odd'] = prevRows[i].columns[columnId]
+                prevRows[i].columns[columnId + '-even'] = (evenSelection && i == rowIndex) ? evenSelection : prevRows[i].columns[columnId] 
+            }
+    
+            return prevRows
+        })
+
+        setColumns((prevColumns: Array<Column>) => {
+            for (let i = 0; i < prevColumns.length; i++) {
+                if (prevColumns[i].id == columnId) {
+                    if (prevColumns[i].oddEven) break;
+
+                    prevColumns.splice(i + 1, 0, {...prevColumns[i], id: prevColumns[i].id + '-even', name: prevColumns[i].name + ' Even', oddEven: true});
+                    prevColumns[i] = {...prevColumns[i], id: prevColumns[i].id + '-odd', name: prevColumns[i].name + ' Odd', oddEven: true};
+                    
+                    break;
+                }
+            }
+
+            return prevColumns
+        })
+
+    }
 
     const handleDragStart = (draggable: any) => {
         if (draggable.active) {
@@ -177,15 +233,18 @@ const ScheduleBuilder = () => {
         const draggable = element.active
         const droppable = element.over
 
+        // Revaluating row heights in case we return before being able to do so
+        setRows((prevRows: Row[]) => [...prevRows])
+
         setAutoScroll(true)
 
         // hide overlay
         setActiveSelection(null)
+
         if (!draggable) {
             return
         }
 
-        // if dragged over nothing, these should still be done
         let selectionElement = document.getElementById(`${draggable.id}`);
         if (!selectionElement) {
             return;
@@ -202,46 +261,55 @@ const ScheduleBuilder = () => {
             }
 
             setRows((prevRows) => {
-                // Need row index, column id
-                // Identifying index of the column to change
+                // check below for details on these
                 const toChange = draggable.data.current.rowIndex;
-                // Id of selection to change
                 const columnId = draggable.data.current.columnId
-                // pass by value -> cannot return reference, otherwise values will not rerender correctly
-                // Row object to change
                 let row = {...prevRows[toChange]}
 
                 // row.columns[columnId] is the selection to change
-
                 // setting selection of respective row in respective column to none selection
-                row.columns[columnId] = {name: "none", id:0 }
+                row.columns[columnId] = { name: "none", id: 0 }  
 
                 return [...prevRows.slice(0, toChange), 
                     row, 
-                    ...prevRows.slice(toChange + 1)];
+                    ...prevRows.slice(toChange + 1)]
             })
 
             return
         }
 
+        // Need row index, column id
+        // Identifying index of the column to change
+        const toChange = droppable.data.current.rowIndex;
+        // Id of selection to change
+        const columnId = droppable.data.current.columnId
+
+        // find the current column and check if it's oddEven
+        let oddEven;
+        for (let col of columns) {
+            if (col.id === columnId) {
+                oddEven = col.oddEven
+                break;
+            }
+        }
+
+        if (isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && oddEven === false) {
+            assignOddEven(columnId, toChange, draggable.data.current.selection)
+            return
+        }
+
         setRows((prevRows) => {
-            // Need row index, column id
-            // Identifying index of the column to change
-            const toChange = droppable.data.current.rowIndex;
-            // Id of selection to change
-            const columnId = droppable.data.current.columnId
             // pass by value -> cannot return reference, otherwise values will not rerender correctly
             // Row object to change
             let row = {...prevRows[toChange]}
 
             // row.columns[columnId] is the selection to change
-
             // setting selection of respective row in respective column to new draggable selection
             row.columns[columnId] = draggable.data.current.selection
 
             return [...prevRows.slice(0, toChange), 
-                    row, 
-                    ...prevRows.slice(toChange + 1)];
+                row, 
+                ...prevRows.slice(toChange + 1)];
         })
 
     }
@@ -294,8 +362,10 @@ const ScheduleBuilder = () => {
             droppableRects: droppableRects,
             droppableContainers: droppableContainers.filter(({id}: {id: SelectionInterface["id"]}) => id !== 'trash-droppable' && id.toString().substring(0, 15) !== 'cover-droppable')
         })
+        
         // store index of row over to update height -> if over row, then only update height if its taller than the heights[index]
-
+        // To keep the height when dragging at either the original (before hover over) or the taller draggable shadow
+        // FIX/somehow don't use this while still updating the value for heights
         setActiveSelection((prevActiveSelection: ActiveSelectionInterface | null) => {
             if (closest[0]?.data && closest[0].data.droppableContainer.data && prevActiveSelection)
                 prevActiveSelection["currentRowIndex"] = closest[0].data.droppableContainer.data.current.rowIndex
@@ -325,7 +395,7 @@ const ScheduleBuilder = () => {
                         collisionDetection={handleCollision}>
                 <div id="main-container">
                     <div className="header">
-                        <h1 className="title">Manhasset Master Schedule Builder</h1>
+                        <h1 className="title">Master Schedule Builder</h1>
                         <Trash />
                     </div>
                     <div className="toolbar">
@@ -349,17 +419,23 @@ const ScheduleBuilder = () => {
                     <Cover className='selections-drop-cover cover-r' id="cover-droppable-r" />
                     
                     <div className='schedule-container' {...(activeSelection ? null : {...events})} ref={drag_scroll_ref}>
-                        <Rows heights={heights} rows={rows} rowsName={rowsName} />
+                        <Rows 
+                            heights={heights} 
+                            rows={rows} 
+                            rowsName={rowsName}
+                            activeSelection={activeSelection}  />
                         <ScheduleTable 
                             activeSelection={activeSelection} 
                             heights={heights}
                             setRows={setRows}
                             columns={columns} 
-                            rows={rows} />
+                            rows={rows}
+                            isOddEvenAutoAssign={isOddEvenAutoAssign}
+                            setColumns={setColumns}
+                            assignOddEven={assignOddEven}
+                             />
                     </div> 
                 </div>
-
-
 
                 <div className="selections-container">
                     <div className="selection-header">
@@ -369,10 +445,12 @@ const ScheduleBuilder = () => {
                 </div>
 
                 {/* To allow the selection to drag over its current div
-                    Overlay is what is show when dragging */}
+                    Overlay is what is shown when dragging */}
                 <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                     {activeSelection ? (
-                        <Selection selection={activeSelection.selection}
+                        <Selection 
+                                   selectionId={activeSelection.selection.id}
+                                   selection={activeSelection.selection}
                                    classNames={"selection-overlay"} />
                     ): null}
                 </DragOverlay>

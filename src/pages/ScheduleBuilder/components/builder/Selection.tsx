@@ -4,22 +4,23 @@ import { CSS } from "@dnd-kit/utilities"
 
 import { 
     Selection as SelectionInterface
-} from '../../types'
+} from '@/types'
 
 const Selection = (props: 
     { 
         selection: SelectionInterface | null,
+        selectionId: SelectionInterface["id"]
         rowIndex?: number,
         columnId?: string | number,
         classNames?: string 
     }) => {
 
-    if (!props.selection || props.selection.id == null) {
+    if (!props.selection || props.selection.id == null || props.selectionId == null) {
         return
     }
 
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
-        id: 'selection-' + props.selection.id,
+        id: 'selection-' + props.selectionId,
         data: { 
             selection: props.selection,
             rowIndex: props.rowIndex,
@@ -34,7 +35,7 @@ const Selection = (props:
 
     return (
         <div className={'selection-container' + ' ' + (props.classNames ? props.classNames : "")}
-            id={'selection-' + props.selection.id}
+            id={'selection-' + props.selectionId}
             ref={setNodeRef} 
             style={style} 
             {...listeners} 
