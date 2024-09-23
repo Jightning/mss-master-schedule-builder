@@ -33,7 +33,6 @@ import { selectRows, selectColumns, selectSelections } from '@/lib/features/Sche
 import { useAppSelector } from '@/lib/hooks';
 
 // TODO Make it so that columns are always odd/even split -> but if odd and even are the same, they display as just one
-// TODO Make a toggle button which seperates manually into odd/even, already does automatically
 // TODO Possibly introduce a memo system (useMemo)
 
 const ScheduleBuilder = () => {
@@ -273,7 +272,7 @@ const ScheduleBuilder = () => {
 
                 return [...prevRows.slice(0, toChange), 
                     row, 
-                    ...prevRows.slice(toChange + 1)];
+                    ...prevRows.slice(toChange + 1)]
             })
 
             return

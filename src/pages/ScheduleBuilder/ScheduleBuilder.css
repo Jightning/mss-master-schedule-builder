@@ -260,7 +260,7 @@ img {
 
 .selections-container {
     min-width: 170px;
-    width: 10vw;
+    max-width: 10vw;
 
     border-left: solid;
     background-color: #00114b;
@@ -282,7 +282,7 @@ img {
 
 .selections-column-container {
     min-width: 160px;
-    width: calc(10vw - 20px);
+    max-width: calc(10vw - 20px);
     height: calc(100% - 60px - 1.3rem);
     
     overflow-y: auto;
@@ -324,13 +324,12 @@ img {
 /* Trashcan */
 .trash {
     position: absolute;
-    right: 200px;
+    right: max(10vw, 200px);
     top: 0.6rem;
     height: 4rem;
-    /* border: solid; */
 }
 .trash-lid, .trash-base {
-    filter:drop-shadow(2px 2px red);
+    filter: drop-shadow(2px 2px red);
     
     display: flex;
 }
@@ -349,6 +348,7 @@ img {
 }
 .trash .lifting-lid {
     animation: lift-lid 0.5s !important;
+
     transform: rotate(45deg) translate(1.25rem, -1.25rem)
 }
 @keyframes lift-lid {
