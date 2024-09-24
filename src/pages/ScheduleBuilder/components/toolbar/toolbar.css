@@ -1,0 +1,11 @@
+.settings-popup {
+    border: solid;
+    border-radius: 10px;
+    height: 100%;
+}
+
+.setting-title {
+    margin-top: 5px;
+    font-size: 2.2rem;
+    text-align: center;
+}

@@ -324,7 +324,7 @@ img {
 /* Trashcan */
 .trash {
     position: absolute;
-    right: max(10vw, 200px);
+    right: max(11vw, 200px);
     top: 0.6rem;
     height: 4rem;
 }

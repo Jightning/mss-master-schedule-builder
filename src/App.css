@@ -29,7 +29,9 @@
 }
 
 .close-popup-btn {
-  float: right;
+  position: absolute;
+  right: 0%;
+  /* float: right; */
   cursor: pointer;
   border: solid;
   border-radius: 15px;
