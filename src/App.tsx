@@ -7,7 +7,7 @@ import StoreProvider from "./StoreProvider";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" >
-      <Route index element={<ScheduleBuilder/>} />
+      <Route index element={<StoreProvider><ScheduleBuilder/></StoreProvider>} />
       {/* <Route path="login" element={<Login />} /> */}
     </Route>
   )
@@ -17,9 +17,7 @@ const router = createBrowserRouter(
 function App() {
   return (
     <div className="container">
-      <StoreProvider>
         <RouterProvider router={router}/>
-      </StoreProvider>
     </div>
   );
 }
