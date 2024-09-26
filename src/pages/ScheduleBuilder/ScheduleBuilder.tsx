@@ -278,11 +278,17 @@ const ScheduleBuilder = () => {
 
                 // row.columns[columnId] is the selection to change
                 // setting selection of respective row in respective column to none selection
-                row.columns[columnId] = { name: "none", id: 0 }  
+                // row.columns[columnId] = { name: "none", id: 0 }  
+                row = {
+                    ...row,
+                    columns: {
+                        [columnId]: { name: "none", id: 0 }  
+                    }
+                }
 
                 return [...rows.slice(0, toChange), 
-                    row, 
-                    ...rows.slice(toChange + 1)]
+                        row, 
+                        ...rows.slice(toChange + 1)]
             })())
 
             return
