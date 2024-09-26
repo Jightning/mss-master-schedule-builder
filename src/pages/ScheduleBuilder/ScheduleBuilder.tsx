@@ -53,17 +53,20 @@ const ScheduleBuilder = () => {
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
     
 
-    const [columns, setColumns] = useState<Array<Column>>([
-        { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
-        { name: "Period 2", id: "period_2", oddEven: false, subcolumns: [{name: "Odd", id:"period_2_odd"}, {name: "Even", id:"period_2_even"}] },
-        { name: "Period 3", id: "period_3", oddEven: false, subcolumns: [{name: "Odd", id:"period_3_odd"}, {name: "Even", id:"period_3_even"}] },
-        { name: "Period 4", id: "period_4", oddEven: false, subcolumns: [{name: "Odd", id:"period_4_odd"}, {name: "Even", id:"period_4_even"}] },
-        { name: "Period 5", id: "period_5", oddEven: false, subcolumns: [{name: "Odd", id:"period_5_odd"}, {name: "Even", id:"period_5_even"}] },
-        { name: "Period 6", id: "period_6", oddEven: false, subcolumns: [{name: "Odd", id:"period_6_odd"}, {name: "Even", id:"period_6_even"}] },
-        { name: "Period 7", id: "period_7", oddEven: false, subcolumns: [{name: "Odd", id:"period_7_odd"}, {name: "Even", id:"period_7_even"}] },
-        { name: "Period 8", id: "period_8", oddEven: false, subcolumns: [{name: "Odd", id:"period_8_odd"}, {name: "Even", id:"period_8_even"}] },
-        { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
-    ]);  
+    // const [columns, setColumns] = useState<Array<Column>>([
+    //     { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
+    //     { name: "Period 2", id: "period_2", oddEven: false, subcolumns: [{name: "Odd", id:"period_2_odd"}, {name: "Even", id:"period_2_even"}] },
+    //     { name: "Period 3", id: "period_3", oddEven: false, subcolumns: [{name: "Odd", id:"period_3_odd"}, {name: "Even", id:"period_3_even"}] },
+    //     { name: "Period 4", id: "period_4", oddEven: false, subcolumns: [{name: "Odd", id:"period_4_odd"}, {name: "Even", id:"period_4_even"}] },
+    //     { name: "Period 5", id: "period_5", oddEven: false, subcolumns: [{name: "Odd", id:"period_5_odd"}, {name: "Even", id:"period_5_even"}] },
+    //     { name: "Period 6", id: "period_6", oddEven: false, subcolumns: [{name: "Odd", id:"period_6_odd"}, {name: "Even", id:"period_6_even"}] },
+    //     { name: "Period 7", id: "period_7", oddEven: false, subcolumns: [{name: "Odd", id:"period_7_odd"}, {name: "Even", id:"period_7_even"}] },
+    //     { name: "Period 8", id: "period_8", oddEven: false, subcolumns: [{name: "Odd", id:"period_8_odd"}, {name: "Even", id:"period_8_even"}] },
+    //     { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
+    // ]);  
+
+    const columns = useAppSelector(selectColumns)
+    const setColumns: any = (val: Array<Row>) => dispatch(newColumns(val))
 
     const [selections, setSelections] = useState<Array<SelectionInterface>>([
         { name: "Comp Sci", id: 33437 },
@@ -204,20 +207,22 @@ const ScheduleBuilder = () => {
             return [...tempRows]
         })())
 
-        setColumns((prevColumns: Array<Column>) => {
-            for (let i = 0; i < prevColumns.length; i++) {
-                if (prevColumns[i].id == columnId) {
-                    if (prevColumns[i].oddEven) break;
+        setColumns((() => {
+            let tempColumns = [...columns]
 
-                    prevColumns.splice(i + 1, 0, {...prevColumns[i], id: prevColumns[i].id + '-even', name: prevColumns[i].name + ' Even', oddEven: true});
-                    prevColumns[i] = {...prevColumns[i], id: prevColumns[i].id + '-odd', name: prevColumns[i].name + ' Odd', oddEven: true};
+            for (let i = 0; i < tempColumns.length; i++) {
+                if (tempColumns[i].id == columnId) {
+                    if (tempColumns[i].oddEven) break;
+
+                    tempColumns.splice(i + 1, 0, {...tempColumns[i], id: tempColumns[i].id + '-even', name: tempColumns[i].name + ' Even', oddEven: true});
+                    tempColumns[i] = {...tempColumns[i], id: tempColumns[i].id + '-odd', name: tempColumns[i].name + ' Odd', oddEven: true};
                     
                     break;
                 }
             }
 
-            return prevColumns
-        })
+                return tempColumns
+        })())
 
     }
 
@@ -282,6 +287,7 @@ const ScheduleBuilder = () => {
                 row = {
                     ...row,
                     columns: {
+                        ...row.columns,
                         [columnId]: { name: "none", id: 0 }  
                     }
                 }
@@ -442,9 +448,7 @@ const ScheduleBuilder = () => {
                         <ScheduleTable 
                             activeSelection={activeSelection} 
                             heights={heights}
-                            columns={columns} 
                             isOddEvenAutoAssign={isOddEvenAutoAssign}
-                            setColumns={setColumns}
                             assignOddEven={assignOddEven}
                              />
                     </div> 

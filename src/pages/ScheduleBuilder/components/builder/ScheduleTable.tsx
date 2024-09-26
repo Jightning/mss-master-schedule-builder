@@ -14,10 +14,8 @@ import { useAppSelector } from '@/lib/hooks';
 
 
 const ScheduleTable = (props: {
-    columns: Array<ColumnInterface>, 
     heights: Array<number>,
     activeSelection: ActiveSelectionInterface | null,
-    setColumns: React.Dispatch<React.SetStateAction<Array<ColumnInterface>>>,
     isOddEvenAutoAssign: boolean,
     assignOddEven: any
 }) => {
@@ -25,6 +23,9 @@ const ScheduleTable = (props: {
 
     const rows = useAppSelector(selectRows)
     const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
+
+    const columns = useAppSelector(selectColumns)
+    const setColumns: any = (val: Array<Row>) => dispatch(newColumns(val))
     
 
     const removeEvenOdd = (columnId: ColumnInterface["id"]) => {
@@ -59,31 +60,31 @@ const ScheduleTable = (props: {
 
         setRows(tempRows)
 
-        props.setColumns((prevColumns: Array<ColumnInterface>) => {
-            for (let i = 0; i < prevColumns.length; i++) {
-                if (prevColumns[i].id == columnId  + "-odd") {
-                    if (!prevColumns[i].oddEven) break;
-                    prevColumns.splice(i + 1, 1)
-                    prevColumns[i] = {...prevColumns[i], id: prevColumns[i].id.toString().substring(0, prevColumns[i].id.toString().length - 4), name: prevColumns[i].name.substring(0, prevColumns[i].name.length - 4), oddEven: false};
+        setColumns((() => {
+            let tempColumns = [...columns]
+            for (let i = 0; i < tempColumns.length; i++) {
+                if (tempColumns[i].id == columnId  + "-odd") {
+                    if (!tempColumns[i].oddEven) break;
+                    tempColumns.splice(i + 1, 1)
+                    tempColumns[i] = {...tempColumns[i], id: tempColumns[i].id.toString().substring(0, tempColumns[i].id.toString().length - 4), name: tempColumns[i].name.substring(0, tempColumns[i].name.length - 4), oddEven: false};
                     
                     break;
                 }
             }
-
-            return prevColumns
-        })
+            return tempColumns
+        })())
     }
 
     const handleDoubleClick = (e: any) => {
         let index = e.target.id.substring(14, e.target.id.length)
-        let column = props.columns[index]
+        let column = columns[index]
         let id = column.id
 
         if (!props.isOddEvenAutoAssign) {
             return
         }
 
-        if (props.columns[index].oddEven) {
+        if (columns[index].oddEven) {
             removeEvenOdd(id)
         } else {
             props.assignOddEven(id)
@@ -96,7 +97,7 @@ const ScheduleTable = (props: {
     return (
         <div className="schedule-table-container">
             <div className='schedule-table-headers' >
-                {props.columns && props.columns.map((column: ColumnInterface, index: number) => (
+                {columns && columns.map((column: ColumnInterface, index: number) => (
                     <div 
                     key={column.id} 
                     className='column-header' 
@@ -113,11 +114,11 @@ const ScheduleTable = (props: {
             </div>
 
             <div className='schedule-table-columns'>
-                {props.columns && props.columns.map((column: ColumnInterface) => (
+                {columns && columns.map((column: ColumnInterface) => (
                     <div key={column.id} className='column-container'>  
                         <Column 
                             activeSelection={props.activeSelection} 
-                            column={column} 
+                            column={column}
                             heights={props.heights} />
                     </div>
                 ))}

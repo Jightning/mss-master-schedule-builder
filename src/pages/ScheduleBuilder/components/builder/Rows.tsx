@@ -1,8 +1,7 @@
 import { Row, ActiveSelectionInterface } from '@/types'
 
-import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
-import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { newSelections } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectSelections } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 // Rows on the right side of the table (teacher rows)
 const Rows = (
@@ -11,8 +10,6 @@ const Rows = (
         rowsName: string, 
         activeSelection: ActiveSelectionInterface | null
     }) => {
-
-    let dispatch = useAppDispatch()
 
     const rows = useAppSelector(selectRows)
 
