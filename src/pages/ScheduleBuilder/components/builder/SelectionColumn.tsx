@@ -1,11 +1,15 @@
 import React from 'react'
 import Selection from './Selection'
-import { Selection as SelectionInterface } from '@/types'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { selectSelections } from '@/lib/features/ScheduleDataSlice'
 
-const SelectionColumn = (props: { selections: Array<SelectionInterface> }) => {
+const SelectionColumn = () => {
+    const dispatch = useAppDispatch()
+    const selections = useAppSelector(selectSelections)
+
     return ( 
         <div className='selections-column-container'>
-            {props.selections && props.selections.map((selection) => (
+            {selections && selections.map((selection) => (
                 <div key={selection.id}><Selection selection={selection} selectionId={selection.id} /></div>
             ))}
         </div>

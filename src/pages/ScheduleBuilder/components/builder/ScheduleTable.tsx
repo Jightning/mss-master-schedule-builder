@@ -7,9 +7,9 @@ import {
     ActiveSelectionInterface
 } from '@/types'
 
-import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
@@ -25,7 +25,7 @@ const ScheduleTable = (props: {
     const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
 
     const columns = useAppSelector(selectColumns)
-    const setColumns: any = (val: Array<Row>) => dispatch(newColumns(val))
+    const setColumns: any = (val: Array<ColumnInterface>) => dispatch(newColumns(val))
     
 
     const removeEvenOdd = (columnId: ColumnInterface["id"]) => {

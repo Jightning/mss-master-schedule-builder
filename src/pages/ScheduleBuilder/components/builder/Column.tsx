@@ -10,9 +10,9 @@ import {
 import { DragOverlay } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 
-import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
+import { newRows } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { selectRows } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 const Column = (props: {
