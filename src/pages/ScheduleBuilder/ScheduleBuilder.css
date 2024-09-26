@@ -67,6 +67,8 @@ img {
     transition: box-shadow 0.2s;
 
     text-align: center;
+
+    overflow: hidden;
 }
 .toolbar ul li:hover {
     border: solid rgb(30, 0, 255);

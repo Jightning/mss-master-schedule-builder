@@ -24,7 +24,6 @@ const Column = (props: {
 
     const rows: Array<Row> = useAppSelector(selectRows)
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
-    
 
     return (
         <div>  

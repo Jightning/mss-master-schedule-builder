@@ -9,3 +9,29 @@
     font-size: 2.2rem;
     text-align: center;
 }
+
+
+/* Seach box */
+#search-input {
+    resize: none;
+    outline: 0;
+    border: none;
+    background: transparent;
+    width: 100%;
+    height: auto;
+
+    font-size: 1.4rem;
+    /* border: solid; */
+
+    white-space: nowrap;
+    overflow-x: scroll;
+    text-overflow: ellipsis;
+}
+.erase-search-icon {
+    position: absolute;
+    right: 0.15rem;   
+    top: 0.25rem;
+}
+.erase-search-icon:hover {
+    filter: invert(27%) sepia(95%) saturate(6480%) hue-rotate(355deg) brightness(93%) contrast(119%);
+}

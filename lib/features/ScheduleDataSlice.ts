@@ -3,10 +3,12 @@ import {
     Column,
     Row,
     Selection,
-    Tile
+    Filter
 } from "@/types"
 
 interface InitialStateType {
+    searchTerm: string,
+    filter: Filter
     rows: Array<Row>,
     columns: Array<Column>,
     selections: Array<Selection>
@@ -14,6 +16,10 @@ interface InitialStateType {
 
 const initialState: InitialStateType = 
 {
+    searchTerm: "",
+    filter: {
+        searchLocation: "selections"
+    },
     rows: [
         { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "B. Teacher", subject: "math", id: 10324, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
@@ -85,6 +91,12 @@ export const scheduleDataSlice = createSlice({
     name: 'Schedule Data',
     initialState,
     reducers: {
+        newSearchTerm: (state, action) => {
+            state.searchTerm = action.payload
+        },
+        newFilter: (state, action) => {
+            state.filter = action.payload
+        },
         newRows: (state, action) => {
             state.rows = action.payload
         },
@@ -97,7 +109,7 @@ export const scheduleDataSlice = createSlice({
     },
 })
 
-export const { newRows, newColumns, newSelections } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newSearchTerm, newFilter } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -105,5 +117,9 @@ export const { newRows, newColumns, newSelections } = scheduleDataSlice.actions
 export const selectRows = (state: { scheduleData: { rows: Array<Row> } }) => state.scheduleData.rows
 export const selectColumns = (state: { scheduleData: { columns: Array<Column> }}) => state.scheduleData.columns
 export const selectSelections = (state: { scheduleData: { selections: Array<Selection> }}) => state.scheduleData.selections
+
+export const selectSearchTerm = (state: { scheduleData: { searchTerm: string } }) => state.scheduleData.searchTerm
+export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
+
 
 export default scheduleDataSlice.reducer

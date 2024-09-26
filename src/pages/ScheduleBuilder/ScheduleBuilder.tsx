@@ -27,10 +27,11 @@ import Popup from '../../components/Popup';
 import Trash from './components/builder/Trash';
 import Cover from './components/builder/Cover';
 
-import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newSelections, newSearchTerm, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectSelections, selectSearchTerm, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
+import SearchBar from './components/toolbar/SearchBar';
 
 // TODO Possibly introduce a memo system (useMemo)
 
@@ -47,6 +48,13 @@ const ScheduleBuilder = () => {
     // const selections = useAppSelector(selectSelections)
     // const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
 
+    const searchTerm = useAppSelector(selectSearchTerm)
+    const setSearchTerm: any = (val: string) => dispatch(newSearchTerm(val))
+
+    const filter = useAppSelector(selectFilter)
+    const setFilter: any = (val: object) => dispatch(newFilter(val))
+
+    // Redux\
 
     const [rowsName, setRowsName] = useState("Teachers")
     const [selectionsName, setSelectionsName] = useState("Classes")
@@ -361,7 +369,7 @@ const ScheduleBuilder = () => {
                             <li className='import-btn'>Import</li>
                             <li className='export-btn'>Export</li>
                             <span/><span/>
-                            <li className='search-box'>Search</li>
+                            <li className='search-box'><SearchBar/></li>
                             <li className='filter-btn'><svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg></li>
                             
                             <li className='settings' onClick={() => setOpenPopup(<Settings/>)}>

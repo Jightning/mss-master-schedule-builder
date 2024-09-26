@@ -26,3 +26,7 @@ export interface ActiveSelectionInterface {
     selection: Selection,
     currentRowIndex: number | null
 } 
+
+export interface Filter {
+    searchLocation: string
+}
