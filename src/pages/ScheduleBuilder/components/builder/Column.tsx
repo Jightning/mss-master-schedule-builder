@@ -10,17 +10,25 @@ import {
 import { DragOverlay } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 
+import { newRows } from '@/lib/features/ScheduleDataSlice';
+import { useAppDispatch } from '@/lib/hooks';
+import { selectRows } from '@/lib/features/ScheduleDataSlice';
+import { useAppSelector } from '@/lib/hooks';
+
 const Column = (props: {
     activeSelection: ActiveSelectionInterface | null, 
     column: ColumnInterface, 
-    rows: Array<Row>, 
     heights: Array<number>,
-    setRows: React.Dispatch<React.SetStateAction<Array<Row>>>
 }) => {
+    let dispatch = useAppDispatch()
+
+    const rows: Array<Row> = useAppSelector(selectRows)
+    const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
+    
 
     return (
         <div>  
-            {props.rows && props.rows.map((row: Row, index: number) => {
+            {rows && rows.map((row: Row, index: number) => {
                 const {setNodeRef, isOver} = useDroppable({
                     id: props.column.id + "-" + row.id,
                     data: {
@@ -40,7 +48,7 @@ const Column = (props: {
                         // don't want to manually do so, so I'm just going to trigger the already made one by changing rows
                         // (useEffect checks row changes -> it works ok)
                         // maybe make this better later  
-                        props.setRows((prevRows) => ([...prevRows]))
+                        setRows([...rows])
                     }        
                 }, [isOver])
 

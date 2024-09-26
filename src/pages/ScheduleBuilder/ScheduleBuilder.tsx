@@ -32,78 +32,21 @@ import { useAppDispatch } from '@/lib/hooks';
 import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
-// TODO Make it so that columns are always odd/even split -> but if odd and even are the same, they display as just one
 // TODO Possibly introduce a memo system (useMemo)
 
 const ScheduleBuilder = () => {
-    const [rows, setRows] = useState<Array<Row>>([
-        { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "B. Teacher", subject: "math", id: 10324, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "C. Teacher", subject: "math", id: 10395, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "D. Teacher", subject: "math", id: 10396, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "E. Teacher", subject: "math", id: 10397, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "F. Teacher", subject: "math", id: 10398, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "G. Teacher", subject: "math", id: 10399, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "I. Teacher", subject: "math", id: 10349, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-    ]);
-    
+    // Redux state management
+    let dispatch = useAppDispatch()
 
-    const [columns, setColumns] = useState<Array<Column>>([
-        { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
-        { name: "Period 2", id: "period_2", oddEven: false, subcolumns: [{name: "Odd", id:"period_2_odd"}, {name: "Even", id:"period_2_even"}] },
-        { name: "Period 3", id: "period_3", oddEven: false, subcolumns: [{name: "Odd", id:"period_3_odd"}, {name: "Even", id:"period_3_even"}] },
-        { name: "Period 4", id: "period_4", oddEven: false, subcolumns: [{name: "Odd", id:"period_4_odd"}, {name: "Even", id:"period_4_even"}] },
-        { name: "Period 5", id: "period_5", oddEven: false, subcolumns: [{name: "Odd", id:"period_5_odd"}, {name: "Even", id:"period_5_even"}] },
-        { name: "Period 6", id: "period_6", oddEven: false, subcolumns: [{name: "Odd", id:"period_6_odd"}, {name: "Even", id:"period_6_even"}] },
-        { name: "Period 7", id: "period_7", oddEven: false, subcolumns: [{name: "Odd", id:"period_7_odd"}, {name: "Even", id:"period_7_even"}] },
-        { name: "Period 8", id: "period_8", oddEven: false, subcolumns: [{name: "Odd", id:"period_8_odd"}, {name: "Even", id:"period_8_even"}] },
-        { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
-    ]);  
+    const rows = useAppSelector(selectRows)
+    const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
 
-    const [selections, setSelections] = useState<Array<SelectionInterface>>([
-        { name: "Comp Sci", id: 33437 },
-        { name: "AP Physics 1", id: 3343855 },
-        { name: "AP Physics 2", id: 334348 },
-        { name: "AP Physics 3", id: 3343238 },
-        { name: "AP Physics 4", id: 3343328 },
-        { name: "AP Physics 5", id: 3343548 },
-        { name: "AP Physics 6", id: 3343068 },
-        { name: "AP Physics 7", id: 334398 },
-        { name: "AP Physics 8", id: 334868 },
-        { name: "AP Physics 9", id: 334548 },
-        { name: "A", id: 130039239 },
-        { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", id: 332448 },
-        { name: "AP Physics 11", id: 33443 },
-        { name: "AP Physics 12", id: 33428 },
-        { name: "AP Physics 13", id: 33438 },
-        { name: "AP Physics 14", id: 33238 },
-        { name: "AP Physics 15", id: 324238 },
-        { name: "AP Physics 16", id: 33644238 },
-        { name: "AP Physics 17", id: 33425693832 },
-        { name: "AP Physics 18", id: 3342385471},
-        { name: "AP Physics 19", id: 3342342532812 },
-        { name: "AP Physics 20", id: 33423064223228 },
-        { name: "AP Physics 21", id: 3342934228054 },
-        { name: "AP Physics 22", id: 334623422807 },
-        { name: "AP Physics 23", id: 3342342285708 },
-        { name: "AP Physics 24", id: 3342342228 },
-        { name: "AP Physics 25", id: 334234282234 },
-        { name: "AP Physics 26", id: 3342342854 },
-        { name: "AP Physics 27", id: 3342322876 },
-        { name: "AP Physics 28", id: 3342422818 },
-        { name: "AP Physics 29", id: 3342422828 },
-        { name: "AP Physics 30", id: 3342422838 },
-        { name: "AP Physics 31", id: 332422848 },
-        { name: "AP Physics 32", id: 3342422858 },
-        { name: "AP Physics 33", id: 33424228786 },
-        { name: "AP Physics 34", id: 3342422868 },
-        { name: "AP Physics 35", id: 3342422878 },
-        { name: "AP Physics 36", id: 3342422888 },
-        { name: "AP Physics 37", id: 3342422898 },
-        { name: "AP Physics 38", id: 33424228108 },
-        { name: "AP Physics 39", id: 33424228118 }
-    ]);
+    const columns = useAppSelector(selectColumns)
+    const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
+
+    // const selections = useAppSelector(selectSelections)
+    // const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
+
 
     const [rowsName, setRowsName] = useState("Teachers")
     const [selectionsName, setSelectionsName] = useState("Classes")
@@ -183,31 +126,39 @@ const ScheduleBuilder = () => {
     // use -1 and null for the last two parameters 
     // Coresponding row is found via the id
     const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
-        setRows((prevRows: Array<Row>) => {
-            for (let i = 0; i < prevRows.length; i++) {
-                // prevRows[i].columns[columnId] = prevRows[i].columns[columnId]
-                prevRows[i].columns[columnId] = prevRows[i].columns[columnId]
-                prevRows[i].columns[columnId + '-odd'] = prevRows[i].columns[columnId]
-                prevRows[i].columns[columnId + '-even'] = (evenSelection && i == rowIndex) ? evenSelection : prevRows[i].columns[columnId] 
-            }
-    
-            return prevRows
-        })
+        // insert_oddeven_row({columnId, rowIndex, evenSelection})
 
-        setColumns((prevColumns: Array<Column>) => {
-            for (let i = 0; i < prevColumns.length; i++) {
-                if (prevColumns[i].id == columnId) {
-                    if (prevColumns[i].oddEven) break;
+        setRows((() => {
+            let tempRows: Array<Row> = [...rows.map((row, i) => {
+                return {
+                    ...row, 
+                     columns: {
+                        ...row.columns,
+                        [columnId]: row.columns[columnId],
+                        [columnId + '-odd']: row.columns[columnId],
+                        [columnId + '-even']: (evenSelection && i == rowIndex) ? evenSelection : row.columns[columnId]
+                    }
+            }})]
+            
+            return [...tempRows]
+        })())
 
-                    prevColumns.splice(i + 1, 0, {...prevColumns[i], id: prevColumns[i].id + '-even', name: prevColumns[i].name + ' Even', oddEven: true});
-                    prevColumns[i] = {...prevColumns[i], id: prevColumns[i].id + '-odd', name: prevColumns[i].name + ' Odd', oddEven: true};
+        setColumns((() => {
+            let tempColumns = [...columns]
+
+            for (let i = 0; i < tempColumns.length; i++) {
+                if (tempColumns[i].id == columnId) {
+                    if (tempColumns[i].oddEven) break;
+
+                    tempColumns.splice(i + 1, 0, {...tempColumns[i], id: tempColumns[i].id + '-even', name: tempColumns[i].name + ' Even', oddEven: true});
+                    tempColumns[i] = {...tempColumns[i], id: tempColumns[i].id + '-odd', name: tempColumns[i].name + ' Odd', oddEven: true};
                     
                     break;
                 }
             }
 
-            return prevColumns
-        })
+                return tempColumns
+        })())
 
     }
 
@@ -234,7 +185,7 @@ const ScheduleBuilder = () => {
         const droppable = element.over
 
         // Revaluating row heights in case we return before being able to do so
-        setRows((prevRows: Row[]) => [...prevRows])
+        setRows([...rows])
 
         setAutoScroll(true)
 
@@ -260,20 +211,27 @@ const ScheduleBuilder = () => {
                 return
             }
 
-            setRows((prevRows) => {
+            setRows((() => {
                 // check below for details on these
                 const toChange = draggable.data.current.rowIndex;
                 const columnId = draggable.data.current.columnId
-                let row = {...prevRows[toChange]}
+                let row = {...rows[toChange]}
 
                 // row.columns[columnId] is the selection to change
                 // setting selection of respective row in respective column to none selection
-                row.columns[columnId] = { name: "none", id: 0 }  
+                // row.columns[columnId] = { name: "none", id: 0 }  
+                row = {
+                    ...row,
+                    columns: {
+                        ...row.columns,
+                        [columnId]: { name: "none", id: 0 }  
+                    }
+                }
 
-                return [...prevRows.slice(0, toChange), 
-                    row, 
-                    ...prevRows.slice(toChange + 1)]
-            })
+                return [...rows.slice(0, toChange), 
+                        row, 
+                        ...rows.slice(toChange + 1)]
+            })())
 
             return
         }
@@ -298,19 +256,19 @@ const ScheduleBuilder = () => {
             return
         }
 
-        setRows((prevRows) => {
+        setRows((() => {
             // pass by value -> cannot return reference, otherwise values will not rerender correctly
             // Row object to change
-            let row = {...prevRows[toChange]}
+            let row = {...rows[toChange], columns: {...rows[toChange].columns, [columnId]: draggable.data.current.selection }}
 
             // row.columns[columnId] is the selection to change
             // setting selection of respective row in respective column to new draggable selection
-            row.columns[columnId] = draggable.data.current.selection
+            // row.columns[columnId] = draggable.data.current.selection
 
-            return [...prevRows.slice(0, toChange), 
+            return [...rows.slice(0, toChange), 
                 row, 
-                ...prevRows.slice(toChange + 1)];
-        })
+                ...rows.slice(toChange + 1)];
+        })())
 
     }
     
@@ -323,7 +281,7 @@ const ScheduleBuilder = () => {
                 setAutoScroll(true)
         } else {
             setAutoScroll(false)
-            setRows((prevRows) => prevRows)
+            setRows([...rows])
         }
     }
 
@@ -421,17 +379,12 @@ const ScheduleBuilder = () => {
                     <div className='schedule-container' {...(activeSelection ? null : {...events})} ref={drag_scroll_ref}>
                         <Rows 
                             heights={heights} 
-                            rows={rows} 
                             rowsName={rowsName}
                             activeSelection={activeSelection}  />
                         <ScheduleTable 
                             activeSelection={activeSelection} 
                             heights={heights}
-                            setRows={setRows}
-                            columns={columns} 
-                            rows={rows}
                             isOddEvenAutoAssign={isOddEvenAutoAssign}
-                            setColumns={setColumns}
                             assignOddEven={assignOddEven}
                              />
                     </div> 
@@ -441,7 +394,7 @@ const ScheduleBuilder = () => {
                     <div className="selection-header">
                         <h4>{selectionsName}</h4>
                     </div>
-                    <SelectionColumn selections={selections} />
+                    <SelectionColumn />
                 </div>
 
                 {/* To allow the selection to drag over its current div
