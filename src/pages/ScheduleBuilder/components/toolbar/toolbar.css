@@ -17,11 +17,12 @@
     outline: 0;
     border: none;
     background: transparent;
-    width: 100%;
+
+    width: calc(100% - 24px - 1rem);
     height: auto;
 
     font-size: 1.4rem;
-    /* border: solid; */
+    float: left;
 
     white-space: nowrap;
     overflow-x: scroll;
@@ -29,9 +30,18 @@
 }
 .erase-search-icon {
     position: absolute;
-    right: 0.15rem;   
-    top: 0.25rem;
+    right: 0;
+    top: 0;
+    padding-top: 0.25rem;
+    padding-right: 0.15rem;
+    background-color: white;
+    height: 100%;
+    width: calc(24px + 1rem);
 }
-.erase-search-icon:hover {
+.erase-search-icon svg {
+    float: right;
+}
+.erase-search-icon svg:hover {
     filter: invert(27%) sepia(95%) saturate(6480%) hue-rotate(355deg) brightness(93%) contrast(119%);
+    background-color: transparent;
 }

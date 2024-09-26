@@ -11,7 +11,6 @@ const SearchBar = () => {
     const setSearchTerm: any = (val: string) => dispatch(newSearchTerm(val))
 
     const handleChange = (e: any) => {
-        console.log(e.target.value)
         setSearchTerm(e.target.value)
     }
 
