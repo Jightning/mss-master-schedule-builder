@@ -26,12 +26,14 @@ import Settings from './components/toolbar/Settings';
 import Popup from '../../components/Popup';
 import Trash from './components/builder/Trash';
 import Cover from './components/builder/Cover';
+import Filter from './components/toolbar/Filter';
+import SearchBar from './components/toolbar/SearchBar';
+
 
 import { newRows, newColumns, newSelections, newSearchTerm, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { selectRows, selectColumns, selectSelections, selectSearchTerm, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
-import SearchBar from './components/toolbar/SearchBar';
 
 // TODO Possibly introduce a memo system (useMemo)
 
@@ -68,6 +70,8 @@ const ScheduleBuilder = () => {
     const [autoScroll, setAutoScroll] = useState(true)
 
     const [isOddEvenAutoAssign, setIsOddEvenAutoAssign] = useState(true)
+
+    const [isFilterOpen, setIsFilterOpen] = useState(false)
 
     // To check for window resize
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
@@ -135,6 +139,9 @@ const ScheduleBuilder = () => {
     // Coresponding row is found via the id
     const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
         // insert_oddeven_row({columnId, rowIndex, evenSelection})
+        if (!filter.evenOddToggle) {
+            return
+        }
 
         setRows((() => {
             let tempRows: Array<Row> = [...rows.map((row, i) => {
@@ -259,11 +266,12 @@ const ScheduleBuilder = () => {
             }
         }
 
-        if (isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && oddEven === false) {
+        if (isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && filter.evenOddToggle) {
             assignOddEven(columnId, toChange, draggable.data.current.selection)
             return
         }
 
+        // Sets the row for regular situations
         setRows((() => {
             // pass by value -> cannot return reference, otherwise values will not rerender correctly
             // Row object to change
@@ -364,13 +372,17 @@ const ScheduleBuilder = () => {
                         <h1 className="title">Master Schedule Builder</h1>
                         <Trash />
                     </div>
+
+                    {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} /> : <></>}
                     <div className="toolbar">
                         <ul>
                             <li className='import-btn'>Import</li>
                             <li className='export-btn'>Export</li>
                             <span/><span/>
                             <li className='search-box'><SearchBar/></li>
-                            <li className='filter-btn'><svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg></li>
+                            <li className='filter-btn' onClick={() => setIsFilterOpen((prevIsFilterOpen) => (!prevIsFilterOpen))}>
+                                <svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
+                            </li>
                             
                             <li className='settings' onClick={() => setOpenPopup(<Settings/>)}>
                                 <svg className={(isAnimating ? "animating" : "")} 

@@ -1,4 +1,3 @@
-import React from 'react'
 import Selection from './Selection'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { selectFilter, selectSearchTerm, selectSelections } from '@/lib/features/ScheduleDataSlice'

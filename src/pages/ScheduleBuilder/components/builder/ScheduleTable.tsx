@@ -7,9 +7,9 @@ import {
     ActiveSelectionInterface
 } from '@/types'
 
-import { newRows, newColumns } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
@@ -26,6 +26,9 @@ const ScheduleTable = (props: {
 
     const columns = useAppSelector(selectColumns)
     const setColumns: any = (val: Array<ColumnInterface>) => dispatch(newColumns(val))
+
+    const filter = useAppSelector(selectFilter)
+    const setFilter: any = (val: string) => dispatch(newFilter(val))
     
 
     const removeEvenOdd = (columnId: ColumnInterface["id"]) => {
@@ -80,7 +83,7 @@ const ScheduleTable = (props: {
         let column = columns[index]
         let id = column.id
 
-        if (!props.isOddEvenAutoAssign) {
+        if (!props.isOddEvenAutoAssign || !filter.evenOddToggle) {
             return
         }
 

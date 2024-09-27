@@ -18,7 +18,8 @@ const initialState: InitialStateType =
 {
     searchTerm: "",
     filter: {
-        searchLocation: "selections"
+        searchLocation: "selections",
+        evenOddToggle: true
     },
     rows: [
         { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },

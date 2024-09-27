@@ -4,7 +4,6 @@ import Selection from './Selection'
 import { 
     Column as ColumnInterface, 
     Row,
-    Selection as SelectionInterface,
     ActiveSelectionInterface
 } from '@/types'
 import { DragOverlay } from '@dnd-kit/core'

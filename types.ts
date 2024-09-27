@@ -28,5 +28,6 @@ export interface ActiveSelectionInterface {
 } 
 
 export interface Filter {
+    evenOddToggle: boolean,
     searchLocation: string
 }
