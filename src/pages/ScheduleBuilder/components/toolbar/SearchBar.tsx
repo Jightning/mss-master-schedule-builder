@@ -1,20 +1,27 @@
-import { selectSearchTerm, newSearchTerm } from '@/lib/features/ScheduleDataSlice'
+import { selectFilterLocation, selectFilter, newFilter } from '@/lib/features/ScheduleDataSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { Filter } from '@/types'
 
 const SearchBar = () => {
     const dispatch = useAppDispatch()
 
-    const searchTerm = useAppSelector(selectSearchTerm)
-    const setSearchTerm: any = (val: string) => dispatch(newSearchTerm(val))
+    const filterLocation = useAppSelector(selectFilterLocation)
+
+    const filter = useAppSelector<Filter>(selectFilter)
+    const setFilter: any = (val: string) => dispatch(newFilter(val))
 
     const handleChange = (e: any) => {
-        setSearchTerm(e.target.value)
+        // V-V. 
+        // Could use type assertion to access fitler[filterLocation], but selections and rows might be different
+        // Check later, if they are not different, just use type assertion
+        setFilter({...filter, [filterLocation]: 
+            {...filter[filterLocation as keyof typeof filter], searchTerm: e.target.value}})
     }
 
     return (
         <div>
-            <textarea id="search-input" onChange={handleChange} value={searchTerm} placeholder='Search' />
-            <div className="erase-search-icon" onClick={() => setSearchTerm("")}>
+            <textarea id="search-input" onChange={handleChange} value={filter[filterLocation as keyof typeof filter].searchTerm} placeholder='Search' />
+            <div className="erase-search-icon" onClick={() => setFilter({...filter, [filterLocation]: {...filter[filterLocation as keyof typeof filter], searchTerm: ""}})}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
             </div>
         </div>

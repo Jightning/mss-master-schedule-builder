@@ -11,7 +11,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 
 import { newRows } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectRows, selectFilter, selectSearchTerm } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectFilter } from '@/lib/features/ScheduleDataSlice';
 
 const Column = (props: {
     activeSelection: ActiveSelectionInterface | null, 
@@ -24,7 +24,6 @@ const Column = (props: {
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
 
     const filter = useAppSelector(selectFilter)
-    const searchTerm = useAppSelector(selectSearchTerm)
 
     return (
         <div>  
@@ -52,9 +51,9 @@ const Column = (props: {
                     }        
                 }, [isOver])
 
-                if (!(searchTerm === "" 
-                    || (filter.searchLocation === "rows" && (row.name.trim().toLowerCase()).includes(searchTerm.trim().toLowerCase()))
-                    || filter.searchLocation !== "rows")) return <></>
+                if (filter.rows.searchTerm !== "" 
+                    && !(row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
+                    return <></>
 
                 return (
                     <div

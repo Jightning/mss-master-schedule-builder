@@ -30,9 +30,9 @@ import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
 
 
-import { newRows, newColumns, newSelections, newSearchTerm, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newSelections, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections, selectSearchTerm, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectSelections, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 // TODO Possibly introduce a memo system (useMemo)
@@ -49,9 +49,6 @@ const ScheduleBuilder = () => {
 
     // const selections = useAppSelector(selectSelections)
     // const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
-
-    const searchTerm = useAppSelector(selectSearchTerm)
-    const setSearchTerm: any = (val: string) => dispatch(newSearchTerm(val))
 
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: object) => dispatch(newFilter(val))
@@ -378,7 +375,7 @@ const ScheduleBuilder = () => {
                         <Trash />
                     </div>
 
-                    {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} /> : <></>}
+                    {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
                     {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} /> : <></>}
 
                     <div className="toolbar">

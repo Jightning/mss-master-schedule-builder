@@ -1,7 +1,7 @@
 import { Row, ActiveSelectionInterface } from '@/types'
 
 import { newSelections } from '@/lib/features/ScheduleDataSlice';
-import { selectRows, selectSelections, selectFilter, selectSearchTerm } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectSelections, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 
 // Rows on the right side of the table (teacher rows)
@@ -16,15 +16,14 @@ const Rows = (
     const rows = useAppSelector(selectRows)
 
     const filter = useAppSelector(selectFilter)
-    const searchTerm = useAppSelector(selectSearchTerm)
 
     return (
         <div className='rows-container' key={1}>
             <div className={"rows-header"}>{props.rowsName}</div>
             {rows && rows.map((row: Record<string, any>, index: number) => (
 
-                searchTerm === "" || (filter.searchLocation === "rows" && (row.name.trim().toLowerCase()).includes(searchTerm.trim().toLowerCase()))
-                || filter.searchLocation !== "rows" ?
+                filter.rows.searchTerm === "" 
+                || (row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()) ?
 
                 <div className={"single-row-container"} 
                     key={row.id}

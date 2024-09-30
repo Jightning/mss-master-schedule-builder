@@ -4,9 +4,9 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { newColumns, newFilter, newRows, selectColumns, selectFilter, selectRows } from '@/lib/features/ScheduleDataSlice';
+import { newColumns, newFilter, newRows, newFilterLocation, selectColumns, selectFilter, selectRows, selectFilterLocation } from '@/lib/features/ScheduleDataSlice';
 
-const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
+const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const filterRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
 
@@ -18,6 +18,9 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
 
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
+
+    const filterLocation = useAppSelector(selectFilterLocation) 
+    const setFilterLocation: any = (val: string) => dispatch(newFilterLocation(val))
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -45,21 +48,22 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
             
         }
     }
-
-    const ChangeSearchLocation = (event: any) => {
-        setFilter({...filter, searchLocation: event.value.toLowerCase()})
-    }
-
-    const searchLocations = [
-        'Selections', 'Rows'
-    ];
     
     return (
         <div className="filter-dropdown" ref={filterRef}>
             <h2>Filter</h2>
-            <ul className="filter-elements">
-                <li><h3>Search Location:</h3><Dropdown options={searchLocations} onChange={ChangeSearchLocation} value={filter.searchLocation.charAt(0).toUpperCase() + filter.searchLocation.slice(1)} placeholder="Select an option" /></li>
-            </ul>
+            <div className={"filter-selections"}>
+                <h3 onClick={() => setFilterLocation("selections")}>{props.selectionsName}</h3>
+                <ul>
+                    <li>Search: {filter.selections.searchTerm === "" ? "None" : filter.selections.searchTerm}</li>
+                </ul>
+            </div>
+            <div className="filter-rows" >
+                <h3 onClick={() => setFilterLocation("rows")}>{props.rowsName}</h3>
+                <ul>
+                    <li>Search: {filter.rows.searchTerm === "" ? "None" : filter.rows.searchTerm}</li>
+                </ul>
+            </div>
         </div>
     )
 }

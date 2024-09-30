@@ -64,6 +64,19 @@
 
     background-color: white;
     z-index: 10;
+
+    display: flex;
+    flex-flow: column;
+}
+.settings-dropdown h2{
+    align-self: center;
+
+    padding: 0 20px;
+
+    width: fit-content;
+    border-bottom: solid;
+
+    margin: 5px;
 }
 .settings-elements li {
     display: flex;
@@ -96,14 +109,34 @@
 
     background-color: white;
     z-index: 10;
+
+    display: flex;
+    flex-flow: column;
 }
+.filter-dropdown h2{
+    align-self: center;
+
+    padding: 0 20px;
+
+    width: fit-content;
+    border-bottom: solid;
+
+    margin: 5px;
+}
+
+.filter-selections, .filter-rows {
+    flex: 1;
+}
+.filter-dropdown h3 {
+    margin: auto;
+    width: fit-content;
+    cursor: pointer;
+}
+
 .filter-elements li {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-.li-switch {
-    
 }
 .filter-elements li h3 {
     display: inline;

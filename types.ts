@@ -28,7 +28,12 @@ export interface ActiveSelectionInterface {
 } 
 
 export interface Filter {
-    searchLocation: string
+    selections: {
+        searchTerm: string
+    },
+    rows: {
+        searchTerm: string
+    }
 }
 
 export interface Settings {

@@ -8,7 +8,7 @@ import {
 } from "@/types"
 
 interface InitialStateType {
-    searchTerm: string,
+    filterLocation: string,
     settings: Settings,
     filter: Filter
     rows: Array<Row>,
@@ -18,24 +18,31 @@ interface InitialStateType {
 
 const initialState: InitialStateType = 
 {
-    searchTerm: "",
+    filterLocation: "selections",
     settings: {
         oddEvenToggle: true,
         oddEvenAutoAssign: true
     },
     filter: {
-        searchLocation: "selections",
+        selections: {
+            searchTerm: ""
+        },
+        rows: {
+            searchTerm: ""
+        }
     },
     rows: [
         { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "B. Teacher", subject: "math", id: 10324, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "B. Teacher", subject: "science", id: 10324, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "CB. Teacher", subject: "english", id: 101101, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "C. Teacher", subject: "math", id: 10395, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "D. Teacher", subject: "math", id: 10396, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "D. Teacher", subject: "science", id: 10396, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "Mrs. Dedededededadsashfauifbasufas", subject: "math", id: 103446, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "E. Teacher", subject: "math", id: 10397, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "F. Teacher", subject: "math", id: 10398, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "G. Teacher", subject: "math", id: 10399, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "G. Teacher", subject: "english", id: 10399, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
         { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "I. Teacher", subject: "math", id: 10349, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "I. Teacher", subject: "english", id: 10349, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
     ],
     columns: [
         { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
@@ -97,8 +104,8 @@ export const scheduleDataSlice = createSlice({
     name: 'Schedule Data',
     initialState,
     reducers: {
-        newSearchTerm: (state, action) => {
-            state.searchTerm = action.payload
+        newFilterLocation: (state, action) => {
+            state.filterLocation = action.payload
         },
         newSettings: (state, action) => {
             console.log("THIS", action.payload)
@@ -119,7 +126,7 @@ export const scheduleDataSlice = createSlice({
     },
 })
 
-export const { newRows, newColumns, newSelections, newSearchTerm, newFilter, newSettings } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newFilterLocation, newFilter, newSettings } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -128,7 +135,7 @@ export const selectRows = (state: { scheduleData: { rows: Array<Row> } }) => sta
 export const selectColumns = (state: { scheduleData: { columns: Array<Column> }}) => state.scheduleData.columns
 export const selectSelections = (state: { scheduleData: { selections: Array<Selection> }}) => state.scheduleData.selections
 
-export const selectSearchTerm = (state: { scheduleData: { searchTerm: string } }) => state.scheduleData.searchTerm
+export const selectFilterLocation = (state: { scheduleData: { filterLocation: string } }) => state.scheduleData.filterLocation
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
 export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
 
