@@ -53,13 +53,17 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         <div className="filter-dropdown" ref={filterRef}>
             <h2>Filter</h2>
             <div className={"filter-selections"}>
-                <h3 onClick={() => setFilterLocation("selections")}>{props.selectionsName}</h3>
+                <h3 onClick={() => setFilterLocation("selections")} className={filterLocation === "selections" ? "text-blue-500" : ""}>
+                    {props.selectionsName}
+                </h3>
                 <ul>
                     <li>Search: {filter.selections.searchTerm === "" ? "None" : filter.selections.searchTerm}</li>
                 </ul>
             </div>
             <div className="filter-rows" >
-                <h3 onClick={() => setFilterLocation("rows")}>{props.rowsName}</h3>
+                <h3 onClick={() => setFilterLocation("rows")} className={filterLocation === "rows" ? "text-blue-500" : ""}>
+                    {props.rowsName}
+                </h3>
                 <ul>
                     <li>Search: {filter.rows.searchTerm === "" ? "None" : filter.rows.searchTerm}</li>
                 </ul>
