@@ -10,9 +10,10 @@ const SelectionColumn = () => {
     const searchTerm = useAppSelector(selectSearchTerm)
 
     return ( 
-        <div className='selections-column-container'>
+        <div className='selections-column-container' key={1}>
             {selections && selections.map((selection) => (
                 searchTerm === "" || (filter.searchLocation === "selections" && (selection.name.trim().toLowerCase()).includes(searchTerm.trim().toLowerCase()))
+                || filter.searchLocation !== "selections"
                 ? <div key={selection.id}><Selection selection={selection} selectionId={selection.id} /></div>
                 : <></>
             ))}

@@ -46,6 +46,7 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
         return false
     }
 
+    // Toggle different settings using a switch
     const toggle = (type: string) => {
         switch (type) {
             case "evenodd":

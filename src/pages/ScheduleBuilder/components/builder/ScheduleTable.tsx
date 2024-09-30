@@ -9,7 +9,7 @@ import {
 
 import { newRows, newColumns, newFilter, newSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectFilter, selectSettings, selectSearchTerm } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
@@ -31,6 +31,8 @@ const ScheduleTable = (props: {
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
+
+    const searchTerm = useAppSelector(selectSearchTerm)
     
 
     const removeEvenOdd = (columnId: ColumnInterface["id"]) => {

@@ -1,9 +1,11 @@
 import { Row, ActiveSelectionInterface } from '@/types'
 
 import { newSelections } from '@/lib/features/ScheduleDataSlice';
-import { selectRows, selectSelections } from '@/lib/features/ScheduleDataSlice';
-import { useAppSelector } from '@/lib/hooks';
+import { selectRows, selectSelections, selectFilter, selectSearchTerm } from '@/lib/features/ScheduleDataSlice';
+import { useAppSelector, useAppDispatch } from '@/lib/hooks';
+
 // Rows on the right side of the table (teacher rows)
+
 const Rows = (
     props: {   
         heights: Array<number>, 
@@ -13,10 +15,17 @@ const Rows = (
 
     const rows = useAppSelector(selectRows)
 
+    const filter = useAppSelector(selectFilter)
+    const searchTerm = useAppSelector(selectSearchTerm)
+
     return (
-        <div className='rows-container'>
+        <div className='rows-container' key={1}>
             <div className={"rows-header"}>{props.rowsName}</div>
             {rows && rows.map((row: Record<string, any>, index: number) => (
+
+                searchTerm === "" || (filter.searchLocation === "rows" && (row.name.trim().toLowerCase()).includes(searchTerm.trim().toLowerCase()))
+                || filter.searchLocation !== "rows" ?
+
                 <div className={"single-row-container"} 
                     key={row.id}
                     id={"row-" + row.id}
@@ -27,7 +36,7 @@ const Rows = (
 
                         <p>{row.name}</p>
 
-                </div>
+                </div> : <></>
             ))}
         </div>
     )
