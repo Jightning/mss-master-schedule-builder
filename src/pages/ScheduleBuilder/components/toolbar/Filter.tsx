@@ -17,14 +17,15 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
 
-    // To close the filter dropdown when the user clicks outside of it
-    const handleClickOutside = (event: any) => {
-        if (filterRef.current && !filterRef.current.contains(event.target)) {
-            props.setIsFilterOpen(false);
-        }
-    };
-
     useEffect(() => {
+        // To close the filter dropdown when the user clicks outside of it
+        const handleClickOutside = (event: any) => {
+            const filter_btn = document.getElementById("filter-btn")
+            if (filterRef.current && !filterRef.current.contains(event.target) && event.target !== filter_btn && !filter_btn?.contains(event.target)) {
+                props.setIsFilterOpen(false);
+            }
+        };
+
         document.addEventListener('mousedown', handleClickOutside);   
 
         return () => {
@@ -32,34 +33,16 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         };
     }, []);
 
-    const checkOddEven = () => {
-        for (let i in columns) {
-            if (columns[i].oddEven) {
-                return false
-            }
-        }
-
-        return true
-    }
-
     const toggle = (type: string) => {
         switch (type) {
-            case "evenodd":
-                if (checkOddEven()) {
-                    setFilter({...filter, evenOddToggle: !filter.evenOddToggle})
-                } else {
-                    console.log("Error Toggeling")
-                }
+
         }
     }
     
     return (
         <div className="filter-dropdown" ref={filterRef}>
-            <h3>Filter</h3>
+            <h2>Filter</h2>
             <ul className="filter-elements">
-                <li>
-                    <h4>Odd/Even</h4><Switch onChange={() => toggle("evenodd")} disabled={!checkOddEven()} checked={filter.evenOddToggle} />
-                </li>
             </ul>
         </div>
     )

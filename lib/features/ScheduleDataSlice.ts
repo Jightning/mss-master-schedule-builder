@@ -3,11 +3,13 @@ import {
     Column,
     Row,
     Selection,
-    Filter
+    Filter,
+    Settings
 } from "@/types"
 
 interface InitialStateType {
     searchTerm: string,
+    settings: Settings,
     filter: Filter
     rows: Array<Row>,
     columns: Array<Column>,
@@ -17,9 +19,12 @@ interface InitialStateType {
 const initialState: InitialStateType = 
 {
     searchTerm: "",
+    settings: {
+        oddEvenToggle: true,
+        oddEvenAutoAssign: true
+    },
     filter: {
         searchLocation: "selections",
-        evenOddToggle: true
     },
     rows: [
         { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
@@ -95,6 +100,10 @@ export const scheduleDataSlice = createSlice({
         newSearchTerm: (state, action) => {
             state.searchTerm = action.payload
         },
+        newSettings: (state, action) => {
+            console.log("THIS", action.payload)
+            state.settings = action.payload
+        },
         newFilter: (state, action) => {
             state.filter = action.payload
         },
@@ -110,7 +119,7 @@ export const scheduleDataSlice = createSlice({
     },
 })
 
-export const { newRows, newColumns, newSelections, newSearchTerm, newFilter } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newSearchTerm, newFilter, newSettings } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -121,6 +130,7 @@ export const selectSelections = (state: { scheduleData: { selections: Array<Sele
 
 export const selectSearchTerm = (state: { scheduleData: { searchTerm: string } }) => state.scheduleData.searchTerm
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
+export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
 
 
 export default scheduleDataSlice.reducer

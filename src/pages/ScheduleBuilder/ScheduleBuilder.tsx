@@ -30,7 +30,7 @@ import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
 
 
-import { newRows, newColumns, newSelections, newSearchTerm, newFilter } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newSelections, newSearchTerm, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { selectRows, selectColumns, selectSelections, selectSearchTerm, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
@@ -56,6 +56,9 @@ const ScheduleBuilder = () => {
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: object) => dispatch(newFilter(val))
 
+    const settings = useAppSelector(selectSettings)
+    const setSettings: any = (val: object) => dispatch(newSettings(val))
+
     // Redux\
 
     const [rowsName, setRowsName] = useState("Teachers")
@@ -72,6 +75,8 @@ const ScheduleBuilder = () => {
     const [isOddEvenAutoAssign, setIsOddEvenAutoAssign] = useState(true)
 
     const [isFilterOpen, setIsFilterOpen] = useState(false)
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
 
     // To check for window resize
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
@@ -139,7 +144,7 @@ const ScheduleBuilder = () => {
     // Coresponding row is found via the id
     const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
         // insert_oddeven_row({columnId, rowIndex, evenSelection})
-        if (!filter.evenOddToggle) {
+        if (!settings.oddEvenToggle) {
             return
         }
 
@@ -266,7 +271,7 @@ const ScheduleBuilder = () => {
             }
         }
 
-        if (isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && filter.evenOddToggle) {
+        if (settings.oddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.oddEvenToggle) {
             assignOddEven(columnId, toChange, draggable.data.current.selection)
             return
         }
@@ -374,17 +379,29 @@ const ScheduleBuilder = () => {
                     </div>
 
                     {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} /> : <></>}
+                    {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} /> : <></>}
+
                     <div className="toolbar">
                         <ul>
                             <li className='import-btn'>Import</li>
                             <li className='export-btn'>Export</li>
                             <span/><span/>
                             <li className='search-box'><SearchBar/></li>
-                            <li className='filter-btn' onClick={() => setIsFilterOpen((prevIsFilterOpen) => (!prevIsFilterOpen))}>
+                            <li className='filter-btn' id="filter-btn" onClick={() => setIsFilterOpen((prevIsFilterOpen) => {
+                                if (isSettingsOpen) {
+                                    setIsSettingsOpen(false)
+                                }
+                                return !prevIsFilterOpen
+                            })}>
                                 <svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
                             </li>
                             
-                            <li className='settings' onClick={() => setOpenPopup(<Settings/>)}>
+                            <li className='settings-btn' id="settings-btn" onClick={() => setIsSettingsOpen((prevIsSettingsOpen) => {
+                                if (isFilterOpen) {
+                                    setIsFilterOpen(false)
+                                }
+                                return !prevIsSettingsOpen
+                            })}>
                                 <svg className={(isAnimating ? "animating" : "")} 
                                     onMouseEnter={() => setIsAnimating(true)}
                                     onAnimationEnd={() => setIsAnimating(false)}
@@ -404,7 +421,6 @@ const ScheduleBuilder = () => {
                         <ScheduleTable 
                             activeSelection={activeSelection} 
                             heights={heights}
-                            isOddEvenAutoAssign={isOddEvenAutoAssign}
                             assignOddEven={assignOddEven}
                              />
                     </div> 

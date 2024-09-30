@@ -28,6 +28,10 @@ export interface ActiveSelectionInterface {
 } 
 
 export interface Filter {
-    evenOddToggle: boolean,
     searchLocation: string
+}
+
+export interface Settings {
+    oddEvenToggle: boolean,
+    oddEvenAutoAssign: boolean,
 }

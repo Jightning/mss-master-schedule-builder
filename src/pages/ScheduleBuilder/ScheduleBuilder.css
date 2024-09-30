@@ -92,10 +92,10 @@ img {
     cursor: default !important;
 }
 
-.toolbar .settings {
+.toolbar .settings-btn {
     border-radius: 5px !important;
 }
-.toolbar .settings .animating {
+.toolbar .settings-btn .animating {
     animation: rotate-gear 0.5s;
 }
 @keyframes rotate-gear {
@@ -107,7 +107,7 @@ img {
     position: relative;
     top: 2px;
 }
-.toolbar .search-box, .settings, .filter-btn {
+.toolbar .search-box, .settings-btn, .filter-btn {
     position: relative;
     right: calc(0.85rem + 1px);
 }

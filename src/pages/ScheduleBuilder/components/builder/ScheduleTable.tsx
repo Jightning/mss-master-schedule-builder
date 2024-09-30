@@ -7,16 +7,15 @@ import {
     ActiveSelectionInterface
 } from '@/types'
 
-import { newRows, newColumns, newFilter } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newFilter, newSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectFilter, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
 const ScheduleTable = (props: {
     heights: Array<number>,
     activeSelection: ActiveSelectionInterface | null,
-    isOddEvenAutoAssign: boolean,
     assignOddEven: any
 }) => {
     let dispatch = useAppDispatch()
@@ -29,6 +28,9 @@ const ScheduleTable = (props: {
 
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
+
+    const settings = useAppSelector(selectSettings)
+    const setSettings: any = (val: string) => dispatch(newSettings(val))
     
 
     const removeEvenOdd = (columnId: ColumnInterface["id"]) => {
@@ -83,7 +85,7 @@ const ScheduleTable = (props: {
         let column = columns[index]
         let id = column.id
 
-        if (!props.isOddEvenAutoAssign || !filter.evenOddToggle) {
+        if (!settings.oddEvenToggle) {
             return
         }
 
@@ -92,7 +94,6 @@ const ScheduleTable = (props: {
         } else {
             props.assignOddEven(id)
         }
-
     }
 
     

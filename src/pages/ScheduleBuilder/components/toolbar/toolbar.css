@@ -1,4 +1,4 @@
-.settings-popup {
+/* .settings-popup {
     border: solid;
     border-radius: 10px;
     height: 100%;
@@ -8,7 +8,7 @@
     margin-top: 5px;
     font-size: 2.2rem;
     text-align: center;
-}
+} */
 
 
 /* Seach box */
@@ -32,8 +32,8 @@
     position: absolute;
     right: 0;
     top: 0;
-    padding-top: 0.25rem;
-    padding-right: 0.15rem;
+    padding-top: 0.15rem;
+    padding-right: 0.25rem;
     background-color: white;
     height: 100%;
     width: calc(24px + 1rem);
@@ -47,6 +47,38 @@
 }
 
 /* Search Box\ */
+
+/* Settings Dropdown */
+.settings-dropdown {
+    position: absolute;
+
+    border: solid;
+    border-radius: 10px;
+
+    height: 300px;
+    width: 400px;
+    padding: 5px;
+
+    top: 120px;
+    right: calc(max(10vw, 190px) + 0.5rem);
+
+    background-color: white;
+    z-index: 10;
+}
+.settings-elements li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.li-switch {
+    
+}
+.settings-elements li h3 {
+    display: inline;
+    margin: 10px;
+}
+ 
+/* \Settings Dropdown */
 
 /* Filter Dropdown */
 .filter-dropdown {
@@ -65,6 +97,15 @@
     background-color: white;
     z-index: 10;
 }
-.filter-elements li h4 {
+.filter-elements li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.li-switch {
+    
+}
+.filter-elements li h3 {
     display: inline;
+    margin: 10px;
 }
