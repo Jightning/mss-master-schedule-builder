@@ -1,12 +1,15 @@
 import './toolbar.css'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { newColumns, newRows, newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { getColumnSubjects } from '@/lib/features/ScheduleDataSlice';
 
 const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
+    const [isChangeColorsDropdownOpen, setIsChangeColorsDropdownOpen] = useState<boolean>(false)
+
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
 
@@ -19,6 +22,8 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
 
+    const subjects = useAppSelector(getColumnSubjects)
+    console.log(subjects, "he;;p")
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
         const handleClickOutside = (event: any) => {
@@ -56,18 +61,47 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
             case "evenodd-autosplit":   
 				setSettings({...settings, oddEvenAutoAssign: !settings.oddEvenAutoAssign})
                 break
+            case "color-column-subjects":
+                setSettings({...settings, colorColumnSubjects: !settings.colorColumnSubjects})
+                break
+            case "color-row-subjects":
+                setSettings({...settings, colorRowSubjects: !settings.colorRowSubjects})
+                break
         }
     }
+
     
     return (
         <div className="settings-dropdown" ref={settingsRef}>
             <h2>Settings</h2>
             <ul className="settings-elements">
-                <li>
-                    <h3>Odd/Even:</h3><Switch className='li-switch' onChange={() => toggle("evenodd")} disabled={checkOddEven()} checked={settings.oddEvenToggle} />
+                <li className='border-solid rounded-lg'>
+                    <li>
+                        <h4>Odd/Even:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd")} disabled={checkOddEven()} checked={settings.oddEvenToggle} /></div>
+                    </li>
+                    <li>
+                        <h4>Autoassign:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd-autosplit")} disabled={!settings.oddEvenToggle} checked={settings.oddEvenAutoAssign} /></div>
+                    </li>
                 </li>
-                <li>
-                    <h3>Odd/Even Autoassign:</h3><Switch className='li-switch' onChange={() => toggle("evenodd-autosplit")} disabled={!settings.oddEvenToggle} checked={settings.oddEvenAutoAssign} />
+                <li className='border-solid rounded-lg flex-col'>
+                    <h4 className='relative top-1'>Color</h4>
+                    <div className='flex flex-row justify-center'>
+                        <li>
+                            <h4>Columns:</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.colorColumnSubjects} /></div>
+                        </li>
+                        <li>
+                            <h4>Rows:</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.colorRowSubjects} /></div>
+                        </li>
+                    </div>
+                    
+                    <div className={"change-colors-container " + (isChangeColorsDropdownOpen ? "trigger" : "")}>
+                        <h4 className={"change-colors-btn"} onClick={() => setIsChangeColorsDropdownOpen((prevValue: boolean) => (!prevValue))}>Change Colors {">>"}</h4>
+                        <ul className="change-colors-dropdown">
+                            <li>Color 1</li>
+                            <li>Color 2</li>
+                            <li>Color 3</li>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>

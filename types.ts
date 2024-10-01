@@ -39,4 +39,7 @@ export interface Filter {
 export interface Settings {
     oddEvenToggle: boolean,
     oddEvenAutoAssign: boolean,
+    colorColumnSubjects: boolean,
+    colorRowSubjects: boolean
+
 }

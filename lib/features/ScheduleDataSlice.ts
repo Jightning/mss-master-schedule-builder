@@ -18,10 +18,12 @@ interface InitialStateType {
 
 const initialState: InitialStateType = 
 {
-    filterLocation: "selections",
+    filterLocation: "rows",
     settings: {
         oddEvenToggle: true,
-        oddEvenAutoAssign: true
+        oddEvenAutoAssign: true,
+        colorColumnSubjects: true,
+        colorRowSubjects: false
     },
     filter: {
         selections: {
@@ -138,6 +140,17 @@ export const selectSelections = (state: { scheduleData: { selections: Array<Sele
 export const selectFilterLocation = (state: { scheduleData: { filterLocation: string } }) => state.scheduleData.filterLocation
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
 export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
+
+export const getColumnSubjects = (state: { scheduleData: { columns: Array<Column> }}) => {
+    let subjects: any = []
+    let columns: Array<Column> = state.scheduleData.columns
+
+    for (let i in columns) {
+        console.log(columns[i])
+    }
+
+    return subjects
+}
 
 
 export default scheduleDataSlice.reducer
