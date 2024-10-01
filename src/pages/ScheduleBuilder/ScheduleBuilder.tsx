@@ -376,7 +376,7 @@ const ScheduleBuilder = () => {
                     </div>
 
                     {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
-                    {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} /> : <></>}
+                    {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
 
                     <div className="toolbar">
                         <ul>

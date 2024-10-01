@@ -1,7 +1,7 @@
 import { Row, ActiveSelectionInterface } from '@/types'
 
 import { newSelections } from '@/lib/features/ScheduleDataSlice';
-import { selectRows, selectSelections, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectSettings, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 
 // Rows on the right side of the table (teacher rows)
@@ -16,6 +16,7 @@ const Rows = (
     const rows = useAppSelector(selectRows)
 
     const filter = useAppSelector(selectFilter)
+    const settings = useAppSelector(selectSettings)
 
     return (
         <div className='rows-container' key={1}>
@@ -30,7 +31,8 @@ const Rows = (
                     id={"row-" + row.id}
                     style={{
                         height: `${props.heights[index]}px`,
-                        color: props.activeSelection?.currentRowIndex == index ? "blue" : "black"
+                        // color: props.activeSelection?.currentRowIndex == index ? "blue" : "black"
+                        color: settings.colorRowSubjects ? settings.colors[row.subject] : "black"
                     }}>
 
                         <p>{row.name}</p>

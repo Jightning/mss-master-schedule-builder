@@ -1,6 +1,6 @@
 import Selection from './Selection'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { selectFilter, selectSelections } from '@/lib/features/ScheduleDataSlice'
+import { selectFilter, selectSelections, selectSettings } from '@/lib/features/ScheduleDataSlice'
 
 const SelectionColumn = () => {
     const dispatch = useAppDispatch()

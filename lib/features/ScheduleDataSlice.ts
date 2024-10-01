@@ -22,8 +22,13 @@ const initialState: InitialStateType =
     settings: {
         oddEvenToggle: true,
         oddEvenAutoAssign: true,
-        colorColumnSubjects: true,
-        colorRowSubjects: false
+        colorSelectionSubjects: true,
+        colorRowSubjects: false,
+        colors: {
+            "math": "#FF0000",
+            "science": "#00FF00",
+            "english": "#ffff1a"
+        }
     },
     filter: {
         selections: {
@@ -58,47 +63,47 @@ const initialState: InitialStateType =
         { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
     ],
     selections: [
-        { name: "Comp Sci", id: 33437 },
-        { name: "AP Physics 1", id: 3343855 },
-        { name: "AP Physics 2", id: 334348 },
-        { name: "AP Physics 3", id: 3343238 },
-        { name: "AP Physics 4", id: 3343328 },
-        { name: "AP Physics 5", id: 3343548 },
-        { name: "AP Physics 6", id: 3343068 },
-        { name: "AP Physics 7", id: 334398 },
-        { name: "AP Physics 8", id: 334868 },
-        { name: "AP Physics 9", id: 334548 },
-        { name: "A", id: 130039239 },
-        { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", id: 332448 },
-        { name: "AP Physics 11", id: 33443 },
-        { name: "AP Physics 12", id: 33428 },
-        { name: "AP Physics 13", id: 33438 },
-        { name: "AP Physics 14", id: 33238 },
-        { name: "AP Physics 15", id: 324238 },
-        { name: "AP Physics 16", id: 33644238 },
-        { name: "AP Physics 17", id: 33425693832 },
-        { name: "AP Physics 18", id: 3342385471},
-        { name: "AP Physics 19", id: 3342342532812 },
-        { name: "AP Physics 20", id: 33423064223228 },
-        { name: "AP Physics 21", id: 3342934228054 },
-        { name: "AP Physics 22", id: 334623422807 },
-        { name: "AP Physics 23", id: 3342342285708 },
-        { name: "AP Physics 24", id: 3342342228 },
-        { name: "AP Physics 25", id: 334234282234 },
-        { name: "AP Physics 26", id: 3342342854 },
-        { name: "AP Physics 27", id: 3342322876 },
-        { name: "AP Physics 28", id: 3342422818 },
-        { name: "AP Physics 29", id: 3342422828 },
-        { name: "AP Physics 30", id: 3342422838 },
-        { name: "AP Physics 31", id: 332422848 },
-        { name: "AP Physics 32", id: 3342422858 },
-        { name: "AP Physics 33", id: 33424228786 },
-        { name: "AP Physics 34", id: 3342422868 },
-        { name: "AP Physics 35", id: 3342422878 },
-        { name: "AP Physics 36", id: 3342422888 },
-        { name: "AP Physics 37", id: 3342422898 },
-        { name: "AP Physics 38", id: 33424228108 },
-        { name: "AP Physics 39", id: 33424228118 }
+        { name: "Comp Sci", subject: "math", id: 33437 },
+        { name: "AP Physics 1", subject: "science", id: 3343855 },
+        { name: "AP Physics 2", subject: "science", id: 334348 },
+        { name: "AP Physics 3", subject: "science", id: 3343238 },
+        { name: "AP Physics 4", subject: "science", id: 3343328 },
+        { name: "AP Physics 5", subject: "science", id: 3343548 },
+        { name: "AP Physics 6", subject: "science", id: 3343068 },
+        { name: "AP Physics 7", subject: "science", id: 334398 },
+        { name: "AP Physics 8", subject: "science", id: 334868 },
+        { name: "AP Physics 9", subject: "science", id: 334548 },
+        { name: "A", subject: "english", id: 130039239 },
+        { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", subject: "science", id: 332448 },
+        { name: "AP Physics 11", subject: "science", id: 33443 },
+        { name: "AP Physics 12", subject: "science", id: 33428 },
+        { name: "AP Physics 13", subject: "science", id: 33438 },
+        { name: "AP Physics 14", subject: "science", id: 33238 },
+        { name: "AP Physics 15", subject: "science", id: 324238 },
+        { name: "AP Physics 16", subject: "science", id: 33644238 },
+        { name: "AP Physics 17", subject: "science", id: 33425693832 },
+        { name: "AP Physics 18", subject: "science", id: 3342385471},
+        { name: "AP Physics 19", subject: "science", id: 3342342532812 },
+        { name: "AP Physics 20", subject: "science", id: 33423064223228 },
+        { name: "AP Physics 21", subject: "science", id: 3342934228054 },
+        { name: "AP Physics 22", subject: "science", id: 334623422807 },
+        { name: "AP Physics 23", subject: "science", id: 3342342285708 },
+        { name: "AP Physics 24", subject: "science", id: 3342342228 },
+        { name: "AP Physics 25", subject: "science", id: 334234282234 },
+        { name: "AP Physics 26", subject: "science", id: 3342342854 },
+        { name: "AP Physics 27", subject: "science", id: 3342322876 },
+        { name: "AP Physics 28", subject: "science", id: 3342422818 },
+        { name: "AP Physics 29", subject: "science", id: 3342422828 },
+        { name: "AP Physics 30", subject: "science", id: 3342422838 },
+        { name: "AP Physics 31", subject: "science", id: 332422848 },
+        { name: "AP Physics 32", subject: "science", id: 3342422858 },
+        { name: "AP Physics 33", subject: "science", id: 33424228786 },
+        { name: "AP Physics 34", subject: "science", id: 3342422868 },
+        { name: "AP Physics 35", subject: "science", id: 3342422878 },
+        { name: "AP Physics 36", subject: "science", id: 3342422888 },
+        { name: "AP Physics 37", subject: "science", id: 3342422898 },
+        { name: "AP Physics 38", subject: "science", id: 33424228108 },
+        { name: "AP Physics 39", subject: "science", id: 33424228118 }
     ]
 }
 
@@ -110,7 +115,6 @@ export const scheduleDataSlice = createSlice({
             state.filterLocation = action.payload
         },
         newSettings: (state, action) => {
-            console.log("THIS", action.payload)
             state.settings = action.payload
         },
         newFilter: (state, action) => {
@@ -141,12 +145,12 @@ export const selectFilterLocation = (state: { scheduleData: { filterLocation: st
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
 export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
 
-export const getColumnSubjects = (state: { scheduleData: { columns: Array<Column> }}) => {
-    let subjects: any = []
-    let columns: Array<Column> = state.scheduleData.columns
+export const getRowSubjects = (state: { scheduleData: { rows: Array<Row> }}) => {
+    let subjects: Set<string> = new Set([])
+    let rows: Array<Row> = state.scheduleData.rows
 
-    for (let i in columns) {
-        console.log(columns[i])
+    for (let i in rows) {
+        subjects.add(rows[i].subject)
     }
 
     return subjects

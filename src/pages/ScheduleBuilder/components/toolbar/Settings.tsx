@@ -5,10 +5,14 @@ import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { newColumns, newRows, newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
-import { getColumnSubjects } from '@/lib/features/ScheduleDataSlice';
+import { getRowSubjects } from '@/lib/features/ScheduleDataSlice';
 
-const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
+import { TwitterPicker } from 'react-color';
+
+const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const [isChangeColorsDropdownOpen, setIsChangeColorsDropdownOpen] = useState<boolean>(false)
+    const [openColorPicker, setOpenColorPicker] = useState("")
+
 
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
@@ -22,8 +26,9 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
 
-    const subjects = useAppSelector(getColumnSubjects)
-    console.log(subjects, "he;;p")
+    const subjects = useAppSelector(getRowSubjects)
+    console.log(subjects)
+
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
         const handleClickOutside = (event: any) => {
@@ -62,7 +67,7 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
 				setSettings({...settings, oddEvenAutoAssign: !settings.oddEvenAutoAssign})
                 break
             case "color-column-subjects":
-                setSettings({...settings, colorColumnSubjects: !settings.colorColumnSubjects})
+                setSettings({...settings, colorSelectionSubjects: !settings.colorSelectionSubjects})
                 break
             case "color-row-subjects":
                 setSettings({...settings, colorRowSubjects: !settings.colorRowSubjects})
@@ -70,6 +75,9 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
         }
     }
 
+    const handleColorChange = (event: any) => {
+        setSettings({...settings, colors: {...settings.colors, [openColorPicker]: event.hex}})
+    }
     
     return (
         <div className="settings-dropdown" ref={settingsRef}>
@@ -83,23 +91,29 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                         <h4>Autoassign:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd-autosplit")} disabled={!settings.oddEvenToggle} checked={settings.oddEvenAutoAssign} /></div>
                     </li>
                 </li>
-                <li className='border-solid rounded-lg flex-col'>
-                    <h4 className='relative top-1'>Color</h4>
+                <li className='color-settings-container border-solid rounded-lg flex-col'>
+                    <h4>Color</h4>
                     <div className='flex flex-row justify-center'>
                         <li>
-                            <h4>Columns:</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.colorColumnSubjects} /></div>
+                            <h4>{props.rowsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.colorRowSubjects} /></div>
                         </li>
                         <li>
-                            <h4>Rows:</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.colorRowSubjects} /></div>
+                            <h4>{props.selectionsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.colorSelectionSubjects} /></div>
                         </li>
                     </div>
                     
                     <div className={"change-colors-container " + (isChangeColorsDropdownOpen ? "trigger" : "")}>
-                        <h4 className={"change-colors-btn"} onClick={() => setIsChangeColorsDropdownOpen((prevValue: boolean) => (!prevValue))}>Change Colors {">>"}</h4>
-                        <ul className="change-colors-dropdown">
-                            <li>Color 1</li>
-                            <li>Color 2</li>
-                            <li>Color 3</li>
+                        <h4 className={"change-colors-btn"} onClick={() => {setIsChangeColorsDropdownOpen((prevValue: boolean) => (!prevValue)); setOpenColorPicker("");}}>Change Colors {">"}</h4>
+                        <ul className="change-colors-dropdown"> 
+                            {Array.from(subjects).map((subject: string) => (
+                                <li className='h-fit flex-col'>
+                                    <div className='flex-row flex items-center justify-center'>
+                                        <p className='h-fit w-fit'>{subject.charAt(0).toUpperCase() + subject.slice(1)}:</p> 
+                                        <div className={'color-picker-btn'} style={{backgroundColor: settings.colors[subject]}} onClick={() => setOpenColorPicker((prevValue) => (prevValue === subject ? "" : subject))}></div>
+                                    </div>
+                                    {openColorPicker === subject ? <TwitterPicker color={ settings.colors[subject] } onChangeComplete={handleColorChange} width={"280px"} className='justify-center m-auto w-fit'/> : <></>}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </li>

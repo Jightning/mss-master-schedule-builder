@@ -1,5 +1,8 @@
+type HEX = `#${string}`
+
 export interface Selection {
     name: string,
+    subject: string
     id: number | string,
 }
 
@@ -39,7 +42,9 @@ export interface Filter {
 export interface Settings {
     oddEvenToggle: boolean,
     oddEvenAutoAssign: boolean,
-    colorColumnSubjects: boolean,
+    colorSelectionSubjects: boolean,
     colorRowSubjects: boolean
-
+    colors: {
+        [subject: string]: HEX
+    }
 }

@@ -19,7 +19,6 @@
     position: absolute;
     right: 0;
     top: 0;
-    padding-top: 0.15rem;
     padding-right: 0.25rem;
     background-color: white;
     height: 100%;
@@ -27,7 +26,10 @@
 }
 .erase-search-icon svg {
     float: right;
-    height: 100%
+    position: 0;
+    top: 0;
+    vertical-align: center;
+    height: 100%;
 }
 .erase-search-icon svg:hover {
     filter: invert(27%) sepia(95%) saturate(6480%) hue-rotate(355deg) brightness(93%) contrast(119%);
@@ -37,6 +39,9 @@
 /* Search Box\ */
 
 /* Settings Dropdown */
+.settings-dropdown::-webkit-scrollbar-thumb:hover {
+    border-right: none;
+}
 .settings-dropdown {
     position: absolute;
 
@@ -83,11 +88,17 @@
     margin-right: 0;
 }
 
+.color-settings-container {
+    padding: 10px;
+}
+
 .change-colors-btn {
     cursor: pointer;
     width: fit-content;
 }
-
+/* .change-colors-container {
+    margin-bottom: 10px;
+} */
 /* Changing the parameter in parentheses changes the event */
 /* This is the list prior to clicking on it */
 .change-colors-container:not(.trigger) > .change-colors-dropdown > * {
@@ -119,6 +130,21 @@
       0.5s 0.2s color,
       0.2s background-color;
 } 
+
+.color-picker-btn {
+    width: 1rem;
+    height:1rem;
+    margin: 5px;
+    border: solid;
+    border-radius: 5px;
+    cursor: pointer;
+}   
+/* VERY WIERD > CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
+#rc-editable-input-6, #rc-editable-input-2 {
+    background-color: white;
+    height: 1 !important;
+    padding: 1px;
+}
 
 /* \Settings Dropdown */
 
