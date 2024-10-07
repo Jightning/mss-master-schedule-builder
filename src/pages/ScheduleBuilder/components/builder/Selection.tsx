@@ -1,13 +1,13 @@
-import React from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from "@dnd-kit/utilities"
 
-import { selectSettings } from '@/lib/features/ScheduleDataSlice'
+import { selectFilter, selectSettings } from '@/lib/features/ScheduleDataSlice'
 import { useAppSelector } from '@/lib/hooks'
 
 import { 
     Selection as SelectionInterface
 } from '@/types'
+import { useEffect } from 'react'
 
 const Selection = (props: 
     { 
@@ -23,7 +23,6 @@ const Selection = (props:
     }
 
     const settings = useAppSelector(selectSettings)
-
 
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id: 'selection-' + props.selectionId,

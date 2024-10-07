@@ -51,8 +51,8 @@ const Column = (props: {
                     }        
                 }, [isOver])
 
-                if (filter.rows.searchTerm !== "" 
-                    && !(row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
+                if ((filter.rows.searchTerm !== "" && !(row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
+                    || (filter.rows.subjects.length !== 0 && !(filter.rows.subjects).includes(row.subject)))
                     return <></>
 
                 return (

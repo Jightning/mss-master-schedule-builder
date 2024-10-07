@@ -19,7 +19,6 @@ import {
     Column, 
     Row,
     ActiveSelectionInterface,
-    Tile
 } from '@/types'
 import Settings from './components/toolbar/Settings';
 
@@ -30,9 +29,9 @@ import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
 
 
-import { newRows, newColumns, newSelections, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 // TODO Possibly introduce a memo system (useMemo)
@@ -69,10 +68,11 @@ const ScheduleBuilder = () => {
     const [isAnimating, setIsAnimating] = useState(false)
     const [autoScroll, setAutoScroll] = useState(true)
 
-    const [isOddEvenAutoAssign, setIsOddEvenAutoAssign] = useState(true)
-
     const [isFilterOpen, setIsFilterOpen] = useState(false)
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+    const defaultSelection = {name: "none", subject: "none", id: 0 }
+
 
 
     // To check for window resize
@@ -80,11 +80,29 @@ const ScheduleBuilder = () => {
     useEffect(() => {
         function changeDims() {
             setWindowDims([window.innerWidth, window.innerHeight])
+            
         }
+        function selectSearch(event: any) {
+            const input = document.getElementById('search-input');
+            if (!input) {
+                return
+            }
+
+            if (event.key === '/') {
+                event.preventDefault()
+                input.focus();
+            } else if (event.key === 'Escape') {
+                event.preventDefault()
+                input.blur();
+            }
+        }
+
         window.addEventListener('resize', changeDims)
+        document.addEventListener('keydown', selectSearch)
 
         return () => {
             window.removeEventListener('resize', changeDims)
+            document.removeEventListener('keydown', selectSearch)
         }
     }, [])
 
@@ -139,7 +157,7 @@ const ScheduleBuilder = () => {
 
     // use -1 and null for the last two parameters 
     // Coresponding row is found via the id
-    const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
+    const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: SelectionInterface) => {
         // insert_oddeven_row({columnId, rowIndex, evenSelection})
         if (!settings.oddEvenToggle) {
             return
@@ -241,7 +259,7 @@ const ScheduleBuilder = () => {
                     ...row,
                     columns: {
                         ...row.columns,
-                        [columnId]: { name: "none", id: 0 }  
+                        [columnId]: defaultSelection 
                     }
                 }
 
@@ -275,17 +293,31 @@ const ScheduleBuilder = () => {
 
         // Sets the row for regular situations
         setRows((() => {
-            // pass by value -> cannot return reference, otherwise values will not rerender correctly
             // Row object to change
             let row = {...rows[toChange], columns: {...rows[toChange].columns, [columnId]: draggable.data.current.selection }}
 
-            // row.columns[columnId] is the selection to change
-            // setting selection of respective row in respective column to new draggable selection
-            // row.columns[columnId] = draggable.data.current.selection
-
-            return [...rows.slice(0, toChange), 
+            let newRows = [...rows.slice(0, toChange), 
                 row, 
                 ...rows.slice(toChange + 1)];
+            
+            // TODO work on this broken copySelection implementation
+            // if (!settings.copySelection) {
+            //     let row = {...rows[draggable.data.current.rowIndex]}
+
+            //     row = {
+            //         ...row,
+            //         columns: {
+            //             ...row.columns,
+            //             [draggable.data.current.columnId]: defaultSelection 
+            //         }
+            //     }
+
+            //     newRows = [...newRows.slice(0, toChange), 
+            //                 row, 
+            //                 ...newRows.slice(toChange + 1)]
+            // }
+
+            return newRows
         })())
 
     }

@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { newColumns, newRows, newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { newSettings, selectColumns, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { getRowSubjects } from '@/lib/features/ScheduleDataSlice';
 
 import { TwitterPicker } from 'react-color';
@@ -16,18 +16,13 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
 
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
-
-    const rows = useAppSelector(selectRows)
-    const setRows: any = (val: string) => dispatch(newRows(val))
     
     const columns = useAppSelector(selectColumns)
-    const setColumns: any = (val: string) => dispatch(newColumns(val))
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
 
     const subjects = useAppSelector(getRowSubjects)
-    console.log(subjects)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -66,6 +61,12 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
             case "evenodd-autosplit":   
 				setSettings({...settings, oddEvenAutoAssign: !settings.oddEvenAutoAssign})
                 break
+            case "subject-limit":
+                setSettings({...settings, subjectLimit: !settings.subjectLimit})
+                break
+            case "copy-selection":
+                setSettings({...settings, copySelection: !settings.copySelection})
+                break
             case "color-column-subjects":
                 setSettings({...settings, colorSelectionSubjects: !settings.colorSelectionSubjects})
                 break
@@ -78,6 +79,8 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
     const handleColorChange = (event: any) => {
         setSettings({...settings, colors: {...settings.colors, [openColorPicker]: event.hex}})
     }
+
+    // TODO copy selection and the selection limit
     
     return (
         <div className="settings-dropdown" ref={settingsRef}>
@@ -89,6 +92,16 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                     </li>
                     <li>
                         <h4>Autoassign:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd-autosplit")} disabled={!settings.oddEvenToggle} checked={settings.oddEvenAutoAssign} /></div>
+                    </li>
+                </li>
+                <li className='border-solid rounded-lg'>
+                    <li>
+                        <h4>Subject Limit: </h4><div className="li-switch"><Switch onChange={() => toggle("subject-limit")} checked={settings.subjectLimit} /></div>
+                    </li>
+                </li>
+                <li className='border-solid rounded-lg'>
+                    <li>
+                        <h4>Copy Selection: </h4><div className="li-switch"><Switch onChange={() => toggle("copy-selection")} checked={settings.copySelection} /></div>
                     </li>
                 </li>
                 <li className='color-settings-container border-solid rounded-lg flex-col'>
@@ -105,13 +118,13 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                     <div className={"change-colors-container " + (isChangeColorsDropdownOpen ? "trigger" : "")}>
                         <h4 className={"change-colors-btn"} onClick={() => {setIsChangeColorsDropdownOpen((prevValue: boolean) => (!prevValue)); setOpenColorPicker("");}}>Change Colors {">"}</h4>
                         <ul className="change-colors-dropdown"> 
-                            {Array.from(subjects).map((subject: string) => (
+                            {subjects.map((subject: string) => (
                                 <li className='h-fit flex-col'>
                                     <div className='flex-row flex items-center justify-center'>
                                         <p className='h-fit w-fit'>{subject.charAt(0).toUpperCase() + subject.slice(1)}:</p> 
                                         <div className={'color-picker-btn'} style={{backgroundColor: settings.colors[subject]}} onClick={() => setOpenColorPicker((prevValue) => (prevValue === subject ? "" : subject))}></div>
                                     </div>
-                                    {openColorPicker === subject ? <TwitterPicker color={ settings.colors[subject] } onChangeComplete={handleColorChange} width={"280px"} className='justify-center m-auto w-fit'/> : <></>}
+                                    {openColorPicker === subject ? <TwitterPicker color={ settings.colors[subject] } onChangeComplete={handleColorChange} triangle='hide' width={"280px"} className='justify-center m-auto w-fit' /> : <></>}
                                 </li>
                             ))}
                         </ul>

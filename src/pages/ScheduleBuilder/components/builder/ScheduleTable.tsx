@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import React from 'react'
 import Column from './Column'
 import { 
     Row, 
@@ -7,7 +5,7 @@ import {
     ActiveSelectionInterface
 } from '@/types'
 
-import { newRows, newColumns, newFilter, newSettings } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { selectRows, selectColumns, selectFilter, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
@@ -30,7 +28,6 @@ const ScheduleTable = (props: {
     const setFilter: any = (val: string) => dispatch(newFilter(val))
 
     const settings = useAppSelector(selectSettings)
-    const setSettings: any = (val: string) => dispatch(newSettings(val))    
 
     const removeEvenOdd = (columnId: ColumnInterface["id"]) => {
         let type = columnId.toString().substring(columnId.toString().length - 3, columnId.toString().length)

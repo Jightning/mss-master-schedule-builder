@@ -48,8 +48,8 @@
     border: solid;
     border-radius: 10px;
 
-    height: 300px;
-    width: 400px;
+    height: 23.5rem;
+    width: 25rem;
     padding: 5px;
 
     top: 120px;
@@ -120,7 +120,7 @@
 .change-colors-dropdown > * {
     overflow: hidden;
     height: 30px;
-    padding: 5px 10px;
+    padding: 1px 0px;
     background: rgba(0,0,0,0);
     white-space: nowrap;
     transition: 
@@ -140,10 +140,10 @@
     cursor: pointer;
 }   
 /* VERY WIERD > CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
-#rc-editable-input-6, #rc-editable-input-2 {
-    background-color: white;
+.change-colors-dropdown li input {
+    background-color: white !important;
     height: 1 !important;
-    padding: 1px;
+    padding: 0.08em;
 }
 
 /* \Settings Dropdown */
@@ -155,8 +155,8 @@
     border: solid;
     border-radius: 10px;
 
-    height: 300px;
-    width: 400px;
+    height: 19rem;
+    width: 25rem;
     padding: 5px;
 
     top: 120px;
