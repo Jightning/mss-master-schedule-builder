@@ -197,3 +197,25 @@
     display: inline;
     margin: 10px;
 }
+
+/* Undo */
+.undoredo-container {
+    position: absolute;
+    margin: 10px;
+}
+.undoredo-container svg {
+    margin: 3px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+.undoredo-container svg:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.09);
+}
+
+.btn-disabled {
+    color: gray;
+    fill: gray !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+}
+/* \Undo */

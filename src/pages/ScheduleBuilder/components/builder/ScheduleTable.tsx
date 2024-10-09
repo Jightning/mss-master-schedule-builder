@@ -2,19 +2,21 @@ import Column from './Column'
 import { 
     Row, 
     Column as ColumnInterface,
-    ActiveSelectionInterface
+    ActiveSelectionInterface,
+    ScheduleBuilderAction,
+    Selection
 } from '@/types'
 
 import { newRows, newColumns, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectFilter, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
 const ScheduleTable = (props: {
     heights: Array<number>,
     activeSelection: ActiveSelectionInterface | null,
-    assignOddEven: any
+    // assignOddEven: any
 }) => {
     let dispatch = useAppDispatch()
 
@@ -29,52 +31,7 @@ const ScheduleTable = (props: {
 
     const settings = useAppSelector(selectSettings)
 
-    const removeEvenOdd = (columnId: ColumnInterface["id"]) => {
-        let type = columnId.toString().substring(columnId.toString().length - 3, columnId.toString().length)
-        if (type === "odd") {
-            columnId = columnId.toString().substring(0, columnId.toString().length - 4)
-        } else if (type === "ven") {
-            columnId = columnId.toString().substring(0, columnId.toString().length - 5)
-        }
-
-        // Removing evenodd from each row in that specific column
-        let tempRows = [...rows]
-
-        for (let i = 0; i < rows.length; i++) {
-            if (rows[i].columns[columnId + '-odd'].id !== rows[i].columns[columnId + '-even'].id) {
-                // Missmatched even odd -> early termination to ensure data isn't erased by mistake
-                return
-            } else {
-                tempRows = [
-                    ...(tempRows.slice(0, i)),
-                    {
-                        ...tempRows[i],
-                        columns: {
-                            ...tempRows[i].columns,
-                            [columnId]: tempRows[i].columns[columnId + '-odd']
-                        }
-                    },
-                    ...(tempRows.slice(i+1, tempRows.length))
-                ]
-            }
-        }
-
-        setRows(tempRows)
-
-        setColumns((() => {
-            let tempColumns = [...columns]
-            for (let i = 0; i < tempColumns.length; i++) {
-                if (tempColumns[i].id == columnId  + "-odd") {
-                    if (!tempColumns[i].oddEven) break;
-                    tempColumns.splice(i + 1, 1)
-                    tempColumns[i] = {...tempColumns[i], id: tempColumns[i].id.toString().substring(0, tempColumns[i].id.toString().length - 4), name: tempColumns[i].name.substring(0, tempColumns[i].name.length - 4), oddEven: false};
-                    
-                    break;
-                }
-            }
-            return tempColumns
-        })())
-    }
+    const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     const handleDoubleClick = (e: any) => {
         let index = e.target.id.substring(14, e.target.id.length)
@@ -86,9 +43,25 @@ const ScheduleTable = (props: {
         }
 
         if (columns[index].oddEven) {
-            removeEvenOdd(id)
+            // removeEvenOdd(id)
+            // rows.map((row) => {
+            //     console.log({...row})
+            // })
+            let type = id.toString().substring(id.toString().length - 3, id.toString().length)
+            if (type === "odd") {
+                id = id.toString().substring(0, id.toString().length - 4)
+            } else if (type === "ven") {
+                id = id.toString().substring(0, id.toString().length - 5)
+            }
+            
+            addHistoryState({type: "DELETE_EVEN_ODD", action: {columnId: id}})
+
         } else {
-            props.assignOddEven(id)
+            // assignOddEven(id)
+            // rows.map((row) => {
+            //     console.log({...row})
+            // })
+            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId: id}})
         }
     }
 

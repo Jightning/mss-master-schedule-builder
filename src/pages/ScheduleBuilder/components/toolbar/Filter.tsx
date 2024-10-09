@@ -70,6 +70,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
                     <li>Search: <span className="underline">{filter.rows.searchTerm === "" ? "None" : filter.rows.searchTerm}</span></li>
                     <li>Subjects: 
                         <Select 
+                        className='w-52 inline-block ml-2'
                             value={filter.rows.subjects.map((subject) => ({value: subject, label: subject.charAt(0).toUpperCase() + subject.slice(1)}))} 
                             options={subject_object} 
                             isMulti 

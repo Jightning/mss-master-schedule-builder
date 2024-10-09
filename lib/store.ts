@@ -4,7 +4,7 @@ import ScheduleDataSlice from './features/ScheduleDataSlice'
 export const makeStore = (reducer = {}) => {
   return configureStore({
     reducer: {
-      scheduleData: ScheduleDataSlice
+      scheduleData: ScheduleDataSlice,
     }
   })
 }

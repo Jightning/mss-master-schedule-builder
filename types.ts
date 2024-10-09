@@ -8,7 +8,7 @@ export interface Selection {
 
 export interface Column {
     name: string,
-    id: string | number,
+    id: string,
     oddEven: boolean,
     subcolumns?: Omit<Column, 'oddEven'>[]
 }
@@ -51,4 +51,15 @@ export interface Settings {
     colors: {
         [subject: string]: HEX
     }
+}
+
+export type ScheduleBuilderAction = {
+    type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD",
+    action: {
+        columnId: Column["id"],
+        isUndo: boolean,
+        prevAction: any,
+        toChange: number,
+        selection: Selection
+    },
 }

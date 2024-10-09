@@ -4,8 +4,11 @@ import {
     Row,
     Selection,
     Filter,
-    Settings
+    Settings,
+    ScheduleBuilderAction
 } from "@/types"
+import { modifyRows, Invert } from "./Utilities"
+
 
 interface InitialStateType {
     filterLocation: string,
@@ -13,27 +16,33 @@ interface InitialStateType {
     filter: Filter
     rows: Array<Row>,
     columns: Array<Column>,
-    selections: Array<Selection>
+    selections: Array<Selection>,
+    history: Array<ScheduleBuilderAction>,
+    settingsHistory: Array<Settings & {step: number}>,
+    currentStep: number
 }
 
-const defaultSelection = {name: "none", subject: "none", id: 0 }
+const defaultSelection = { name: "none", subject: "none", id: 0 }
+const modelChangeRecordObject = {action: "PUSH"}
+
+const defaultSettings: Settings = {
+    oddEvenToggle: true,
+    oddEvenAutoAssign: true,
+    subjectLimit: true,
+    copySelection: true,
+    colorSelectionSubjects: false,
+    colorRowSubjects: false,
+    colors: {
+        "math": "#FF0000",
+        "science": "#00FF00",
+        "english": "#ffff1a"
+    }
+}
 
 const initialState: InitialStateType = 
 {
     filterLocation: "rows",
-    settings: {
-        oddEvenToggle: true,
-        oddEvenAutoAssign: true,
-        subjectLimit: true,
-        copySelection: true,
-        colorSelectionSubjects: false,
-        colorRowSubjects: false,
-        colors: {
-            "math": "#FF0000",
-            "science": "#00FF00",
-            "english": "#ffff1a"
-        }
-    },
+    settings: defaultSettings,
     filter: {
         selections: {
             searchTerm: "",
@@ -110,7 +119,10 @@ const initialState: InitialStateType =
         { name: "AP Physics 37", subject: "science", id: 3342422898 },
         { name: "AP Physics 38", subject: "science", id: 33424228108 },
         { name: "AP Physics 39", subject: "science", id: 33424228118 }
-    ]
+    ],
+    history: [],
+    settingsHistory: [{...defaultSettings, step: -1}],
+    currentStep: -1
 }
 
 export const scheduleDataSlice = createSlice({
@@ -118,11 +130,11 @@ export const scheduleDataSlice = createSlice({
     initialState,
     reducers: {
         newFilterLocation: (state, action) => {
-            
             state.filterLocation = action.payload
         },
         newSettings: (state, action) => {
             state.settings = action.payload
+            state.settingsHistory.push({...state.settings, step: state.currentStep})
         },
         newFilter: (state, action) => {
             state.filter = action.payload
@@ -135,11 +147,68 @@ export const scheduleDataSlice = createSlice({
         },
         newSelections: (state, action) => {
             state.selections = action.payload
+        },    
+        // History Reducers    
+        // I'm sorry
+        // I'm really sorry, you can't even debug this with a regular debugger
+        addState: (state, action: {payload: ScheduleBuilderAction}) => {
+
+            // Kinda scuffed, try to find a better alternative
+            const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
+            state.rows = modifications.rows
+            state.columns = modifications.columns
+
+            state.history = [...state.history.slice(0, state.currentStep + 1)]
+            state.history.push(action.payload)
+            state.currentStep = state.history.length - 1
+
+            state.settingsHistory = [...state.settingsHistory.slice(0, state.currentStep + 1)]
+        },
+        // BUG:
+        // 1. When splitting evenodd and then adding one element and undoing, the element is removed completely and not replaced
+        // with the previous one
+        undoState(state) {
+            if (state.currentStep >= 0) {
+
+                const currentState = state.history[state.currentStep]
+                const type = Invert(currentState.type)
+
+                const modifications = modifyRows(
+                    {
+                        type, action: {
+                            ...currentState.action, 
+                            isUndo: true, 
+                            prevAction: {...state.history[state.currentStep - 1]}
+                        }
+                    }, 
+                    state.rows, state.columns, state.settings)
+
+                state.rows = modifications.rows
+                state.columns = modifications.columns
+
+                state.currentStep--;
+            }
+        },
+        redoState(state) {
+            if (state.currentStep < state.history.length - 1) {
+                state.currentStep++;
+                const currentState = state.history[state.currentStep]
+
+                const modifications = modifyRows(currentState, state.rows, state.columns, state.settings)
+                state.rows = modifications.rows
+                state.columns = modifications.columns
+            }
+        },
+        resetHistory(state) {
+            state.history = [];
+            state.settingsHistory = []
+            state.currentStep = -1;
         },
     },
 })
 
 export const { newRows, newColumns, newSelections, newFilterLocation, newFilter, newSettings } = scheduleDataSlice.actions
+export const { addState, undoState, redoState, resetHistory } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -151,6 +220,9 @@ export const selectSelections = (state: { scheduleData: { selections: Array<Sele
 export const selectFilterLocation = (state: { scheduleData: { filterLocation: string } }) => state.scheduleData.filterLocation
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
 export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
+
+export const selectCurrentStep = (state: { scheduleData: { currentStep: number } }) => state.scheduleData.currentStep
+export const selectHistory = (state: { scheduleData: { history: Array<ScheduleBuilderAction> } }) => state.scheduleData.history
 
 export const getRowSubjects = (state: { scheduleData: { rows: Array<Row> }}) => {
     let subjects: Set<string> = new Set([])
