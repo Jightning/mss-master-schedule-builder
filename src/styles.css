@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
+/* Don't want to inherit tailwind styling, just the utlities that come with it 
+@tailwind components; */
 @tailwind utilities;
+@tailwind base;
 
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;

@@ -19,20 +19,25 @@ import {
     Column, 
     Row,
     ActiveSelectionInterface,
-    Tile
+    ScheduleBuilderAction
 } from '@/types'
 import Settings from './components/toolbar/Settings';
 
 import Popup from '../../components/Popup';
 import Trash from './components/builder/Trash';
 import Cover from './components/builder/Cover';
+import Filter from './components/toolbar/Filter';
+import SearchBar from './components/toolbar/SearchBar';
+import UndoRedo from './components/toolbar/UndoRedo';
 
-import { newRows, newColumns, newSelections } from '@/lib/features/ScheduleDataSlice';
+import { newRows, newColumns, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectSelections } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns, selectFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
-// TODO Possibly introduce a memo system (useMemo)
+import { addState } from '@/lib/features/ScheduleDataSlice';
+
+// TODO Possibly introduce a memo system (useMemo or useCallback)
 
 const ScheduleBuilder = () => {
     // Redux state management
@@ -44,9 +49,15 @@ const ScheduleBuilder = () => {
     const columns = useAppSelector(selectColumns)
     const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
 
-    // const selections = useAppSelector(selectSelections)
-    // const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
+    const filter = useAppSelector(selectFilter)
+    const setFilter: any = (val: object) => dispatch(newFilter(val))
 
+    const settings = useAppSelector(selectSettings)
+    const setSettings: any = (val: object) => dispatch(newSettings(val))
+
+    const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
+
+    // Redux\
 
     const [rowsName, setRowsName] = useState("Teachers")
     const [selectionsName, setSelectionsName] = useState("Classes")
@@ -59,18 +70,38 @@ const ScheduleBuilder = () => {
     const [isAnimating, setIsAnimating] = useState(false)
     const [autoScroll, setAutoScroll] = useState(true)
 
-    const [isOddEvenAutoAssign, setIsOddEvenAutoAssign] = useState(true)
+    const [isFilterOpen, setIsFilterOpen] = useState(false)
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
 
     // To check for window resize
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
     useEffect(() => {
         function changeDims() {
             setWindowDims([window.innerWidth, window.innerHeight])
+            
         }
+        function selectSearch(event: any) {
+            const input = document.getElementById('search-input');
+            if (!input) {
+                return
+            }
+
+            if (event.key === '/') {
+                event.preventDefault()
+                input.focus();
+            } else if (event.key === 'Escape') {
+                event.preventDefault()
+                input.blur();
+            }
+        }
+
         window.addEventListener('resize', changeDims)
+        document.addEventListener('keydown', selectSearch)
 
         return () => {
             window.removeEventListener('resize', changeDims)
+            document.removeEventListener('keydown', selectSearch)
         }
     }, [])
 
@@ -123,44 +154,6 @@ const ScheduleBuilder = () => {
         }
     }, [rows, originalRowHeights, windowDims])
 
-    // use -1 and null for the last two parameters 
-    // Coresponding row is found via the id
-    const assignOddEven = (columnId: Column["id"], rowIndex?: Row["id"], evenSelection?: Tile) => {
-        // insert_oddeven_row({columnId, rowIndex, evenSelection})
-
-        setRows((() => {
-            let tempRows: Array<Row> = [...rows.map((row, i) => {
-                return {
-                    ...row, 
-                     columns: {
-                        ...row.columns,
-                        [columnId]: row.columns[columnId],
-                        [columnId + '-odd']: row.columns[columnId],
-                        [columnId + '-even']: (evenSelection && i == rowIndex) ? evenSelection : row.columns[columnId]
-                    }
-            }})]
-            
-            return [...tempRows]
-        })())
-
-        setColumns((() => {
-            let tempColumns = [...columns]
-
-            for (let i = 0; i < tempColumns.length; i++) {
-                if (tempColumns[i].id == columnId) {
-                    if (tempColumns[i].oddEven) break;
-
-                    tempColumns.splice(i + 1, 0, {...tempColumns[i], id: tempColumns[i].id + '-even', name: tempColumns[i].name + ' Even', oddEven: true});
-                    tempColumns[i] = {...tempColumns[i], id: tempColumns[i].id + '-odd', name: tempColumns[i].name + ' Odd', oddEven: true};
-                    
-                    break;
-                }
-            }
-
-                return tempColumns
-        })())
-
-    }
 
     const handleDragStart = (draggable: any) => {
         if (draggable.active) {
@@ -211,27 +204,12 @@ const ScheduleBuilder = () => {
                 return
             }
 
-            setRows((() => {
-                // check below for details on these
-                const toChange = draggable.data.current.rowIndex;
-                const columnId = draggable.data.current.columnId
-                let row = {...rows[toChange]}
-
-                // row.columns[columnId] is the selection to change
-                // setting selection of respective row in respective column to none selection
-                // row.columns[columnId] = { name: "none", id: 0 }  
-                row = {
-                    ...row,
-                    columns: {
-                        ...row.columns,
-                        [columnId]: { name: "none", id: 0 }  
-                    }
-                }
-
-                return [...rows.slice(0, toChange), 
-                        row, 
-                        ...rows.slice(toChange + 1)]
-            })())
+            addHistoryState({type: "DELETE_SIMPLE_ROW", 
+                            action: {
+                                columnId: draggable.data.current.columnId, 
+                                toChange: draggable.data.current.rowIndex,
+                                selection: draggable.data.current.selection
+                            }})
 
             return
         }
@@ -250,25 +228,16 @@ const ScheduleBuilder = () => {
                 break;
             }
         }
-
-        if (isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && oddEven === false) {
-            assignOddEven(columnId, toChange, draggable.data.current.selection)
+        
+        if (settings.oddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.oddEvenToggle) {
+            // assignOddEven(columnId, toChange, draggable.data.current.selection)
+            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection}})
             return
         }
 
-        setRows((() => {
-            // pass by value -> cannot return reference, otherwise values will not rerender correctly
-            // Row object to change
-            let row = {...rows[toChange], columns: {...rows[toChange].columns, [columnId]: draggable.data.current.selection }}
-
-            // row.columns[columnId] is the selection to change
-            // setting selection of respective row in respective column to new draggable selection
-            // row.columns[columnId] = draggable.data.current.selection
-
-            return [...rows.slice(0, toChange), 
-                row, 
-                ...rows.slice(toChange + 1)];
-        })())
+        
+        // Sets the row for regular situations
+        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {selection: draggable.data.current.selection, toChange, columnId}})
 
     }
     
@@ -356,15 +325,36 @@ const ScheduleBuilder = () => {
                         <h1 className="title">Master Schedule Builder</h1>
                         <Trash />
                     </div>
+
+                    <UndoRedo />
+
+                    {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
+                    {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
+
                     <div className="toolbar">
                         <ul>
-                            <li className='import-btn'>Import</li>
-                            <li className='export-btn'>Export</li>
-                            <span/><span/>
-                            <li className='search-box'>Search</li>
-                            <li className='filter-btn'><svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg></li>
-                            
-                            <li className='settings' onClick={() => setOpenPopup(<Settings/>)}>
+                            <li className='import-btn rounded-tl-md rounded-bl-md'>Import</li>
+                            <li className='export-btn rounded-tr-md rounded-br-md'>Export</li>
+                            <span/>
+                            <li className='search-box rounded-tl-md rounded-bl-md'><SearchBar searchLocation="rows" /></li>
+                            <li className='search-box rounded-tr-md rounded-br-md'><SearchBar searchLocation='selections'/></li>
+                            <span/>
+
+                            <li className='filter-btn rounded-md' id="filter-btn" onClick={() => setIsFilterOpen((prevIsFilterOpen) => {
+                                if (isSettingsOpen) {
+                                    setIsSettingsOpen(false)
+                                }
+                                return !prevIsFilterOpen
+                            })}>
+                                <svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
+                            </li>
+                    
+                            <li className='settings-btn rounded-md' id="settings-btn" onClick={() => setIsSettingsOpen((prevIsSettingsOpen) => {
+                                if (isFilterOpen) {
+                                    setIsFilterOpen(false)
+                                }
+                                return !prevIsSettingsOpen
+                            })}>
                                 <svg className={(isAnimating ? "animating" : "")} 
                                     onMouseEnter={() => setIsAnimating(true)}
                                     onAnimationEnd={() => setIsAnimating(false)}
@@ -384,8 +374,6 @@ const ScheduleBuilder = () => {
                         <ScheduleTable 
                             activeSelection={activeSelection} 
                             heights={heights}
-                            isOddEvenAutoAssign={isOddEvenAutoAssign}
-                            assignOddEven={assignOddEven}
                              />
                     </div> 
                 </div>

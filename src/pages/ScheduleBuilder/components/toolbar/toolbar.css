@@ -1,11 +1,221 @@
-.settings-popup {
-    border: solid;
-    border-radius: 10px;
+/* Seach box */
+#search-input {
+    resize: none;
+    outline: 0;
+    border: none;
+    background: transparent;
+
+    width: calc(100% - 24px - 1rem);
+    height: 100%;
+    font-size: 1.3rem;
+
+    float: left;
+
+    white-space: nowrap;
+    overflow-x: scroll;
+    text-overflow: ellipsis;
+}
+.erase-search-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-right: 0.25rem;
+    background-color: white;
+    height: 100%;
+    width: calc(24px + 1rem);
+}
+.erase-search-icon svg {
+    float: right;
+    position: 0;
+    top: 0;
+    vertical-align: center;
     height: 100%;
 }
-
-.setting-title {
-    margin-top: 5px;
-    font-size: 2.2rem;
-    text-align: center;
+.erase-search-icon svg:hover {
+    filter: invert(27%) sepia(95%) saturate(6480%) hue-rotate(355deg) brightness(93%) contrast(119%);
+    background-color: transparent;
 }
+
+/* Search Box\ */
+
+/* Settings Dropdown */
+.settings-dropdown::-webkit-scrollbar-thumb:hover {
+    border-right: none;
+}
+.settings-dropdown {
+    position: absolute;
+
+    border: solid;
+    border-radius: 10px;
+
+    height: 23.5rem;
+    width: 25rem;
+    padding: 5px;
+
+    top: 120px;
+    right: calc(max(10vw, 190px) + 0.5rem);
+
+    background-color: white;
+    z-index: 10;
+
+    display: flex;
+    flex-flow: column;
+
+    overflow: auto;
+}
+.settings-dropdown h2{
+    align-self: center;
+
+    padding: 0 20px;
+
+    width: fit-content;
+    border-bottom: solid;
+
+    margin: 5px;
+}
+.settings-elements li {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+}
+.li-switch {
+    transform: scale(0.8);
+    /* Sneaky little adjustment - Works */
+    height: 1px;
+}
+.settings-elements li h4 {
+    display: inline;
+    margin-right: 0;
+}
+
+.color-settings-container {
+    padding: 10px;
+}
+
+.change-colors-btn {
+    cursor: pointer;
+    width: fit-content;
+}
+/* .change-colors-container {
+    margin-bottom: 10px;
+} */
+/* Changing the parameter in parentheses changes the event */
+/* This is the list prior to clicking on it */
+.change-colors-container:not(.trigger) > .change-colors-dropdown > * {
+    visibility: hidden;
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    color: rgba(25,25,25,0);
+    transition: 
+      0.5s 0.1s height,
+      0.5s 0.1s padding,
+      0.5s 0.1s margin,
+      0.3s color,
+      0.6s visibility;
+    z-index: 99;
+}
+/* This is after */
+.change-colors-dropdown > * {
+    overflow: hidden;
+    height: 30px;
+    padding: 1px 0px;
+    background: rgba(0,0,0,0);
+    white-space: nowrap;
+    transition: 
+      0.5s height cubic-bezier(.73,.32,.34,1.5),
+      0.5s padding cubic-bezier(.73,.32,.34,1.5),
+      0.5s margin cubic-bezier(.73,.32,.34,1.5),
+      0.5s 0.2s color,
+      0.2s background-color;
+} 
+
+.color-picker-btn {
+    width: 1rem;
+    height:1rem;
+    margin: 5px;
+    border: solid;
+    border-radius: 5px;
+    cursor: pointer;
+}   
+/* VERY WIERD > CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
+.change-colors-dropdown li input {
+    background-color: white !important;
+    height: 1 !important;
+    padding: 0.08em;
+}
+
+/* \Settings Dropdown */
+
+/* Filter Dropdown */
+.filter-dropdown {
+    position: absolute;
+
+    border: solid;
+    border-radius: 10px;
+
+    height: 19rem;
+    width: 25rem;
+    padding: 5px;
+
+    top: 120px;
+    right: calc(max(10vw, 190px) + 3.7rem);
+
+    background-color: white;
+    z-index: 10;
+
+    display: flex;
+    flex-flow: column;
+}
+.filter-dropdown h2{
+    align-self: center;
+
+    padding: 0 20px;
+
+    width: fit-content;
+    border-bottom: solid;
+
+    margin: 5px;
+}
+
+.filter-selections, .filter-rows {
+    flex: 1;
+}
+.filter-dropdown h3 {
+    margin: auto;
+    width: fit-content;
+    cursor: pointer;
+}
+
+.filter-elements li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.filter-elements li h3 {
+    display: inline;
+    margin: 10px;
+}
+
+/* Undo */
+.undoredo-container {
+    position: absolute;
+    margin: 10px;
+}
+.undoredo-container svg {
+    margin: 3px;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+.undoredo-container svg:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.09);
+}
+
+.btn-disabled {
+    color: gray;
+    fill: gray !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+}
+/* \Undo */

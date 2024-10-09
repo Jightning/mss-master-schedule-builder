@@ -1,29 +1,70 @@
-import { createSlice, current  } from '@reduxjs/toolkit'
+import { createSlice  } from '@reduxjs/toolkit'
 import {
     Column,
     Row,
     Selection,
-    Tile
+    Filter,
+    Settings,
+    ScheduleBuilderAction
 } from "@/types"
+import { modifyRows, Invert } from "./Utilities"
+
 
 interface InitialStateType {
+    filterLocation: string,
+    settings: Settings,
+    filter: Filter
     rows: Array<Row>,
     columns: Array<Column>,
-    selections: Array<Selection>
+    selections: Array<Selection>,
+    history: Array<ScheduleBuilderAction>,
+    settingsHistory: Array<Settings & {step: number}>,
+    currentStep: number
+}
+
+const defaultSelection = { name: "none", subject: "none", id: 0 }
+const modelChangeRecordObject = {action: "PUSH"}
+
+const defaultSettings: Settings = {
+    oddEvenToggle: true,
+    oddEvenAutoAssign: true,
+    subjectLimit: true,
+    copySelection: true,
+    colorSelectionSubjects: false,
+    colorRowSubjects: false,
+    colors: {
+        "math": "#FF0000",
+        "science": "#00FF00",
+        "english": "#ffff1a"
+    }
 }
 
 const initialState: InitialStateType = 
 {
+    filterLocation: "rows",
+    settings: defaultSettings,
+    filter: {
+        selections: {
+            searchTerm: "",
+            subjects: []
+        },
+        rows: {
+            searchTerm: "",
+            subjects: []
+        }
+    },
     rows: [
-        { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "B. Teacher", subject: "math", id: 10324, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "C. Teacher", subject: "math", id: 10395, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "D. Teacher", subject: "math", id: 10396, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "E. Teacher", subject: "math", id: 10397, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "F. Teacher", subject: "math", id: 10398, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "G. Teacher", subject: "math", id: 10399, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
-        { name: "I. Teacher", subject: "math", id: 10349, columns: {"period_1": {name: "none", id:0 }, "period_2": {name: "none", id:0 }, "period_3": {name: "none", id:0 }, "period_4": {name: "none", id:0 }, "period_5": {name: "none", id:0 }, "period_6": {name: "none", id:0 }, "period_7": {name: "none", id:0 }, "period_8": {name: "none", id:0 }, "period_9": {name: "none", id:0 }} },
+        { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "B. Teacher", subject: "science", id: 10324, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "CB. Teacher", subject: "english", id: 101101, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "C. Teacher", subject: "math", id: 10395, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "D. Teacher", subject: "science", id: 10396, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "Mrs. Dedededededadsashfauifbasufas", subject: "math", id: 103446, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "E. Teacher", subject: "math", id: 10397, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "F. Teacher", subject: "math", id: 10398, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "G. Teacher", subject: "english", id: 10399, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "I. Teacher", subject: "english", id: 10349, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     ],
     columns: [
         { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
@@ -37,54 +78,67 @@ const initialState: InitialStateType =
         { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
     ],
     selections: [
-        { name: "Comp Sci", id: 33437 },
-        { name: "AP Physics 1", id: 3343855 },
-        { name: "AP Physics 2", id: 334348 },
-        { name: "AP Physics 3", id: 3343238 },
-        { name: "AP Physics 4", id: 3343328 },
-        { name: "AP Physics 5", id: 3343548 },
-        { name: "AP Physics 6", id: 3343068 },
-        { name: "AP Physics 7", id: 334398 },
-        { name: "AP Physics 8", id: 334868 },
-        { name: "AP Physics 9", id: 334548 },
-        { name: "A", id: 130039239 },
-        { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", id: 332448 },
-        { name: "AP Physics 11", id: 33443 },
-        { name: "AP Physics 12", id: 33428 },
-        { name: "AP Physics 13", id: 33438 },
-        { name: "AP Physics 14", id: 33238 },
-        { name: "AP Physics 15", id: 324238 },
-        { name: "AP Physics 16", id: 33644238 },
-        { name: "AP Physics 17", id: 33425693832 },
-        { name: "AP Physics 18", id: 3342385471},
-        { name: "AP Physics 19", id: 3342342532812 },
-        { name: "AP Physics 20", id: 33423064223228 },
-        { name: "AP Physics 21", id: 3342934228054 },
-        { name: "AP Physics 22", id: 334623422807 },
-        { name: "AP Physics 23", id: 3342342285708 },
-        { name: "AP Physics 24", id: 3342342228 },
-        { name: "AP Physics 25", id: 334234282234 },
-        { name: "AP Physics 26", id: 3342342854 },
-        { name: "AP Physics 27", id: 3342322876 },
-        { name: "AP Physics 28", id: 3342422818 },
-        { name: "AP Physics 29", id: 3342422828 },
-        { name: "AP Physics 30", id: 3342422838 },
-        { name: "AP Physics 31", id: 332422848 },
-        { name: "AP Physics 32", id: 3342422858 },
-        { name: "AP Physics 33", id: 33424228786 },
-        { name: "AP Physics 34", id: 3342422868 },
-        { name: "AP Physics 35", id: 3342422878 },
-        { name: "AP Physics 36", id: 3342422888 },
-        { name: "AP Physics 37", id: 3342422898 },
-        { name: "AP Physics 38", id: 33424228108 },
-        { name: "AP Physics 39", id: 33424228118 }
-    ]
+        { name: "Comp Sci", subject: "math", id: 33437 },
+        { name: "AP Physics 1", subject: "science", id: 3343855 },
+        { name: "AP Physics 2", subject: "science", id: 334348 },
+        { name: "AP Physics 3", subject: "science", id: 3343238 },
+        { name: "AP Physics 4", subject: "science", id: 3343328 },
+        { name: "AP Physics 5", subject: "science", id: 3343548 },
+        { name: "AP Physics 6", subject: "science", id: 3343068 },
+        { name: "AP Physics 7", subject: "science", id: 334398 },
+        { name: "AP Physics 8", subject: "science", id: 334868 },
+        { name: "AP Physics 9", subject: "science", id: 334548 },
+        { name: "A", subject: "english", id: 130039239 },
+        { name: "AP Physics 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", subject: "science", id: 332448 },
+        { name: "AP Physics 11", subject: "science", id: 33443 },
+        { name: "AP Physics 12", subject: "science", id: 33428 },
+        { name: "AP Physics 13", subject: "science", id: 33438 },
+        { name: "AP Physics 14", subject: "science", id: 33238 },
+        { name: "AP Physics 15", subject: "science", id: 324238 },
+        { name: "AP Physics 16", subject: "science", id: 33644238 },
+        { name: "AP Physics 17", subject: "science", id: 33425693832 },
+        { name: "AP Physics 18", subject: "science", id: 3342385471},
+        { name: "AP Physics 19", subject: "science", id: 3342342532812 },
+        { name: "AP Physics 20", subject: "science", id: 33423064223228 },
+        { name: "AP Physics 21", subject: "science", id: 3342934228054 },
+        { name: "AP Physics 22", subject: "science", id: 334623422807 },
+        { name: "AP Physics 23", subject: "science", id: 3342342285708 },
+        { name: "AP Physics 24", subject: "science", id: 3342342228 },
+        { name: "AP Physics 25", subject: "science", id: 334234282234 },
+        { name: "AP Physics 26", subject: "science", id: 3342342854 },
+        { name: "AP Physics 27", subject: "science", id: 3342322876 },
+        { name: "AP Physics 28", subject: "science", id: 3342422818 },
+        { name: "AP Physics 29", subject: "science", id: 3342422828 },
+        { name: "AP Physics 30", subject: "science", id: 3342422838 },
+        { name: "AP Physics 31", subject: "science", id: 332422848 },
+        { name: "AP Physics 32", subject: "science", id: 3342422858 },
+        { name: "AP Physics 33", subject: "science", id: 33424228786 },
+        { name: "AP Physics 34", subject: "science", id: 3342422868 },
+        { name: "AP Physics 35", subject: "science", id: 3342422878 },
+        { name: "AP Physics 36", subject: "science", id: 3342422888 },
+        { name: "AP Physics 37", subject: "science", id: 3342422898 },
+        { name: "AP Physics 38", subject: "science", id: 33424228108 },
+        { name: "AP Physics 39", subject: "science", id: 33424228118 }
+    ],
+    history: [],
+    settingsHistory: [{...defaultSettings, step: -1}],
+    currentStep: -1
 }
 
 export const scheduleDataSlice = createSlice({
     name: 'Schedule Data',
     initialState,
     reducers: {
+        newFilterLocation: (state, action) => {
+            state.filterLocation = action.payload
+        },
+        newSettings: (state, action) => {
+            state.settings = action.payload
+            state.settingsHistory.push({...state.settings, step: state.currentStep})
+        },
+        newFilter: (state, action) => {
+            state.filter = action.payload
+        },
         newRows: (state, action) => {
             state.rows = action.payload
         },
@@ -93,11 +147,68 @@ export const scheduleDataSlice = createSlice({
         },
         newSelections: (state, action) => {
             state.selections = action.payload
+        },    
+        // History Reducers    
+        // I'm sorry
+        // I'm really sorry, you can't even debug this with a regular debugger
+        addState: (state, action: {payload: ScheduleBuilderAction}) => {
+
+            // Kinda scuffed, try to find a better alternative
+            const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
+            state.rows = modifications.rows
+            state.columns = modifications.columns
+
+            state.history = [...state.history.slice(0, state.currentStep + 1)]
+            state.history.push(action.payload)
+            state.currentStep = state.history.length - 1
+
+            state.settingsHistory = [...state.settingsHistory.slice(0, state.currentStep + 1)]
+        },
+        // BUG:
+        // 1. When splitting evenodd and then adding one element and undoing, the element is removed completely and not replaced
+        // with the previous one
+        undoState(state) {
+            if (state.currentStep >= 0) {
+
+                const currentState = state.history[state.currentStep]
+                const type = Invert(currentState.type)
+
+                const modifications = modifyRows(
+                    {
+                        type, action: {
+                            ...currentState.action, 
+                            isUndo: true, 
+                            prevAction: {...state.history[state.currentStep - 1]}
+                        }
+                    }, 
+                    state.rows, state.columns, state.settings)
+
+                state.rows = modifications.rows
+                state.columns = modifications.columns
+
+                state.currentStep--;
+            }
+        },
+        redoState(state) {
+            if (state.currentStep < state.history.length - 1) {
+                state.currentStep++;
+                const currentState = state.history[state.currentStep]
+
+                const modifications = modifyRows(currentState, state.rows, state.columns, state.settings)
+                state.rows = modifications.rows
+                state.columns = modifications.columns
+            }
+        },
+        resetHistory(state) {
+            state.history = [];
+            state.settingsHistory = []
+            state.currentStep = -1;
         },
     },
 })
 
-export const { newRows, newColumns, newSelections } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newFilterLocation, newFilter, newSettings } = scheduleDataSlice.actions
+export const { addState, undoState, redoState, resetHistory } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -105,5 +216,24 @@ export const { newRows, newColumns, newSelections } = scheduleDataSlice.actions
 export const selectRows = (state: { scheduleData: { rows: Array<Row> } }) => state.scheduleData.rows
 export const selectColumns = (state: { scheduleData: { columns: Array<Column> }}) => state.scheduleData.columns
 export const selectSelections = (state: { scheduleData: { selections: Array<Selection> }}) => state.scheduleData.selections
+
+export const selectFilterLocation = (state: { scheduleData: { filterLocation: string } }) => state.scheduleData.filterLocation
+export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
+export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
+
+export const selectCurrentStep = (state: { scheduleData: { currentStep: number } }) => state.scheduleData.currentStep
+export const selectHistory = (state: { scheduleData: { history: Array<ScheduleBuilderAction> } }) => state.scheduleData.history
+
+export const getRowSubjects = (state: { scheduleData: { rows: Array<Row> }}) => {
+    let subjects: Set<string> = new Set([])
+    let rows: Array<Row> = state.scheduleData.rows
+
+    for (let i in rows) {
+        subjects.add(rows[i].subject)
+    }
+
+    return Array.from(subjects)
+}
+
 
 export default scheduleDataSlice.reducer

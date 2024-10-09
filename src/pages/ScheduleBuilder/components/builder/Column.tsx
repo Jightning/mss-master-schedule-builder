@@ -4,16 +4,14 @@ import Selection from './Selection'
 import { 
     Column as ColumnInterface, 
     Row,
-    Selection as SelectionInterface,
     ActiveSelectionInterface
 } from '@/types'
 import { DragOverlay } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 
 import { newRows } from '@/lib/features/ScheduleDataSlice';
-import { useAppDispatch } from '@/lib/hooks';
-import { selectRows } from '@/lib/features/ScheduleDataSlice';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { selectRows, selectFilter } from '@/lib/features/ScheduleDataSlice';
 
 const Column = (props: {
     activeSelection: ActiveSelectionInterface | null, 
@@ -24,7 +22,8 @@ const Column = (props: {
 
     const rows: Array<Row> = useAppSelector(selectRows)
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
-    
+
+    const filter = useAppSelector(selectFilter)
 
     return (
         <div>  
@@ -51,6 +50,10 @@ const Column = (props: {
                         setRows([...rows])
                     }        
                 }, [isOver])
+
+                if ((filter.rows.searchTerm !== "" && !(row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
+                    || (filter.rows.subjects.length !== 0 && !(filter.rows.subjects).includes(row.subject)))
+                    return <></>
 
                 return (
                     <div
