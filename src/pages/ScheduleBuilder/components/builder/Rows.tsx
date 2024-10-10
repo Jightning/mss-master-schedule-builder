@@ -32,7 +32,7 @@ const Rows = (
                     style={{
                         height: `${props.heights[index]}px`,
                         // color: props.activeSelection?.currentRowIndex == index ? "blue" : "black"
-                        color: settings.colorRowSubjects ? settings.colors[row.subject] : "black"
+                        color: settings.isColorRowSubjects ? settings.colors[row.subject] : "black"
                     }}>
                         <p>{row.name}</p>
                 </div> : <></>

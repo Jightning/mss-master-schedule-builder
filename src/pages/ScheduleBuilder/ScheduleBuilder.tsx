@@ -231,7 +231,7 @@ const ScheduleBuilder = () => {
             }
         }
         
-        if (settings.oddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.oddEvenToggle) {
+        if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
             // assignOddEven(columnId, toChange, draggable.data.current.selection)
             addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection}})
             return

@@ -56,22 +56,22 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
         switch (type) {
             case "evenodd":
                 // I know it's wierd, but for some reason setting it prior won't work so bear with me
-                setSettings({...{...settings, oddEvenToggle: !settings.oddEvenToggle}, ...(settings.oddEvenToggle ? {oddEvenAutoAssign: false} : {})})
+                setSettings({...{...settings, isOddEvenToggle: !settings.isOddEvenToggle}, ...(settings.isOddEvenToggle ? {isOddEvenAutoAssign: false} : {})})
 				return
             case "evenodd-autosplit":   
-				setSettings({...settings, oddEvenAutoAssign: !settings.oddEvenAutoAssign})
+				setSettings({...settings, isOddEvenAutoAssign: !settings.isOddEvenAutoAssign})
                 break
-            case "subject-limit":
-                setSettings({...settings, subjectLimit: !settings.subjectLimit})
+            case "has-subject-limit":
+                setSettings({...settings, hasSubjectLimit: !settings.hasSubjectLimit})
                 break
             case "copy-selection":
-                setSettings({...settings, copySelection: !settings.copySelection})
+                setSettings({...settings, isCopySelection: !settings.isCopySelection})
                 break
             case "color-column-subjects":
-                setSettings({...settings, colorSelectionSubjects: !settings.colorSelectionSubjects})
+                setSettings({...settings, isColorSelectionSubjects: !settings.isColorSelectionSubjects})
                 break
             case "color-row-subjects":
-                setSettings({...settings, colorRowSubjects: !settings.colorRowSubjects})
+                setSettings({...settings, isColorRowSubjects: !settings.isColorRowSubjects})
                 break
         }
     }
@@ -88,30 +88,40 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
             <ul className="settings-elements">
                 <li className='border-solid rounded-lg'>
                     <li>
-                        <h4>Odd/Even:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd")} disabled={checkOddEven()} checked={settings.oddEvenToggle} /></div>
+                        <h4>Odd/Even:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd")} disabled={checkOddEven()} checked={settings.isOddEvenToggle} /></div>
                     </li>
                     <li>
-                        <h4>Autoassign:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd-autosplit")} disabled={!settings.oddEvenToggle} checked={settings.oddEvenAutoAssign} /></div>
-                    </li>
-                </li>
-                <li className='border-solid rounded-lg'>
-                    <li>
-                        <h4>Subject Limit: </h4><div className="li-switch"><Switch onChange={() => toggle("subject-limit")} checked={settings.subjectLimit} /></div>
+                        <h4>Autoassign:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd-autosplit")} disabled={!settings.isOddEvenToggle} checked={settings.isOddEvenAutoAssign} /></div>
                     </li>
                 </li>
                 <li className='border-solid rounded-lg'>
                     <li>
-                        <h4>Copy Selection: </h4><div className="li-switch"><Switch onChange={() => toggle("copy-selection")} checked={settings.copySelection} /></div>
+                        <h4>Subject Limit: </h4><div className="li-switch"><Switch onChange={() => toggle("has-subject-limit")} checked={settings.hasSubjectLimit} /></div>
+                        <input
+                            className="number-input"
+                            type="number"
+                            value={settings.hasSubjectLimit ? settings.subjectLimit : 0}
+                            onChange={(e) => {
+                                if (!settings.hasSubjectLimit) return 
+                                const newLimit = parseInt(e.target.value)
+                                setSettings({...settings, subjectLimit: isNaN(newLimit) ? 0 : newLimit})
+                            }}
+                            min='0'/>
+                    </li>
+                </li>
+                <li className='border-solid rounded-lg'>
+                    <li>
+                        <h4>Copy Selection: </h4><div className="li-switch"><Switch onChange={() => toggle("copy-selection")} checked={settings.isCopySelection} /></div>
                     </li>
                 </li>
                 <li className='color-settings-container border-solid rounded-lg flex-col'>
                     <h4>Color</h4>
                     <div className='flex flex-row justify-center'>
                         <li>
-                            <h4>{props.rowsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.colorRowSubjects} /></div>
+                            <h4>{props.rowsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.isColorRowSubjects} /></div>
                         </li>
                         <li>
-                            <h4>{props.selectionsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.colorSelectionSubjects} /></div>
+                            <h4>{props.selectionsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.isColorSelectionSubjects} /></div>
                         </li>
                     </div>
                     

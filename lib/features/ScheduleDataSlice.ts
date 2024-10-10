@@ -26,12 +26,13 @@ const defaultSelection = { name: "none", subject: "none", id: 0 }
 const modelChangeRecordObject = {action: "PUSH"}
 
 const defaultSettings: Settings = {
-    oddEvenToggle: true,
-    oddEvenAutoAssign: true,
-    subjectLimit: true,
-    copySelection: false,
-    colorSelectionSubjects: false,
-    colorRowSubjects: false,
+    isOddEvenToggle: true,
+    isOddEvenAutoAssign: true,
+    hasSubjectLimit: true,
+    subjectLimit: 4,
+    isCopySelection: false,
+    isColorSelectionSubjects: false,
+    isColorRowSubjects: false,
     colors: {
         "math": "#FF0000",
         "science": "#00FF00",
@@ -54,17 +55,17 @@ const initialState: InitialStateType =
         }
     },
     rows: [
-        { name: "A. Teacher", subject: "math", id: 10394, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "B. Teacher", subject: "science", id: 10324, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "CB. Teacher", subject: "english", id: 101101, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "C. Teacher", subject: "math", id: 10395, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "D. Teacher", subject: "science", id: 10396, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "Mrs. Dedededededadsashfauifbasufas", subject: "math", id: 103446, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "E. Teacher", subject: "math", id: 10397, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "F. Teacher", subject: "math", id: 10398, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "G. Teacher", subject: "english", id: 10399, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "H. Teacher", subject: "math", id: 10320, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
-        { name: "I. Teacher", subject: "english", id: 10349, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "A. Teacher", subject: "math", id: 10394, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "B. Teacher", subject: "science", id: 10324, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "CB. Teacher", subject: "english", id: 101101, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "C. Teacher", subject: "math", id: 10395, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "D. Teacher", subject: "science", id: 10396, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "Mrs. Dedededededadsashfauifbasufas", subject: "math", id: 103446, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "E. Teacher", subject: "math", id: 10397, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "F. Teacher", subject: "math", id: 10398, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "G. Teacher", subject: "english", id: 10399, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "H. Teacher", subject: "math", id: 10320, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
+        { name: "I. Teacher", subject: "english", id: 10349, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     ],
     columns: [
         { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
@@ -134,8 +135,6 @@ export const scheduleDataSlice = createSlice({
         },
         newSettings: (state, action) => {
             state.settings = action.payload
-            // Has to be its own step
-            state.currentStep += 1
             state.settingsHistory.push({...state.settings, step: state.currentStep})
         },
         newFilter: (state, action) => {
@@ -154,12 +153,22 @@ export const scheduleDataSlice = createSlice({
         // I'm sorry
         // I'm really sorry, you can't even debug this with a regular debugger
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
-
             // Kinda scuffed, try to find a better alternative
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
             }
+
+            let selectionCount = 0
+
+            const columns = modifications.rows[action.payload.action.toChange]?.columns
+            for (const val in columns) {
+                console.log({...columns[val]}, val)
+                if (columns[val].id !== 0) {
+                    selectionCount += 1
+                }
+            }
+            console.log(selectionCount)
 
             state.rows = modifications.rows
             state.columns = modifications.columns
@@ -175,13 +184,19 @@ export const scheduleDataSlice = createSlice({
         // with the previous one
         undoState(state) {
             if (state.currentStep >= 0) {
-
-                const currentState = state.history[state.currentStep]
-                const type = Invert(currentState.type)
                 // Get the latest setting
                 const setting = [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
-                    return setting.step <= state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
+                    return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
                 })
+                // 1 2 3 4
+                const currentState = state.history[state.currentStep]
+                console.log(state.currentStep)
+                state.history.map((val) => {
+                    console.log(val.type)
+                    console.log({...val.action})
+                })
+
+                const type = Invert(currentState.type)
 
                 const modifications = modifyRows(
                     {
@@ -202,12 +217,13 @@ export const scheduleDataSlice = createSlice({
         redoState(state) {
             if (state.currentStep < state.history.length - 1) {
                 state.currentStep++;
-                const currentState = state.history[state.currentStep]
 
                 // Get the latest setting
                 const setting = [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
-                    return setting.step <= state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
+                    return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
                 })
+                
+                const currentState = state.history[state.currentStep]
 
                 const modifications = modifyRows(currentState, state.rows, state.columns, setting)
                 state.rows = modifications.rows
