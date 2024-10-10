@@ -21,23 +21,22 @@ export const modifyRows = (
     rows: Array<Row>, 
     columns: Array<Column>, 
     settings: Settings
-): { rows: Array<Row>, columns: Array<Column> } => {
+): { rows: Array<Row>, columns: Array<Column>, failed?: boolean } => {
+    // Default selection for blank spaces
+    let defaultSelection: Selection = { name: "none", subject: "none", id: 0 }
+
     switch (type) {
         case "PATCH_SIMPLE_ROW":
-            return {rows: [...rows.slice(0, action.toChange), 
-                    {
-                        ...rows[action.toChange], 
-                        columns: 
-                                {
-                                    ...rows[action.toChange].columns, 
-                                    [action.columnId]: action.selection 
-                                }
-                    }, 
-                    ...rows.slice(action.toChange + 1)], columns};
+            let newRowArray = addSelection(rows, action.toChange, action.columnId, action.selection)
 
-        case "DELETE_SIMPLE_ROW":
-            let defaultSelection: Selection = {name: "none", subject: "none", id: 0 }
-            
+            if (!settings.copySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
+                // Deleting old selection 
+                newRowArray = removeSelection(newRowArray, action.prevToChange, action.prevColumnId, defaultSelection)
+            }
+
+            return {rows: newRowArray, columns: columns};
+
+        case "DELETE_SIMPLE_ROW":            
             let row: any = {...rows[action.toChange]}
 
             // For the undo
@@ -52,17 +51,15 @@ export const modifyRows = (
                     defaultSelection = action.prevAction.action.selection
                 }
             }
+
+            let tempRowArray = removeSelection(rows, action.toChange, action.columnId, defaultSelection)
+
+            if (!settings.copySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
+                // Adding old selection back (ONLY FOR UNDO)
+                tempRowArray = addSelection(tempRowArray, action.prevToChange, action.prevColumnId, action.selection)
+            }
     
-            return {rows: [...rows.slice(0, action.toChange), 
-                    {
-                        ...row,
-                        columns: {
-                            ...row.columns,
-                            [action.columnId]: defaultSelection
-                        }
-                    }, 
-                    ...rows.slice(action.toChange + 1)
-            ], columns}
+            return {rows: tempRowArray, columns}
         case "PATCH_EVEN_ODD":
             return assignOddEven(rows, columns, settings, action)
         case "DELETE_EVEN_ODD":
@@ -71,6 +68,32 @@ export const modifyRows = (
             return {rows, columns}
     }
 }   
+
+const addSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], selection: Selection) => {
+    return [...rows.slice(0, toChange), 
+        {
+            ...rows[toChange], 
+            columns: 
+                    {
+                        ...rows[toChange].columns, 
+                        [columnId]: selection 
+                    }
+        }, 
+        ...rows.slice(toChange + 1)]
+}
+
+const removeSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], defaultSelection: Selection) => {    
+    return [...rows.slice(0, toChange), 
+        {
+            ...rows[toChange],
+            columns: {
+                ...rows[toChange].columns,
+                [columnId]: defaultSelection
+            }
+        }, 
+        ...rows.slice(toChange + 1)
+    ]
+} 
 
 // use -1 and null for the last two parameters 
 // Coresponding row is found via the id
@@ -122,7 +145,7 @@ const removeEvenOdd = (
     rows: Array<Row>, 
     columns: Array<Column>, 
     { columnId, isUndo }: { columnId: Column["id"], isUndo?: boolean }
-): {rows: Array<Row>, columns: Array<Column>}  => {
+): {rows: Array<Row>, columns: Array<Column>, failed?: boolean}  => {
     // Removing evenodd from each row in that specific column
 
     let tempRows = [...rows]
@@ -130,7 +153,7 @@ const removeEvenOdd = (
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].columns[columnId + '-odd'].id !== rows[i].columns[columnId + '-even'].id && !isUndo) {
             // Missmatched even odd -> early termination to ensure data isn't erased by mistake
-            return { rows, columns }
+            return { rows, columns, failed: true }
         }
 
         tempRows = [

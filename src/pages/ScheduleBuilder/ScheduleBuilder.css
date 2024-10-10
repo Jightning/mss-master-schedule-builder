@@ -403,54 +403,6 @@ img {
 
 /* \Selections Column */
 
-/* Trashcan */
-.trash {
-    position: absolute;
-    right: max(11vw, 210px);
-    top: 0.6rem;
-    height: 4rem;
-}
-.trash-lid, .trash-base {
-    filter: drop-shadow(2px 2px red);
-    
-    display: flex;
-}
-.trash-base {
-    /* top: 1.5rem; */
-    position: relative;
-    bottom: -0.5vh;
-    height: 2.5rem;
-}
-.trash-lid {
-    position: relative;
-    right: -0.12rem;
-    width: 2.5rem;
-    animation: close-lid 0.5s;
-
-}
-.trash .lifting-lid {
-    animation: lift-lid 0.5s !important;
-
-    transform: rotate(45deg) translate(1.25rem, -1.25rem)
-}
-@keyframes lift-lid {
-    from {transform: rotate(0deg) translate(0, 0)}
-    to {transform: rotate(45deg) translate(1.25rem, -1.25rem)};
-}
-@keyframes close-lid {
-    from {transform: rotate(45deg) translate(1.25rem, -1.25rem)};
-    to {transform: rotate(0deg) translate(0, 0)}
-}
-@media (max-width: 890px) {
-    .trash-lid {
-        display: none;
-    }
-    .title {
-        display: none;
-    }
-}
-/* \Trashcan */
-
 /* Covers */
 
 .selections-drop-cover {

@@ -219,3 +219,108 @@
     box-shadow: none !important;
 }
 /* \Undo */
+
+/* Trashcan */
+.trash {
+    position: absolute;
+    right: max(11vw, 210px);
+    top: 0.6rem;
+    height: 4rem;
+}
+.trash-lid, .trash-base {
+    filter: drop-shadow(2px 2px red);
+    
+    display: flex;
+}
+.trash-base {
+    /* top: 1.5rem; */
+    position: relative;
+    bottom: -0.5vh;
+    height: 2.5rem;
+}
+.trash-lid {
+    position: relative;
+    right: -0.12rem;
+    width: 2.5rem;
+    animation: close-lid 0.5s;
+
+}
+.trash .lifting-lid {
+    animation: lift-lid 0.5s !important;
+
+    transform: rotate(45deg) translate(1.25rem, -1.25rem)
+}
+@keyframes lift-lid {
+    from {transform: rotate(0deg) translate(0, 0)}
+    to {transform: rotate(45deg) translate(1.25rem, -1.25rem)};
+}
+@keyframes close-lid {
+    from {transform: rotate(45deg) translate(1.25rem, -1.25rem)};
+    to {transform: rotate(0deg) translate(0, 0)}
+}
+@media (max-width: 890px) {
+    .trash-lid {
+        display: none;
+    }
+    .title {
+        display: none;
+    }
+}
+/* \Trashcan */
+
+/* Context Menu */
+
+.context-menu-container {
+    border: solid;
+    width: 6rem;
+    height: max(15rem, fit-content);
+    background-color: #c2ceff;
+    border-radius: 5px;
+    z-index: 10000;
+    display: flex;
+    flex-flow: column;
+}
+.context-menu-delete {
+    background-color: #ffa6a6;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    border-radius: 10px;
+}
+.context-menu-delete::after {
+    border-radius: 10px !important;
+}
+.context-menu-delete p {
+    margin: auto;
+    width: fit-content;
+}
+
+.information-section {
+    border: solid;
+    border-radius: 10px;
+
+    background-color: #d7dfff;
+
+    margin-top: 5px;
+    width: 100%;
+    flex-grow: 1;
+}
+.info-name {
+    border: solid;
+    border-radius: 10px;
+    margin: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-break: break-word;
+
+    background-color: #c7d2ff;
+
+}
+.info-subject {
+    margin: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-break: break-word;
+}
+
+/* \Context Menu */
