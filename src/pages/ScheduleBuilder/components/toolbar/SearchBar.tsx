@@ -1,6 +1,7 @@
 import { selectFilterLocation, selectFilter, newFilter, newRows, selectRows } from '@/lib/features/ScheduleDataSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { Filter, Row } from '@/types'
+import { useEffect } from 'react'
 
 const SearchBar = ({ searchLocation }: { searchLocation: string }) => {
     const dispatch = useAppDispatch()
@@ -12,6 +13,16 @@ const SearchBar = ({ searchLocation }: { searchLocation: string }) => {
 
     const rows = useAppSelector<Array<Row>>(selectRows)
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
+
+    useEffect(() => {
+        const searchBar = document.getElementById('search-input');
+
+        searchBar?.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && (event.key === 'z' || event.key === "y")) {
+            event.preventDefault();
+        }
+        });
+    })
 
     const handleChange = (e: any) => {
         // V-V. 

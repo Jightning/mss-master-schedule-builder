@@ -13,6 +13,7 @@ import { selectRows, selectColumns, selectFilter, selectSettings, addState } fro
 import { useAppSelector } from '@/lib/hooks';
 
 
+
 const ScheduleTable = (props: {
     heights: Array<number>,
     activeSelection: ActiveSelectionInterface | null,
@@ -43,10 +44,6 @@ const ScheduleTable = (props: {
         }
 
         if (columns[index].oddEven) {
-            // removeEvenOdd(id)
-            // rows.map((row) => {
-            //     console.log({...row})
-            // })
             let type = id.toString().substring(id.toString().length - 3, id.toString().length)
             if (type === "odd") {
                 id = id.toString().substring(0, id.toString().length - 4)
@@ -57,10 +54,6 @@ const ScheduleTable = (props: {
             addHistoryState({type: "DELETE_EVEN_ODD", action: {columnId: id}})
 
         } else {
-            // assignOddEven(id)
-            // rows.map((row) => {
-            //     console.log({...row})
-            // })
             addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId: id}})
         }
     }

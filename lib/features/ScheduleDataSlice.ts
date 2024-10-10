@@ -13,7 +13,7 @@ import { modifyRows, Invert } from "./Utilities"
 interface InitialStateType {
     filterLocation: string,
     settings: Settings,
-    filter: Filter
+    filter: Filter,
     rows: Array<Row>,
     columns: Array<Column>,
     selections: Array<Selection>,
@@ -29,7 +29,7 @@ const defaultSettings: Settings = {
     oddEvenToggle: true,
     oddEvenAutoAssign: true,
     subjectLimit: true,
-    copySelection: true,
+    copySelection: false,
     colorSelectionSubjects: false,
     colorRowSubjects: false,
     colors: {
@@ -134,6 +134,8 @@ export const scheduleDataSlice = createSlice({
         },
         newSettings: (state, action) => {
             state.settings = action.payload
+            // Has to be its own step
+            state.currentStep += 1
             state.settingsHistory.push({...state.settings, step: state.currentStep})
         },
         newFilter: (state, action) => {
@@ -155,6 +157,10 @@ export const scheduleDataSlice = createSlice({
 
             // Kinda scuffed, try to find a better alternative
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
+            if (modifications.failed) {
+                return
+            }
+
             state.rows = modifications.rows
             state.columns = modifications.columns
 
@@ -172,6 +178,10 @@ export const scheduleDataSlice = createSlice({
 
                 const currentState = state.history[state.currentStep]
                 const type = Invert(currentState.type)
+                // Get the latest setting
+                const setting = [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
+                    return setting.step <= state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
+                })
 
                 const modifications = modifyRows(
                     {
@@ -181,7 +191,7 @@ export const scheduleDataSlice = createSlice({
                             prevAction: {...state.history[state.currentStep - 1]}
                         }
                     }, 
-                    state.rows, state.columns, state.settings)
+                    state.rows, state.columns, setting)
 
                 state.rows = modifications.rows
                 state.columns = modifications.columns
@@ -194,7 +204,12 @@ export const scheduleDataSlice = createSlice({
                 state.currentStep++;
                 const currentState = state.history[state.currentStep]
 
-                const modifications = modifyRows(currentState, state.rows, state.columns, state.settings)
+                // Get the latest setting
+                const setting = [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
+                    return setting.step <= state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
+                })
+
+                const modifications = modifyRows(currentState, state.rows, state.columns, setting)
                 state.rows = modifications.rows
                 state.columns = modifications.columns
             }
@@ -203,7 +218,7 @@ export const scheduleDataSlice = createSlice({
             state.history = [];
             state.settingsHistory = []
             state.currentStep = -1;
-        },
+        }
     },
 })
 

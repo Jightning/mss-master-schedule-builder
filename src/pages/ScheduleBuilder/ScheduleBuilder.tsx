@@ -1,5 +1,7 @@
-import React, { useState, useEffect, ReactNode } from 'react'
+import React, { useState, useEffect, ReactNode, useRef } from 'react'
+
 import "./ScheduleBuilder.css"
+
 import { 
     DndContext,
     DragOverlay,
@@ -8,7 +10,7 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 import { useDraggable as useDraggableScroll } from "react-use-draggable-scroll";
-import { useRef } from 'react';
+
 
 import Rows from './components/builder/Rows'
 import ScheduleTable from './components/builder/ScheduleTable'
@@ -24,7 +26,7 @@ import {
 import Settings from './components/toolbar/Settings';
 
 import Popup from '../../components/Popup';
-import Trash from './components/builder/Trash';
+import Trash from './components/toolbar/Trash';
 import Cover from './components/builder/Cover';
 import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
@@ -57,7 +59,7 @@ const ScheduleBuilder = () => {
 
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
-    // Redux\
+    // \Redux\
 
     const [rowsName, setRowsName] = useState("Teachers")
     const [selectionsName, setSelectionsName] = useState("Classes")
@@ -234,10 +236,13 @@ const ScheduleBuilder = () => {
             addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection}})
             return
         }
-
+        console.log(draggable)
         
         // Sets the row for regular situations
-        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {selection: draggable.data.current.selection, toChange, columnId}})
+        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {selection: draggable.data.current.selection, 
+                                                           toChange, columnId,
+                                                            prevToChange: draggable.data.current.rowIndex,
+                                                            prevColumnId: draggable.data.current.columnId}})
 
     }
     

@@ -57,9 +57,12 @@ export type ScheduleBuilderAction = {
     type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD",
     action: {
         columnId: Column["id"],
+        toChange: number,
+        prevColumnId: Column["id"],
+        prevToChange?: number,
         isUndo: boolean,
         prevAction: any,
-        toChange: number,
-        selection: Selection
+        selection: Selection,
+
     },
 }
