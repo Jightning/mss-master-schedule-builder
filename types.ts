@@ -45,8 +45,8 @@ export interface Filter {
 export interface Settings {
     isOddEvenToggle: boolean,
     isOddEvenAutoAssign: boolean,
-    hasSubjectLimit: boolean,
-    subjectLimit: number,
+    hasSelectionLimit: boolean,
+    selectionLimit: number,
     isCopySelection: boolean,
     isColorSelectionSubjects: boolean,
     isColorRowSubjects: boolean

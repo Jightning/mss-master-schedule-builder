@@ -78,21 +78,49 @@ export const modifyRows = (
     }
 }   
 
+const countSelections = (columns: Row["columns"]): number => {
+    let selectionCount = 0
+
+    for (const val in columns) {
+        // Every even has an odd, and a regular - this is to balance out the regular being added
+        if (val.endsWith("even")) {
+            selectionCount -= 1
+        }
+        if (columns[val].id !== 0 && (val.endsWith("even") || val.endsWith("odd"))) {
+            selectionCount += 0.5
+        } else if (columns[val].id !== 0) {
+            selectionCount += 1
+        }
+    }
+
+    return selectionCount
+}
+
 const addSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], selection: Selection) => {
-    return [...rows.slice(0, toChange), 
+    let newRows: Array<Row> = [...rows.slice(0, toChange), 
         {
             ...rows[toChange], 
             columns: 
                     {
                         ...rows[toChange].columns, 
-                        [columnId]: selection 
+                        [columnId]: selection
                     }
         }, 
         ...rows.slice(toChange + 1)]
+    
+    newRows = [...newRows.slice(0, toChange),
+        {
+            ...newRows[toChange],
+            selectionCount: countSelections(newRows[toChange].columns)
+        },
+        ...rows.slice(toChange + 1)
+    ]
+
+    return newRows
 }
 
 const removeSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], defaultSelection: Selection) => {    
-    return [...rows.slice(0, toChange), 
+    let newRows: Array<Row> = [...rows.slice(0, toChange), 
         {
             ...rows[toChange],
             columns: {
@@ -102,6 +130,16 @@ const removeSelection = (rows: Array<Row>, toChange: number, columnId: Column["i
         }, 
         ...rows.slice(toChange + 1)
     ]
+
+    newRows = [...newRows.slice(0, toChange),
+        {
+            ...newRows[toChange],
+            selectionCount: countSelections(newRows[toChange].columns)
+        },
+        ...rows.slice(toChange + 1)
+    ]
+
+    return newRows
 } 
 
 // use -1 and null for the last two parameters 

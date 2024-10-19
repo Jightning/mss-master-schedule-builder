@@ -28,8 +28,8 @@ const modelChangeRecordObject = {action: "PUSH"}
 const defaultSettings: Settings = {
     isOddEvenToggle: true,
     isOddEvenAutoAssign: true,
-    hasSubjectLimit: true,
-    subjectLimit: 4,
+    hasSelectionLimit: true,
+    selectionLimit: 4,
     isCopySelection: false,
     isColorSelectionSubjects: false,
     isColorRowSubjects: false,
@@ -148,7 +148,7 @@ export const scheduleDataSlice = createSlice({
         },
         newSelections: (state, action) => {
             state.selections = action.payload
-        },    
+        },
         // History Reducers    
         // I'm sorry
         // I'm really sorry, you can't even debug this with a regular debugger
@@ -159,16 +159,11 @@ export const scheduleDataSlice = createSlice({
                 return
             }
 
-            let selectionCount = 0
+            const count = modifications.rows[action.payload.action.toChange]?.selectionCount
 
-            const columns = modifications.rows[action.payload.action.toChange]?.columns
-            for (const val in columns) {
-                console.log({...columns[val]}, val)
-                if (columns[val].id !== 0) {
-                    selectionCount += 1
-                }
+            if (count > state.settings.selectionLimit) {
+                return
             }
-            console.log(selectionCount)
 
             state.rows = modifications.rows
             state.columns = modifications.columns

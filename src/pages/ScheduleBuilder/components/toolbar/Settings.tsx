@@ -56,13 +56,13 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
         switch (type) {
             case "evenodd":
                 // I know it's wierd, but for some reason setting it prior won't work so bear with me
-                setSettings({...{...settings, isOddEvenToggle: !settings.isOddEvenToggle}, ...(settings.isOddEvenToggle ? {isOddEvenAutoAssign: false} : {})})
+                setSettings({...{...settings, isOddEvenToggle: !settings.isOddEvenToggle}, ...(settings.isOddEvenToggle && {isOddEvenAutoAssign: false})})
 				return
             case "evenodd-autosplit":   
 				setSettings({...settings, isOddEvenAutoAssign: !settings.isOddEvenAutoAssign})
                 break
             case "has-subject-limit":
-                setSettings({...settings, hasSubjectLimit: !settings.hasSubjectLimit})
+                setSettings({...settings, hasSubjectLimit: !settings.hasSelectionLimit})
                 break
             case "copy-selection":
                 setSettings({...settings, isCopySelection: !settings.isCopySelection})
@@ -96,13 +96,13 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                 </li>
                 <li className='border-solid rounded-lg'>
                     <li>
-                        <h4>Subject Limit: </h4><div className="li-switch"><Switch onChange={() => toggle("has-subject-limit")} checked={settings.hasSubjectLimit} /></div>
+                        <h4>Subject Limit: </h4><div className="li-switch"><Switch onChange={() => toggle("has-subject-limit")} checked={settings.hasSelectionLimit} /></div>
                         <input
                             className="number-input"
                             type="number"
-                            value={settings.hasSubjectLimit ? settings.subjectLimit : 0}
+                            value={settings.hasSelectionLimit ? settings.selectionLimit : 0}
                             onChange={(e) => {
-                                if (!settings.hasSubjectLimit) return 
+                                if (!settings.hasSelectionLimit) return 
                                 const newLimit = parseInt(e.target.value)
                                 setSettings({...settings, subjectLimit: isNaN(newLimit) ? 0 : newLimit})
                             }}
