@@ -1,5 +1,5 @@
 import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "../../types";
-// REMINDER: TEST THIS SO MUCH THERE IS NO WAY ERRORS DON'T APPEAR
+// REMINDER: TEST THIS
 
 // Returns the inverse of each process for the undo
 export const Invert = (type: ScheduleBuilderAction["type"]) => {
@@ -41,7 +41,6 @@ export const modifyRows = (
             console.log("here", action.toChange, action.columnId, {...action.selection})
 
             // For the undo
-            // DON'T QUESTION IT IT WORKS OK
             if (action?.prevAction?.action && 
                 action.columnId.includes(action.prevAction.action.columnId)) {
                 if (action.prevAction.type === "PATCH_EVEN_ODD" && !("selection" in action.prevAction.action)) {
@@ -53,7 +52,6 @@ export const modifyRows = (
 
             let tempRowArray = removeSelection(rows, action.toChange, action.columnId, defaultSelection)
 
-            // WHY WHY WHY WHYW HYW WHYWHYWHWYWHYWHW IS IT EVEN MORE EFFICIENT A THIS POINT
             if (!settings.isOddEvenAutoAssign 
                 && action.prevAction.action !== undefined 
                 && action.prevAction.action.toChange !== undefined 
@@ -144,7 +142,6 @@ const removeSelection = (rows: Array<Row>, toChange: number, columnId: Column["i
 
 // use -1 and null for the last two parameters 
 // Coresponding row is found via the id
-// To whoever is attempting to decifer this, I am so sorry
 const assignOddEven = (
     rows: Array<Row>, 
     columns: Array<Column>, 
