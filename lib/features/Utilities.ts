@@ -1,4 +1,5 @@
 import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "../../types";
+// REMINDER: TEST THIS
 
 // Returns the inverse of each process for the undo
 export const Invert = (type: ScheduleBuilderAction["type"]) => {
@@ -28,21 +29,18 @@ export const modifyRows = (
     switch (type) {
         case "PATCH_SIMPLE_ROW":
             let newRowArray = addSelection(rows, action.toChange, action.columnId, action.selection)
-
-            if (!settings.copySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
+            if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
                 // Deleting old selection 
                 newRowArray = removeSelection(newRowArray, action.prevToChange, action.prevColumnId, defaultSelection)
             }
-
+            
             return {rows: newRowArray, columns: columns};
 
         case "DELETE_SIMPLE_ROW":            
             let row: any = {...rows[action.toChange]}
+            console.log("here", action.toChange, action.columnId, {...action.selection})
 
             // For the undo
-            // DON'T QUESTION IT IT WORKS OK
-            // unless there's a bug...
-            // Listening to Ave Maria rn and it's doing nothing for me
             if (action?.prevAction?.action && 
                 action.columnId.includes(action.prevAction.action.columnId)) {
                 if (action.prevAction.type === "PATCH_EVEN_ODD" && !("selection" in action.prevAction.action)) {
@@ -54,11 +52,20 @@ export const modifyRows = (
 
             let tempRowArray = removeSelection(rows, action.toChange, action.columnId, defaultSelection)
 
-            if (!settings.copySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
+            if (!settings.isOddEvenAutoAssign 
+                && action.prevAction.action !== undefined 
+                && action.prevAction.action.toChange !== undefined 
+                && action.prevAction.action.columnId !== undefined 
+                && action.prevAction.action.toChange === action.toChange 
+                && action.prevAction.action.columnId === action.columnId) {
+                tempRowArray = addSelection(tempRowArray, action.toChange, action.columnId, action.prevAction.action.selection)
+            } 
+            
+            if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
                 // Adding old selection back (ONLY FOR UNDO)
                 tempRowArray = addSelection(tempRowArray, action.prevToChange, action.prevColumnId, action.selection)
             }
-    
+
             return {rows: tempRowArray, columns}
         case "PATCH_EVEN_ODD":
             return assignOddEven(rows, columns, settings, action)
@@ -69,21 +76,49 @@ export const modifyRows = (
     }
 }   
 
+const countSelections = (columns: Row["columns"]): number => {
+    let selectionCount = 0
+
+    for (const val in columns) {
+        // Every even has an odd, and a regular - this is to balance out the regular being added
+        if (val.endsWith("even")) {
+            selectionCount -= 1
+        }
+        if (columns[val].id !== 0 && (val.endsWith("even") || val.endsWith("odd"))) {
+            selectionCount += 0.5
+        } else if (columns[val].id !== 0) {
+            selectionCount += 1
+        }
+    }
+
+    return selectionCount
+}
+
 const addSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], selection: Selection) => {
-    return [...rows.slice(0, toChange), 
+    let newRows: Array<Row> = [...rows.slice(0, toChange), 
         {
             ...rows[toChange], 
             columns: 
                     {
                         ...rows[toChange].columns, 
-                        [columnId]: selection 
+                        [columnId]: selection
                     }
         }, 
         ...rows.slice(toChange + 1)]
+    
+    newRows = [...newRows.slice(0, toChange),
+        {
+            ...newRows[toChange],
+            selectionCount: countSelections(newRows[toChange].columns)
+        },
+        ...rows.slice(toChange + 1)
+    ]
+
+    return newRows
 }
 
 const removeSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], defaultSelection: Selection) => {    
-    return [...rows.slice(0, toChange), 
+    let newRows: Array<Row> = [...rows.slice(0, toChange), 
         {
             ...rows[toChange],
             columns: {
@@ -93,18 +128,27 @@ const removeSelection = (rows: Array<Row>, toChange: number, columnId: Column["i
         }, 
         ...rows.slice(toChange + 1)
     ]
+
+    newRows = [...newRows.slice(0, toChange),
+        {
+            ...newRows[toChange],
+            selectionCount: countSelections(newRows[toChange].columns)
+        },
+        ...rows.slice(toChange + 1)
+    ]
+
+    return newRows
 } 
 
 // use -1 and null for the last two parameters 
 // Coresponding row is found via the id
-// To whoever is attempting to decifer this, I am so sorry
 const assignOddEven = (
     rows: Array<Row>, 
     columns: Array<Column>, 
     settings: Settings, 
     {columnId, toChange, selection}: {columnId: Column["id"], toChange?: Row["id"], selection?: Selection}
 ): {rows: Array<Row>, columns: Array<Column>} => {
-    if (!settings.oddEvenToggle) {
+    if (!settings.isOddEvenToggle) {
         return {rows, columns}
     }
 

@@ -61,7 +61,7 @@ const Selection = (props:
     const style = {
         transform: CSS.Translate.toString(transform),
         display: (props.selection.name === 'none' ? "none" : "block"),
-        backgroundColor: (settings.colorSelectionSubjects ? settings.colors[props.selection.subject] : "")
+        backgroundColor: (settings.isColorSelectionSubjects ? settings.colors[props.selection.subject] : "")
     }
 
     return (

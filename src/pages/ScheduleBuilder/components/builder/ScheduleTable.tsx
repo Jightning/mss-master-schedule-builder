@@ -39,7 +39,7 @@ const ScheduleTable = (props: {
         let column = columns[index]
         let id = column.id
 
-        if (!settings.oddEvenToggle) {
+        if (!settings.isOddEvenToggle) {
             return
         }
 

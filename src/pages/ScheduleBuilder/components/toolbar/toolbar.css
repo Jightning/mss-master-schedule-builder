@@ -146,6 +146,11 @@
     padding: 0.08em;
 }
 
+.number-input {
+    max-width: 40%;
+    margin-left: 10px
+}
+
 /* \Settings Dropdown */
 
 /* Filter Dropdown */
