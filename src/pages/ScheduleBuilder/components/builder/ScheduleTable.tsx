@@ -22,13 +22,13 @@ const ScheduleTable = (props: {
     let dispatch = useAppDispatch()
 
     const rows = useAppSelector(selectRows)
-    const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
+    // const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
 
     const columns = useAppSelector(selectColumns)
-    const setColumns: any = (val: Array<ColumnInterface>) => dispatch(newColumns(val))
+    // const setColumns: any = (val: Array<ColumnInterface>) => dispatch(newColumns(val))
 
-    const filter = useAppSelector(selectFilter)
-    const setFilter: any = (val: string) => dispatch(newFilter(val))
+    // const filter = useAppSelector(selectFilter)
+    // const setFilter: any = (val: string) => dispatch(newFilter(val))
 
     const settings = useAppSelector(selectSettings)
 

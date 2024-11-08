@@ -7,7 +7,7 @@ import {
     Settings,
     ScheduleBuilderAction
 } from "@/types"
-import { modifyRows, Invert } from "./Utilities"
+import { modifyRows } from "./Utilities"
 
 
 interface InitialStateType {
@@ -17,13 +17,12 @@ interface InitialStateType {
     rows: Array<Row>,
     columns: Array<Column>,
     selections: Array<Selection>,
-    history: Array<ScheduleBuilderAction>,
+    history: Array<{rows: Array<Row>, columns: Array<Column>}>,
     settingsHistory: Array<Settings & {step: number}>,
     currentStep: number
 }
 
 const defaultSelection = { name: "none", subject: "none", id: 0 }
-const modelChangeRecordObject = {action: "PUSH"}
 
 const defaultSettings: Settings = {
     isOddEvenToggle: true,
@@ -68,15 +67,15 @@ const initialState: InitialStateType =
         { name: "I. Teacher", subject: "english", id: 10349, selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     ],
     columns: [
-        { name: "Period 1", id: "period_1", oddEven: false, subcolumns: [{name: "Odd", id:"period_1_odd"}, {name: "Even", id:"period_1_even"}] },
-        { name: "Period 2", id: "period_2", oddEven: false, subcolumns: [{name: "Odd", id:"period_2_odd"}, {name: "Even", id:"period_2_even"}] },
-        { name: "Period 3", id: "period_3", oddEven: false, subcolumns: [{name: "Odd", id:"period_3_odd"}, {name: "Even", id:"period_3_even"}] },
-        { name: "Period 4", id: "period_4", oddEven: false, subcolumns: [{name: "Odd", id:"period_4_odd"}, {name: "Even", id:"period_4_even"}] },
-        { name: "Period 5", id: "period_5", oddEven: false, subcolumns: [{name: "Odd", id:"period_5_odd"}, {name: "Even", id:"period_5_even"}] },
-        { name: "Period 6", id: "period_6", oddEven: false, subcolumns: [{name: "Odd", id:"period_6_odd"}, {name: "Even", id:"period_6_even"}] },
-        { name: "Period 7", id: "period_7", oddEven: false, subcolumns: [{name: "Odd", id:"period_7_odd"}, {name: "Even", id:"period_7_even"}] },
-        { name: "Period 8", id: "period_8", oddEven: false, subcolumns: [{name: "Odd", id:"period_8_odd"}, {name: "Even", id:"period_8_even"}] },
-        { name: "Period 9", id: "period_9", oddEven: false, subcolumns: [{name: "Odd", id:"period_9_odd"}, {name: "Even", id:"period_9_even"}] }
+        { name: "Period 1", id: "period_1", oddEven: false},
+        { name: "Period 2", id: "period_2", oddEven: false},
+        { name: "Period 3", id: "period_3", oddEven: false},
+        { name: "Period 4", id: "period_4", oddEven: false},
+        { name: "Period 5", id: "period_5", oddEven: false},
+        { name: "Period 6", id: "period_6", oddEven: false},
+        { name: "Period 7", id: "period_7", oddEven: false},
+        { name: "Period 8", id: "period_8", oddEven: false},
+        { name: "Period 9", id: "period_9", oddEven: false}
     ],
     selections: [
         { name: "Comp Sci", subject: "math", id: 33437 },
@@ -150,10 +149,8 @@ export const scheduleDataSlice = createSlice({
             state.selections = action.payload
         },
         // History Reducers    
-        // I'm sorry
-        // I'm really sorry, you can't even debug this with a regular debugger
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
-            // Kinda scuffed, try to find a better alternative
+            // Wierd -> I could possibly improve
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
@@ -169,7 +166,7 @@ export const scheduleDataSlice = createSlice({
             state.columns = modifications.columns
 
             state.history = [...state.history.slice(0, state.currentStep + 1)]
-            state.history.push(action.payload)
+            state.history.push({rows: modifications.rows, columns: modifications.columns})
             state.currentStep = state.history.length - 1
 
             state.settingsHistory = [...state.settingsHistory.slice(0, state.currentStep + 1)]
@@ -178,35 +175,25 @@ export const scheduleDataSlice = createSlice({
         // 1. When splitting evenodd and then adding one element and undoing, the element is removed completely and not replaced
         // with the previous one
         undoState(state) {
-            if (state.currentStep >= 0) {
+            if (state.currentStep > 0) {
+                state.currentStep--;
+
                 // Get the latest setting
                 const setting = [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
                     return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
                 })
-                // 1 2 3 4
+
                 const currentState = state.history[state.currentStep]
-                console.log(state.currentStep)
-                state.history.map((val) => {
-                    console.log(val.type)
-                    console.log({...val.action})
-                })
 
-                const type = Invert(currentState.type)
-
-                const modifications = modifyRows(
-                    {
-                        type, action: {
-                            ...currentState.action, 
-                            isUndo: true, 
-                            prevAction: {...state.history[state.currentStep - 1]}
-                        }
-                    }, 
-                    state.rows, state.columns, setting)
-
-                state.rows = modifications.rows
-                state.columns = modifications.columns
-
+                state.rows = currentState.rows
+                state.columns = currentState.columns
+                state.settings = setting
+            } else if (state.currentStep === 0) {
                 state.currentStep--;
+
+                state.rows = initialState.rows
+                state.columns = initialState.columns
+                state.settings = initialState.settings
             }
         },
         redoState(state) {
@@ -220,9 +207,9 @@ export const scheduleDataSlice = createSlice({
                 
                 const currentState = state.history[state.currentStep]
 
-                const modifications = modifyRows(currentState, state.rows, state.columns, setting)
-                state.rows = modifications.rows
-                state.columns = modifications.columns
+                state.rows = currentState.rows
+                state.columns = currentState.columns
+                state.settings = setting
             }
         },
         resetHistory(state) {

@@ -10,7 +10,6 @@ export interface Column {
     name: string,
     id: string,
     oddEven: boolean,
-    subcolumns?: Omit<Column, 'oddEven'>[]
 }
 
 // export interface Tile {

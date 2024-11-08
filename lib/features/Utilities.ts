@@ -1,22 +1,6 @@
 import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "../../types";
 // REMINDER: TEST THIS
 
-// Returns the inverse of each process for the undo
-export const Invert = (type: ScheduleBuilderAction["type"]) => {
-    switch (type) {
-        case "PATCH_SIMPLE_ROW":
-            return "DELETE_SIMPLE_ROW"
-        case "DELETE_SIMPLE_ROW":
-            return "PATCH_SIMPLE_ROW"
-        case "PATCH_EVEN_ODD":
-            return "DELETE_EVEN_ODD"
-        case "DELETE_EVEN_ODD":
-            return "PATCH_EVEN_ODD"
-        default:
-            return type
-    }
-}
-
 export const modifyRows = (
     { type, action }: ScheduleBuilderAction, 
     rows: Array<Row>, 
@@ -94,6 +78,7 @@ const countSelections = (columns: Row["columns"]): number => {
     return selectionCount
 }
 
+// Tochange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, toChange: number, columnId: Column["id"], selection: Selection) => {
     let newRows: Array<Row> = [...rows.slice(0, toChange), 
         {
@@ -152,6 +137,7 @@ const assignOddEven = (
         return {rows, columns}
     }
 
+    // Setting the rows
     const newRows = [...rows.map((row, i) => {
         return {
             ...{...row}, 
@@ -164,6 +150,7 @@ const assignOddEven = (
         }
     })]
 
+    // Setting the Columns
     const newColumns: Array<Column> = ((() => {
         let tempColumns = [...columns]
 
