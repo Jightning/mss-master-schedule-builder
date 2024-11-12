@@ -38,24 +38,6 @@ export const modifyRows = (
     }
 }   
 
-const countSelections = (columns: Row["columns"]): number => {
-    let selectionCount = 0
-
-    for (const val in columns) {
-        // Every even has an odd, and a regular - this is to balance out the regular being added
-        if (val.endsWith("even")) {
-            selectionCount -= 1
-        }
-        if (columns[val].id !== 0 && (val.endsWith("even") || val.endsWith("odd"))) {
-            selectionCount += 0.5
-        } else if (columns[val].id !== 0) {
-            selectionCount += 1
-        }
-    }
-
-    return selectionCount
-}
-
 // toChange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], selection: Selection) => {
     let newRows: Array<Row> = [
@@ -96,20 +78,25 @@ const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: num
 const assignOddEven = (
     rows: Array<Row>, 
     columns: Array<Column>, 
-    {columnId, toChange}: {columnId: Column["id"], toChange?: Row["id"]}
+    { columnId }: { columnId: Column["id"] }
 ): {rows: Array<Row>, columns: Array<Column>} => {
     // Setting the rows
-    const newRows = [...rows.map((row) => {
+    let newRows = [...rows.map((row) => {
         return {
-            ...{...row}, 
-            columns: {
-                ...row.columns,
-                [columnId]: {...row.columns[columnId]},
-                [columnId + '-odd']: {...row.columns[columnId]},
-                [columnId + '-even']: {...row.columns[columnId]}
-            }
+            ...{...row},
+            columns: (() => {
+                let values = {
+                    ...row.columns,
+                    [columnId + '-odd']: {...row.columns[columnId]},
+                    [columnId + '-even']: {...row.columns[columnId]}
+                }
+                delete values[columnId]
+                return values
+            })()
         }
     })]
+
+    console.log(newRows[0].columns)
 
     // Setting the Columns
     const newColumns: Array<Column> = ((() => {
@@ -151,17 +138,17 @@ const removeEvenOdd = (
     columns: Array<Column>, 
     { columnId, isUndo }: { columnId: Column["id"], isUndo?: boolean }
 ): {rows: Array<Row>, columns: Array<Column>, failed?: boolean}  => {
-    // Removing evenodd from each row in that specific column
 
+    // Removing evenodd from each row in that specific column
     let tempRows = [...rows]
     for (let i = 0; i < rows.length; i++) {
+        // Miss-matched even odd -> early termination to ensure data isn't erased by mistake
         if (rows[i].columns[columnId + '-odd'].id !== rows[i].columns[columnId + '-even'].id && !isUndo) {
-            // Miss-matched even odd -> early termination to ensure data isn't erased by mistake
             return { rows, columns, failed: true }
         }
 
         tempRows = [
-            ...(tempRows.slice(0, i)),
+            ...tempRows.slice(0, i),
             {
                 ...tempRows[i],
                 columns: {
@@ -169,20 +156,25 @@ const removeEvenOdd = (
                     [columnId]: tempRows[i].columns[columnId + '-odd']
                 }
             },
-            ...(tempRows.slice(i + 1, tempRows.length))
+            ...tempRows.slice(i + 1)
         ]
     }
 
+    // Return column to normal
     let tempColumns = [...columns]
-    for (let i = 0; i < tempColumns.length; i++) {
-        if (tempColumns[i].id == columnId  + "-odd") {
-            if (!tempColumns[i].oddEven) break;
-            tempColumns.splice(i + 1, 1)
-            tempColumns[i] = {...tempColumns[i], id: tempColumns[i].id.toString().substring(0, tempColumns[i].id.toString().length - 4), name: tempColumns[i].name.substring(0, tempColumns[i].name.length - 4), oddEven: false};
-                
-            break;
-        }
-    }
+    // Even always after odd - identify odd and remove even alongside it
+    const columnIndex = tempColumns.findIndex(column => column.id = columnId + "-odd")
+    if (!tempColumns[columnIndex].oddEven) return {rows: tempRows, columns: tempColumns};
+
+    // Remove even
+    tempColumns.splice(columnIndex + 1, 1)
+    // Remove odd and replace with regular
+    tempColumns[columnIndex] = {
+        ...tempColumns[columnIndex], 
+        id: tempColumns[columnIndex].id.substring(0, tempColumns[columnIndex].id.length - 4), 
+        name: tempColumns[columnIndex].name.substring(0, tempColumns[columnIndex].name.length - 4), 
+        oddEven: false
+    };
 
     return {rows: tempRows, columns: tempColumns}
 }
