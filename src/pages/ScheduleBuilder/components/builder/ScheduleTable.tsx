@@ -44,10 +44,9 @@ const ScheduleTable = (props: {
         }
 
         if (columns[index].oddEven) {
-            let type = id.toString().substring(id.toString().length - 3, id.toString().length)
-            if (type === "odd") {
+            if (columns[index].oddEven === "ODD") {
                 id = id.toString().substring(0, id.toString().length - 4)
-            } else if (type === "ven") {
+            } else if (columns[index].oddEven === "EVEN") {
                 id = id.toString().substring(0, id.toString().length - 5)
             }
             

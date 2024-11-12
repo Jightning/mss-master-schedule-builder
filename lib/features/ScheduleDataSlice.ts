@@ -22,7 +22,7 @@ interface InitialStateType {
     currentStep: number
 }
 
-const defaultSelection = { name: "none", subject: "none", id: 0 }
+const defaultSelection = { name: "none", subject: "none", id: 0, oddEven: false }
 
 const defaultSettings: Settings = {
     isOddEvenToggle: true,
@@ -150,7 +150,7 @@ export const scheduleDataSlice = createSlice({
         },
         // History Reducers    
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
-            // Wierd -> I could possibly improve
+            // Weird -> I could possibly improve
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return

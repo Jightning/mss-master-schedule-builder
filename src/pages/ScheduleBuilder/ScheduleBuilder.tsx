@@ -223,24 +223,17 @@ const ScheduleBuilder = () => {
         const columnId = droppable.data.current.columnId
 
         // find the current column and check if it's oddEven
-        let oddEven;
-        for (let col of columns) {
-            if (col.id === columnId) {
-                oddEven = col.oddEven
-                break;
-            }
-        }
+        let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
         
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
             // assignOddEven(columnId, toChange, draggable.data.current.selection)
             addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection}})
             return
         }
-        console.log(draggable)
         
         // Sets the row for regular situations
         addHistoryState({type: "PATCH_SIMPLE_ROW", action: {selection: draggable.data.current.selection, 
-                                                           toChange, columnId,
+                                                            toChange, columnId,
                                                             prevToChange: draggable.data.current.rowIndex,
                                                             prevColumnId: draggable.data.current.columnId}})
 
