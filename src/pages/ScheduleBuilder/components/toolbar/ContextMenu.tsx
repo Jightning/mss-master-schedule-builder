@@ -22,10 +22,11 @@ const ContextMenu = (
 
     return (
         <Menu id={selectionId} className="absolute context-menu-container" >
-             {columnId && rowIndex && <Item 
-                                        className='context-menu-delete' 
-                                        onClick={() => addHistoryState({type: "DELETE_SIMPLE_ROW", action: {columnId: columnId, toChange: rowIndex,selection: selection}})}>
-                                        <p>Delete</p></Item>}
+             {rowIndex !== undefined && columnId && <Item 
+                                className='context-menu-delete' 
+                                onClick={() => addHistoryState({type: "DELETE_SIMPLE_ROW", action: {columnId: columnId, toChange: rowIndex, selection: selection}})}>
+                                <p>Delete</p>
+                        </Item>}
 
             <div className='information-section'>
                 <p className='info-name'>{selection.name}</p>

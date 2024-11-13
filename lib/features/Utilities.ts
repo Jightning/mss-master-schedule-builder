@@ -12,19 +12,19 @@ export const modifyRows = (
 
     switch (type) {
         case "PATCH_SIMPLE_ROW":
-            let newRowArray = addSelection(rows, columns, action.toChange, action.columnId, action.selection)
-            
+            let newRowArray: Array<Row> = [...rows];
+
+            // Deleting old selection when moving element and not copying
             if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
-                // Deleting old selection when moving element and not copying
                 newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId, defaultSelection)
             }
+
+            newRowArray = addSelection(newRowArray, columns, action.toChange, action.columnId, action.selection)
             
             return {rows: newRowArray, columns: columns};
         case "DELETE_SIMPLE_ROW":   
-            return {
-                rows: removeSelection(rows, columns, action.toChange, action.columnId, defaultSelection), 
-                columns
-            }
+            let newRowsArray: Array<Row> = removeSelection(rows, columns, action.toChange, action.columnId, defaultSelection)
+            return {rows: newRowsArray, columns}
         case "PATCH_EVEN_ODD":
             if (!settings.isOddEvenToggle) {
                 return {rows, columns}
@@ -63,7 +63,7 @@ const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: num
             ...rows[toChange],
             columns: {
                 ...rows[toChange].columns,
-                [columnId]: defaultSelection
+                [columnId]: {...defaultSelection}
             },
             selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1)
         }, 
@@ -73,7 +73,6 @@ const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: num
     return newRows
 } 
 
-// use -1 and null for the last two parameters 
 // Corresponding row is found via the id
 const assignOddEven = (
     rows: Array<Row>, 
@@ -103,7 +102,7 @@ const assignOddEven = (
         let tempColumns = [...columns]
 
         const index = tempColumns.findIndex(column => columnId == column.id)
-        if (tempColumns[index].oddEven && index != -1) return tempColumns;
+        if (tempColumns[index].oddEven || index === -1) return tempColumns;
 
         const { id, name } = tempColumns[index]
 
@@ -132,7 +131,7 @@ const assignOddEven = (
     return {rows: newRows, columns: newColumns}
 }
 
-
+// BUG: column id copied to the first period for SOME REASON
 const removeEvenOdd = (
     rows: Array<Row>, 
     columns: Array<Column>, 
@@ -151,10 +150,15 @@ const removeEvenOdd = (
             ...tempRows.slice(0, i),
             {
                 ...tempRows[i],
-                columns: {
-                    ...tempRows[i].columns,
-                    [columnId]: tempRows[i].columns[columnId + '-odd']
-                }
+                columns: (() => {
+                    let values = {
+                        ...tempRows[i].columns,
+                        [columnId]: tempRows[i].columns[columnId + '-odd']
+                    }
+                    delete values[columnId + "-odd"]
+                    delete values[columnId + "-even"]
+                    return values
+                })()
             },
             ...tempRows.slice(i + 1)
         ]
@@ -163,18 +167,19 @@ const removeEvenOdd = (
     // Return column to normal
     let tempColumns = [...columns]
     // Even always after odd - identify odd and remove even alongside it
-    const columnIndex = tempColumns.findIndex(column => column.id = columnId + "-odd")
-    if (!tempColumns[columnIndex].oddEven) return {rows: tempRows, columns: tempColumns};
+    const columnIndex: number = tempColumns.findIndex(column => column.id === columnId + "-odd")
 
-    // Remove even
-    tempColumns.splice(columnIndex + 1, 1)
-    // Remove odd and replace with regular
-    tempColumns[columnIndex] = {
-        ...tempColumns[columnIndex], 
-        id: tempColumns[columnIndex].id.substring(0, tempColumns[columnIndex].id.length - 4), 
-        name: tempColumns[columnIndex].name.substring(0, tempColumns[columnIndex].name.length - 4), 
-        oddEven: false
-    };
+    if (tempColumns[columnIndex].oddEven && columnIndex !== -1) {
+        // Replace odd with regular
+        tempColumns[columnIndex] = {
+            ...tempColumns[columnIndex], 
+            id: tempColumns[columnIndex].id.substring(0, tempColumns[columnIndex].id.length - 4), 
+            name: tempColumns[columnIndex].name.substring(0, tempColumns[columnIndex].name.length - 4), 
+            oddEven: false
+        };
+        // Remove even
+        tempColumns.splice(columnIndex + 1, 1)
+    }
 
     return {rows: tempRows, columns: tempColumns}
 }
