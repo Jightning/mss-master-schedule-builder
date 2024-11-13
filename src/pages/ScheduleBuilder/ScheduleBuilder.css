@@ -116,13 +116,13 @@ img {
 
     cursor: default !important;
     background-color: white;
-    border-radius: 5px 0 0 5px;
+    border-radius: 5px;
     transition: box-shadow 0.2s;
     padding: 0.15rem 0.25rem;
+    overflow: hidden;
 }
 .selection-search:hover {
     border: solid rgb(30, 0, 255);
-    border-radius: 5px 0 0 5px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
