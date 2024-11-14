@@ -1,8 +1,8 @@
 [package]
 name = "mss_msb_v2"
-version = "0.0.0"
+version = "1.0.0"
 description = "Master Schedule Builder"
-authors = ["you"]
+authors = ["Juan Vazquez"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

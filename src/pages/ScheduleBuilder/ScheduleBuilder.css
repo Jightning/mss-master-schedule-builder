@@ -100,82 +100,31 @@ img {
 }
 
 .toolbar .search-box {
-    width: 25%;
+    width: 50%;
+    border-radius: 5px;
     position: relative;
     cursor: default !important;
+    height: fit-content;
 }
 
-/* .toolbar {
-    width: 100%;
-}
-.toolbar ul {
-    width: 100%;
-    margin: 0.5rem;
-
-    display: flex;
-    flex-flow: row nowrap;
-}
-.toolbar ul li {
-    padding: 0.15rem 0.25rem;
-    margin: 0 0.35rem;
-    height: 2.2rem;
-
-    cursor: pointer;
+.selection-search {
     border: solid;
-    flex-grow: 0;
+    height: calc(2rem + 2px);
+    margin: 0 5px;
+    width: calc(100% - 10px);
+    position: relative;
+
+    cursor: default !important;
+    background-color: white;
+    border-radius: 5px;
     transition: box-shadow 0.2s;
-
-    text-align: center;
-
+    padding: 0.15rem 0.25rem;
     overflow: hidden;
 }
-.toolbar ul li:hover {
+.selection-search:hover {
     border: solid rgb(30, 0, 255);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-.toolbar ul li:nth-child(odd) {
-    border-radius: 10px 0 0 10px;
-}
-.toolbar ul li:nth-child(even) {
-    border-radius: 0 10px 10px 0;
-}
-.toolbar ul span {
-   flex-grow: 1;
-}
-
-.toolbar .settings-btn {
-    border-radius: 10px !important;
-}
-.toolbar .settings-btn .animating {
-    animation: rotate-gear 0.5s;
-}
-@keyframes rotate-gear {
-    from {transform: rotate(0deg);}
-    to {transform: rotate(60deg);}
-}
-
-.toolbar .filter-svg {
-    position: relative;
-    top: 2px;
-}
-.toolbar, .settings-btn, .filter-btn {
-    position: relative;
-    right: calc(0.85rem + 1px);
-}
-
-.toolbar .search-box {
-    width: 30%;
-    cursor: default !important;
-} */
-/* .search-right {
-    position: relative;
-    right: calc(0.85rem + 1px);
-}
-.search-left {
-    color: blue;
-    right: calc(2rem + 1px);
-
-} */
 
 /* \Toolbar */
 
@@ -331,13 +280,8 @@ img {
 /* Selections Column */
 
 .selections-container {
-    /* min-width: 190px;
-    max-width: 10vw; */
     width: max(190px, 10vw);
-    /* width: fit-content; */
-
-    /* flex: 0; */
-
+  
     border-left: solid;
     background-color: #00114b;
 }
@@ -361,7 +305,7 @@ img {
     max-width: calc(10vw - 20px); */
     width: max(170px, calc(10vw - 20px));
 
-    height: calc(100% - 60px - 1.3rem);
+    height: calc(100% - 60px - 3.8rem);
     
     overflow-y: auto;
     overflow-x: hidden;

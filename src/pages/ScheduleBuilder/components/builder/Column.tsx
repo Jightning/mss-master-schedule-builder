@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import Selection from './Selection'
 import { 
@@ -43,10 +43,7 @@ const Column = (props: {
                 // BUG -> Fid a  way to make the the tile only change height when the shade is higher to prevent overflow
                 useEffect(() => {
                     if (isOver) {
-                        // dumbass way to signal the useEffect which changes the height on hover over
-                        // don't want to manually do so, so I'm just going to trigger the already made one by changing rows
-                        // (useEffect checks row changes -> it works ok)
-                        // maybe make this better later  
+                        // strange way to signal the useEffect which changes the height on hover over
                         setRows([...rows])
                     }        
                 }, [isOver])

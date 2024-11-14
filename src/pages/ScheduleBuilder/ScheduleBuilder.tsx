@@ -26,15 +26,15 @@ import {
 import Settings from './components/toolbar/Settings';
 
 import Popup from '../../components/Popup';
-import Trash from './components/toolbar/Trash';
+// import Trash from './components/toolbar/Trash';
 import Cover from './components/builder/Cover';
 import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
 import UndoRedo from './components/toolbar/UndoRedo';
 
-import { newRows, newColumns, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
+import { newRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 import { addState } from '@/lib/features/ScheduleDataSlice';
@@ -49,20 +49,20 @@ const ScheduleBuilder = () => {
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
 
     const columns = useAppSelector(selectColumns)
-    const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
+    // const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
 
-    const filter = useAppSelector(selectFilter)
-    const setFilter: any = (val: object) => dispatch(newFilter(val))
+    // const filter = useAppSelector(selectFilter)
+    // const setFilter: any = (val: object) => dispatch(newFilter(val))
 
     const settings = useAppSelector(selectSettings)
-    const setSettings: any = (val: object) => dispatch(newSettings(val))
+    // const setSettings: any = (val: object) => dispatch(newSettings(val))
 
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     // \Redux\
 
-    const [rowsName, setRowsName] = useState("Teachers")
-    const [selectionsName, setSelectionsName] = useState("Classes")
+    const [rowsName, _setRowsName] = useState("Teachers")
+    const [selectionsName, _setSelectionsName] = useState("Classes")
 
     const [activeSelection, setActiveSelection] = useState<ActiveSelectionInterface | null>(null);
     const [heights, setHeights] = useState<Array<number>>([])
@@ -119,7 +119,7 @@ const ScheduleBuilder = () => {
                 const rowElement = document.getElementById(`row-${row.id}`)
                 const height = rowElement?.getElementsByTagName("p")[0].offsetHeight
                 // Adds height
-                // miniumum height is 70, otherwise we add 11 to account for padding
+                // minimum height is 70, otherwise we add 11 to account for padding
                 rowHeights.push((height && height > 70 ? height + 11 : 70))
             })  
             setOriginalRowHeights(rowHeights)
@@ -143,7 +143,7 @@ const ScheduleBuilder = () => {
                     }
                 })
                 // Checks if the user is hovering with a selection over this row
-                // if they are, only add the tallest height, since we dont want to be switching between large and small with the smaller selection
+                // if they are, only add the tallest height, since we don't want to be switching between large and small with the smaller selection
                 if (index == activeSelection?.currentRowIndex) {
                     allHeights.push(height > heights[index] ? (height ? height : 0) : heights[index])
                 } else {
@@ -212,37 +212,42 @@ const ScheduleBuilder = () => {
                                 toChange: draggable.data.current.rowIndex,
                                 selection: draggable.data.current.selection
                             }})
-
             return
         }
 
         // Need row index, column id
         // Identifying index of the column to change
         const toChange = droppable.data.current.rowIndex;
+        console.log(toChange)
         // Id of selection to change
         const columnId = droppable.data.current.columnId
 
         // find the current column and check if it's oddEven
-        let oddEven;
-        for (let col of columns) {
-            if (col.id === columnId) {
-                oddEven = col.oddEven
-                break;
-            }
-        }
+        let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
         
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
             // assignOddEven(columnId, toChange, draggable.data.current.selection)
-            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection}})
+            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
+            
+            if (draggable.data.current.rowIndex !== toChange && draggable.data.current.columnId !== columnId) {
+                addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
+                    selection: draggable.data.current.selection, 
+                    toChange: toChange, columnId: columnId + "-odd",
+                    prevToChange: draggable.data.current.rowIndex,
+                    prevColumnId: draggable.data.current.columnId
+                }})
+            }
+
             return
         }
-        console.log(draggable)
         
         // Sets the row for regular situations
-        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {selection: draggable.data.current.selection, 
-                                                           toChange, columnId,
-                                                            prevToChange: draggable.data.current.rowIndex,
-                                                            prevColumnId: draggable.data.current.columnId}})
+        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
+            selection: draggable.data.current.selection, 
+            toChange, columnId,
+            prevToChange: draggable.data.current.rowIndex,
+            prevColumnId: draggable.data.current.columnId
+        }})
 
     }
     
@@ -328,7 +333,11 @@ const ScheduleBuilder = () => {
                 <div id="main-container">
                     <div className="header">
                         <h1 className="title">Master Schedule Builder</h1>
-                        <Trash />
+                        {/* BUG Currently disabled due to bug
+                                When dragging something over, it occasionally does not delete
+                                Quickly dragging the same selection over again does delete it
+                                Replicable by splitting a column to odd/even with a selection inside, and then dragging the odd version to the trash bin */}
+                        {/* <Trash /> */}
                     </div>
 
                     <UndoRedo />
@@ -342,7 +351,6 @@ const ScheduleBuilder = () => {
                             <li className='export-btn rounded-tr-md rounded-br-md'>Export</li>
                             <span/>
                             <li className='search-box rounded-tl-md rounded-bl-md'><SearchBar searchLocation="rows" /></li>
-                            <li className='search-box rounded-tr-md rounded-br-md'><SearchBar searchLocation='selections'/></li>
                             <span/>
 
                             <li className='filter-btn rounded-md' id="filter-btn" onClick={() => setIsFilterOpen((prevIsFilterOpen) => {
@@ -386,6 +394,9 @@ const ScheduleBuilder = () => {
                 <div className="selections-container">
                     <div className="selection-header">
                         <h4>{selectionsName}</h4>
+                    </div>
+                    <div className='selection-search search-box rounded-tr-md rounded-br-md'>
+                        <SearchBar searchLocation='selections'/>
                     </div>
                     <SelectionColumn />
                 </div>

@@ -3,29 +3,25 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Column, Selection, ScheduleBuilderAction } from '@/types'
 import {
     Menu,
-    Item,
-    Separator,
-    Submenu,
-    useContextMenu
+    Item
 } from "react-contexify";  
 import "react-contexify/dist/ReactContexify.css";
 
-import { useEffect, useRef } from 'react';
-
 const ContextMenu = (
-        { hide, selectionId, selection, rowIndex, columnId }: 
-        { hide: any, selectionId: Selection["id"], selection: Selection, rowIndex?: number, columnId?: Column["id"] }) => {
+        { selectionId, selection, rowIndex, columnId }: 
+        { selectionId: Selection["id"], selection: Selection, rowIndex?: number, columnId?: Column["id"] }) => {
         
     const dispatch = useAppDispatch()
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
     const settings = useAppSelector(selectSettings)
 
     return (
-        <Menu id={selectionId} className="absolute context-menu-container" >
-             {columnId && rowIndex && <Item 
-                                        className='context-menu-delete' 
-                                        onClick={() => addHistoryState({type: "DELETE_SIMPLE_ROW", action: {columnId: columnId, toChange: rowIndex,selection: selection}})}>
-                                        <p>Delete</p></Item>}
+        <Menu id={selectionId} className="absolute context-menu-container border-none" >
+             {rowIndex !== undefined && columnId && <Item 
+                                className='context-menu-delete' 
+                                onClick={() => addHistoryState({type: "DELETE_SIMPLE_ROW", action: {columnId: columnId, toChange: rowIndex, selection: selection}})}>
+                                <p>Delete</p>
+                        </Item>}
 
             <div className='information-section'>
                 <p className='info-name'>{selection.name}</p>

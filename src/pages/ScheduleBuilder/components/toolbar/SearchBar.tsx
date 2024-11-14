@@ -1,12 +1,10 @@
-import { selectFilterLocation, selectFilter, newFilter, newRows, selectRows } from '@/lib/features/ScheduleDataSlice'
+import { selectFilter, newFilter, newRows, selectRows } from '@/lib/features/ScheduleDataSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { Filter, Row } from '@/types'
 import { useEffect } from 'react'
 
 const SearchBar = ({ searchLocation }: { searchLocation: string }) => {
     const dispatch = useAppDispatch()
-
-    const filterLocation = useAppSelector(selectFilterLocation)
 
     const filter = useAppSelector<Filter>(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))

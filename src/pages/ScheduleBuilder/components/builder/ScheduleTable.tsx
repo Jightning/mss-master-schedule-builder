@@ -1,15 +1,12 @@
 import Column from './Column'
 import { 
-    Row, 
     Column as ColumnInterface,
     ActiveSelectionInterface,
     ScheduleBuilderAction,
-    Selection
 } from '@/types'
 
-import { newRows, newColumns, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
+import { selectColumns, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
@@ -21,14 +18,14 @@ const ScheduleTable = (props: {
 }) => {
     let dispatch = useAppDispatch()
 
-    const rows = useAppSelector(selectRows)
-    const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
+    // const rows = useAppSelector(selectRows)
+    // const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
 
     const columns = useAppSelector(selectColumns)
-    const setColumns: any = (val: Array<ColumnInterface>) => dispatch(newColumns(val))
+    // const setColumns: any = (val: Array<ColumnInterface>) => dispatch(newColumns(val))
 
-    const filter = useAppSelector(selectFilter)
-    const setFilter: any = (val: string) => dispatch(newFilter(val))
+    // const filter = useAppSelector(selectFilter)
+    // const setFilter: any = (val: string) => dispatch(newFilter(val))
 
     const settings = useAppSelector(selectSettings)
 
@@ -44,10 +41,9 @@ const ScheduleTable = (props: {
         }
 
         if (columns[index].oddEven) {
-            let type = id.toString().substring(id.toString().length - 3, id.toString().length)
-            if (type === "odd") {
+            if (columns[index].oddEven === "ODD") {
                 id = id.toString().substring(0, id.toString().length - 4)
-            } else if (type === "ven") {
+            } else if (columns[index].oddEven === "EVEN") {
                 id = id.toString().substring(0, id.toString().length - 5)
             }
             

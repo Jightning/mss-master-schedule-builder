@@ -1,22 +1,15 @@
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from "@dnd-kit/utilities"
 
-import { selectFilter, selectSettings } from '@/lib/features/ScheduleDataSlice'
+import { selectSettings } from '@/lib/features/ScheduleDataSlice'
 import { useAppSelector } from '@/lib/hooks'
 
 import { 
     Column,
     Selection as SelectionInterface
 } from '@/types'
-import { useState, useEffect } from 'react'
 
-import {
-    Menu,
-    Item,
-    Separator,
-    Submenu,
-    useContextMenu
-  } from "react-contexify";  
+import {useContextMenu} from "react-contexify";  
 import "react-contexify/dist/ReactContexify.css";
 import ContextMenu from '../toolbar/ContextMenu'
 
@@ -34,10 +27,10 @@ const Selection = (props:
     }
 
     const settings = useAppSelector(selectSettings)
-    const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(true)
-    const [contextMenuPoints, setContextMenuPoints] = useState({x: 0, y: 0})
+    // const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(true)
+    // const [contextMenuPoints, setContextMenuPoints] = useState({x: 0, y: 0})
 
-    const { show, hideAll } = useContextMenu({
+    const { show } = useContextMenu({
         id: props.selectionId
     });
 
@@ -66,7 +59,7 @@ const Selection = (props:
 
     return (
         <>
-            <ContextMenu hide={hideAll} selectionId={props.selectionId} selection={props.selection} rowIndex={props.rowIndex} columnId={props.columnId} />
+            <ContextMenu selectionId={props.selectionId} selection={props.selection} rowIndex={props.rowIndex} columnId={props.columnId} />
 
             <div className={'selection-container' + ' ' + (props.classNames ? props.classNames : "")}
                 id={'selection-' + props.selectionId}

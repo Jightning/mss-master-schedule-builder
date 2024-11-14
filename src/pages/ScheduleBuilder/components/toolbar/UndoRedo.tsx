@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { selectCurrentStep, selectHistory } from '@/lib/features/ScheduleDataSlice'
 import { undoState, redoState } from '@/lib/features/ScheduleDataSlice'

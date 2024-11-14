@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import ScheduleDataSlice from './features/ScheduleDataSlice'
 
-export const makeStore = (reducer = {}) => {
+export const makeStore = (_reducer = {}) => {
   return configureStore({
     reducer: {
       scheduleData: ScheduleDataSlice,

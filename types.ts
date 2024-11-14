@@ -9,8 +9,7 @@ export interface Selection {
 export interface Column {
     name: string,
     id: string,
-    oddEven: boolean,
-    subcolumns?: Omit<Column, 'oddEven'>[]
+    oddEven: boolean | "EVEN" | "ODD",
 }
 
 // export interface Tile {
@@ -60,11 +59,9 @@ export type ScheduleBuilderAction = {
     action: {
         columnId: Column["id"],
         toChange: number,
-        prevColumnId: Column["id"],
+        prevColumnId?: Column["id"],
         prevToChange?: number,
-        isUndo: boolean,
-        prevAction: any,
-        selection: Selection,
-
+        selection?: Selection,
+        ignoreHistory?: boolean
     },
 }

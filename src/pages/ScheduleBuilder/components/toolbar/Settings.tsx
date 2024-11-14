@@ -55,14 +55,14 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
     const toggle = (type: string) => {
         switch (type) {
             case "evenodd":
-                // I know it's wierd, but for some reason setting it prior won't work so bear with me
+                // I know it's weird, but for some reason setting it prior won't work so bear with me
                 setSettings({...{...settings, isOddEvenToggle: !settings.isOddEvenToggle}, ...(settings.isOddEvenToggle && {isOddEvenAutoAssign: false})})
 				return
             case "evenodd-autosplit":   
 				setSettings({...settings, isOddEvenAutoAssign: !settings.isOddEvenAutoAssign})
                 break
             case "has-subject-limit":
-                setSettings({...settings, hasSubjectLimit: !settings.hasSelectionLimit})
+                setSettings({...settings, hasSelectionLimit: !settings.hasSelectionLimit})
                 break
             case "copy-selection":
                 setSettings({...settings, isCopySelection: !settings.isCopySelection})
@@ -94,9 +94,14 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                         <h4>Autoassign:</h4><div className="li-switch"><Switch onChange={() => toggle("evenodd-autosplit")} disabled={!settings.isOddEvenToggle} checked={settings.isOddEvenAutoAssign} /></div>
                     </li>
                 </li>
-                <li className='border-solid rounded-lg'>
+                <li className='border-solid rounded-lg flex items-center justify-between'>
                     <li>
-                        <h4>Subject Limit: </h4><div className="li-switch"><Switch onChange={() => toggle("has-subject-limit")} checked={settings.hasSelectionLimit} /></div>
+                        <div className='subject-limit flex items-center'>
+                            <h4>Subject Limit: </h4>
+                            <div className="li-switch subject-limit-switch">
+                                <Switch onChange={() => toggle("has-subject-limit")} checked={settings.hasSelectionLimit} />
+                            </div>
+                        </div>
                         <input
                             className="number-input"
                             type="number"
@@ -104,7 +109,7 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                             onChange={(e) => {
                                 if (!settings.hasSelectionLimit) return 
                                 const newLimit = parseInt(e.target.value)
-                                setSettings({...settings, subjectLimit: isNaN(newLimit) ? 0 : newLimit})
+                                setSettings({...settings, selectionLimit: isNaN(newLimit) ? 0 : newLimit})
                             }}
                             min='0'/>
                     </li>

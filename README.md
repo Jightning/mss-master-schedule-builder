@@ -1,4 +1,8 @@
 # Master Schedule Builder
 > Create any schedule you want by dragging custom selections into custom rows and columns!
-## WIP
-Main changes in reliable-undo-redo
+### WIP
+**Documentation:** Exalidraw in docs/.excalidraw
+### Todo:
+- Import/export functionality
+- CSS Improvements for different screen sizes
+- Performance improvement

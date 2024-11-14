@@ -1,19 +1,24 @@
 /* Seach box */
 #search-input {
     resize: none;
-    outline: 0;
+    outline: none;
     border: none;
+    box-sizing: border-box;
     background: transparent;
 
     width: calc(100% - 24px - 1rem);
-    height: 100%;
+    /* height: 100%; */
+    height: calc(1.3rem + 5px);
     font-size: 1.3rem;
 
     float: left;
 
     white-space: nowrap;
-    overflow-x: scroll;
-    text-overflow: ellipsis;
+    overflow-x: auto;
+    /* text-overflow: ellipsis; */
+}
+#search-input::-webkit-scrollbar {
+    display: none;
 }
 .erase-search-icon {
     position: absolute;
@@ -48,7 +53,7 @@
     border: solid;
     border-radius: 10px;
 
-    height: 23.5rem;
+    height: 71vh;
     width: 25rem;
     padding: 5px;
 
@@ -80,6 +85,8 @@
 }
 .li-switch {
     transform: scale(0.8);
+    position: relative;
+    top: 2px;
     /* Sneaky little adjustment - Works */
     height: 1px;
 }
@@ -139,13 +146,17 @@
     border-radius: 5px;
     cursor: pointer;
 }   
-/* VERY WIERD > CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
+/* CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
 .change-colors-dropdown li input {
     background-color: white !important;
     height: 1 !important;
     padding: 0.08em;
 }
 
+.subject-limit-switch {
+    position: relative;
+    top: -10px;
+}
 .number-input {
     max-width: 40%;
     margin-left: 10px
@@ -257,18 +268,19 @@
 }
 @keyframes lift-lid {
     from {transform: rotate(0deg) translate(0, 0)}
-    to {transform: rotate(45deg) translate(1.25rem, -1.25rem)};
+    to {transform: rotate(45deg) translate(1.25rem, -1.25rem)}
 }
 @keyframes close-lid {
-    from {transform: rotate(45deg) translate(1.25rem, -1.25rem)};
+    from {transform: rotate(45deg) translate(1.25rem, -1.25rem)}
     to {transform: rotate(0deg) translate(0, 0)}
 }
-@media (max-width: 890px) {
-    .trash-lid {
+@media (max-width: 45rem) {
+    .trash-lid, .trash-base, .trash {
         display: none;
     }
     .title {
-        display: none;
+        color: transparent;
+        /* width: 0; */
     }
 }
 /* \Trashcan */
@@ -301,7 +313,7 @@
 }
 
 .information-section {
-    border: solid;
+    /* border: solid; */
     border-radius: 10px;
 
     background-color: #d7dfff;
@@ -311,7 +323,7 @@
     flex-grow: 1;
 }
 .info-name {
-    border: solid;
+    /* border: solid; */
     border-radius: 10px;
     margin: 5px;
     overflow-x: hidden;
