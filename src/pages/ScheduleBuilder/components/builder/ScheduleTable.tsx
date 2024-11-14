@@ -1,15 +1,12 @@
 import Column from './Column'
 import { 
-    Row, 
     Column as ColumnInterface,
     ActiveSelectionInterface,
     ScheduleBuilderAction,
-    Selection
 } from '@/types'
 
-import { newRows, newColumns, newFilter } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
+import { selectColumns, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
@@ -21,7 +18,7 @@ const ScheduleTable = (props: {
 }) => {
     let dispatch = useAppDispatch()
 
-    const rows = useAppSelector(selectRows)
+    // const rows = useAppSelector(selectRows)
     // const setRows: any = (val: Array<Row>) => Array(dispatch(newRows(val)))
 
     const columns = useAppSelector(selectColumns)

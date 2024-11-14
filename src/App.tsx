@@ -1,5 +1,4 @@
 import "./App.css";
-import React from "react"
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom';
 import ScheduleBuilder from "./pages/ScheduleBuilder/ScheduleBuilder";
 import StoreProvider from "./StoreProvider";

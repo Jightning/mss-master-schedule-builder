@@ -1,9 +1,7 @@
 /* 
 BUG
-
 1. double clicking a selection splits even/odd but makes the selection vanish
 2. selection count not working -> can't move from odd to another odd (same with even)
-
 */
 
 import { createSlice  } from '@reduxjs/toolkit'
@@ -26,7 +24,7 @@ interface InitialStateType {
     columns: Array<Column>,
     selections: Array<Selection>,
     history: Array<{rows: Array<Row>, columns: Array<Column>}>,
-    settingsHistory: Array<Settings & {step: number}>,
+    // settingsHistory: Array<Settings & {step: number}>,
     currentStep: number
 }
 
@@ -129,7 +127,7 @@ const initialState: InitialStateType =
         { name: "AP Physics 39", subject: "science", id: 33424228118 }
     ],
     history: [],
-    settingsHistory: [{...defaultSettings, step: -1}],
+    // settingsHistory: [{...defaultSettings, step: -1}],
     currentStep: -1
 }
 
@@ -142,7 +140,7 @@ export const scheduleDataSlice = createSlice({
         },
         newSettings: (state, action) => {
             state.settings = action.payload
-            state.settingsHistory.push({...state.settings, step: state.currentStep})
+            // state.settingsHistory.push({...state.settings, step: state.currentStep})
         },
         newFilter: (state, action) => {
             state.filter = action.payload
@@ -159,7 +157,7 @@ export const scheduleDataSlice = createSlice({
         // History Reducers  
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
             // Weird -> I could possibly improve
-            console.log(action.payload)
+            // console.log(action.payload)
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
@@ -171,30 +169,29 @@ export const scheduleDataSlice = createSlice({
                 return
             }
 
-            state.rows = [...modifications.rows]
-            state.columns = [...modifications.columns]
+            state.rows = modifications.rows
+            state.columns = modifications.columns
 
-            state.history = [...state.history.slice(0, state.currentStep + 1), {rows: modifications.rows, columns: modifications.columns}]
-            state.settingsHistory = [...state.settingsHistory.slice(0, state.currentStep + 1)]
+            if (!action.payload.action.ignoreHistory)
+                state.history = [...state.history.slice(0, state.currentStep + 1), {rows: modifications.rows, columns: modifications.columns}]
+            // state.settingsHistory = [...state.settingsHistory.slice(0, state.currentStep + 1)]
 
             state.currentStep = state.history.length - 1
-
-            console.log(state.rows, state.columns, count)
         },
         undoState(state) {
             if (state.currentStep > 0) {
                 state.currentStep--;
 
                 // Get the latest setting
-                const setting = state.settingsHistory.length > 0 ? [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
-                    return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
-                }) : state.settings
+                // const setting = state.settingsHistory.length > 0 ? [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
+                //     return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
+                // }) : state.settings
 
                 const currentState = state.history[state.currentStep]
 
                 state.rows = currentState.rows
                 state.columns = currentState.columns
-                state.settings = setting
+                // state.settings = setting
 
             } else if (state.currentStep === 0) {
                 state.currentStep--;
@@ -209,20 +206,20 @@ export const scheduleDataSlice = createSlice({
                 state.currentStep++;
 
                 // Get the latest setting
-                const setting = state.settingsHistory.length > 0 ? [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
-                    return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
-                }) : state.settings
+                // const setting = state.settingsHistory.length > 0 ? [...state.settingsHistory].reduce((prev: Settings & {step: number}, setting: Settings & {step: number}) => {
+                //     return setting.step < state.currentStep && (prev == null || setting.step > prev.step) ? setting : prev
+                // }) : state.settings
                 
                 const currentState = state.history[state.currentStep]
 
                 state.rows = currentState.rows
                 state.columns = currentState.columns
-                state.settings = setting
+                // state.settings = setting
             }
         },
         resetHistory(state) {
             state.history = [];
-            state.settingsHistory = []
+            // state.settingsHistory = []
             state.currentStep = -1;
         }
     },

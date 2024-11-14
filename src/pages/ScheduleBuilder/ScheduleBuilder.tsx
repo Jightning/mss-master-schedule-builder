@@ -26,15 +26,15 @@ import {
 import Settings from './components/toolbar/Settings';
 
 import Popup from '../../components/Popup';
-import Trash from './components/toolbar/Trash';
+// import Trash from './components/toolbar/Trash';
 import Cover from './components/builder/Cover';
 import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
 import UndoRedo from './components/toolbar/UndoRedo';
 
-import { newRows, newColumns, newFilter, selectSettings, newSettings } from '@/lib/features/ScheduleDataSlice';
+import { newRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
-import { selectRows, selectColumns, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectColumns } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 import { addState } from '@/lib/features/ScheduleDataSlice';
@@ -49,20 +49,20 @@ const ScheduleBuilder = () => {
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
 
     const columns = useAppSelector(selectColumns)
-    const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
+    // const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
 
-    const filter = useAppSelector(selectFilter)
-    const setFilter: any = (val: object) => dispatch(newFilter(val))
+    // const filter = useAppSelector(selectFilter)
+    // const setFilter: any = (val: object) => dispatch(newFilter(val))
 
     const settings = useAppSelector(selectSettings)
-    const setSettings: any = (val: object) => dispatch(newSettings(val))
+    // const setSettings: any = (val: object) => dispatch(newSettings(val))
 
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     // \Redux\
 
-    const [rowsName, setRowsName] = useState("Teachers")
-    const [selectionsName, setSelectionsName] = useState("Classes")
+    const [rowsName, _setRowsName] = useState("Teachers")
+    const [selectionsName, _setSelectionsName] = useState("Classes")
 
     const [activeSelection, setActiveSelection] = useState<ActiveSelectionInterface | null>(null);
     const [heights, setHeights] = useState<Array<number>>([])
@@ -227,7 +227,7 @@ const ScheduleBuilder = () => {
         
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
             // assignOddEven(columnId, toChange, draggable.data.current.selection)
-            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection}})
+            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
             
             if (draggable.data.current.rowIndex !== toChange && draggable.data.current.columnId !== columnId) {
                 addHistoryState({type: "PATCH_SIMPLE_ROW", action: {

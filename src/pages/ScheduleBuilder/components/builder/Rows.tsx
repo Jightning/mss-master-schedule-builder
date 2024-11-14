@@ -1,7 +1,7 @@
 import { ActiveSelectionInterface } from '@/types'
 
 import { selectRows, selectSettings, selectFilter } from '@/lib/features/ScheduleDataSlice';
-import { useAppSelector, useAppDispatch } from '@/lib/hooks';
+import { useAppSelector } from '@/lib/hooks';
 
 // Rows on the right side of the table (teacher rows)
 
