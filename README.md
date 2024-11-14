@@ -3,6 +3,6 @@
 ### WIP
 **Documentation:** Exalidraw in docs/.excalidraw
 ### Todo:
-- Odd/Even Documentation
+- Import/export functionality
 - CSS Improvements for different screen sizes
-- Look into conversion to .exe
+- Performance improvement
