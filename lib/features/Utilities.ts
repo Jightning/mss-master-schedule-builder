@@ -95,8 +95,6 @@ const assignOddEven = (
         }
     })]
 
-    console.log(newRows[0].columns)
-
     // Setting the Columns
     const newColumns: Array<Column> = ((() => {
         let tempColumns = [...columns]
@@ -131,7 +129,6 @@ const assignOddEven = (
     return {rows: newRows, columns: newColumns}
 }
 
-// BUG: column id copied to the first period for SOME REASON
 const removeEvenOdd = (
     rows: Array<Row>, 
     columns: Array<Column>, 

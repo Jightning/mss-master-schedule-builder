@@ -61,7 +61,7 @@ export type ScheduleBuilderAction = {
         toChange: number,
         prevColumnId?: Column["id"],
         prevToChange?: number,
-        selection?: Selection,
+        selection: Selection,
         ignoreHistory?: boolean
     },
 }

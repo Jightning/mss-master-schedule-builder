@@ -218,7 +218,6 @@ const ScheduleBuilder = () => {
         // Need row index, column id
         // Identifying index of the column to change
         const toChange = droppable.data.current.rowIndex;
-        console.log(toChange)
         // Id of selection to change
         const columnId = droppable.data.current.columnId
 
@@ -226,10 +225,10 @@ const ScheduleBuilder = () => {
         let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
         
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
-            // assignOddEven(columnId, toChange, draggable.data.current.selection)
-            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
-            
-            if (draggable.data.current.rowIndex !== toChange && draggable.data.current.columnId !== columnId) {
+            if (draggable.data.current.rowIndex !== toChange || draggable.data.current.columnId !== columnId) {
+                // BUG This will call, but will only create the column split and fail to update rows when double clicking an element (without the if)
+                addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
+                
                 addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
                     selection: draggable.data.current.selection, 
                     toChange: toChange, columnId: columnId + "-odd",

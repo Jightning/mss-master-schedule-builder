@@ -1,9 +1,3 @@
-/* 
-BUG
-1. double clicking a selection splits even/odd but makes the selection vanish
-2. selection count not working -> can't move from odd to another odd (same with even)
-*/
-
 import { createSlice  } from '@reduxjs/toolkit'
 import {
     Column,
