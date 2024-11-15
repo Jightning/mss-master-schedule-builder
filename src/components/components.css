@@ -1,0 +1,60 @@
+/* Context Menu */
+.context-menu-container {    
+    display: flex;
+    flex-flow: column;
+
+    width: 6rem;
+    height: max(15rem, fit-content);
+
+    background-color: #c2ceff;
+    border-radius: 5px;
+
+    z-index: 10000;
+}
+.context-menu-delete {
+    background-color: #ffa6a6;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 5px;
+}
+.context-menu-delete p {
+    margin: auto;
+    width: fit-content;
+}
+
+.information-section {
+    border-radius: 10px !important;
+    width: 100%;
+    flex-grow: 1;
+
+    background-color: #d7dfff !important;
+}
+.info-name {
+    border-radius: 10px;
+    margin: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-break: break-word;
+
+    background-color: #c7d2ff;
+}
+.info-subject {
+    margin-top: 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-break: break-word;
+}
+.contexify_itemContent:hover {
+    border-radius: 10px !important;
+}
+.contexify_itemContent {
+    display: block !important;
+}
+
+/* \Context Menu */
+
+.css-reset {
+    all: unset;
+}

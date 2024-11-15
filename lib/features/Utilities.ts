@@ -16,9 +16,10 @@ export const modifyRows = (
 
             // Deleting old selection when moving element and not copying
             if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
+                console.log('here')
                 newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId, defaultSelection)
             }
-
+            console.log(newRowArray)
             newRowArray = addSelection(newRowArray, columns, action.toChange, action.columnId, action.selection)
             
             return {rows: newRowArray, columns: columns};
@@ -179,4 +180,14 @@ const removeEvenOdd = (
     }
 
     return {rows: tempRows, columns: tempColumns}
+}
+
+export const getRowSubjects = (rows: Array<Row>) => {
+    let subjects: Set<string> = new Set([])
+
+    for (let i in rows) {
+        subjects.add(rows[i].subject)
+    }
+
+    return Array.from(subjects)
 }

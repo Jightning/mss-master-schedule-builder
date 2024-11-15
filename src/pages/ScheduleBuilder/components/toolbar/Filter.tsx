@@ -3,16 +3,20 @@ import 'react-dropdown/style.css';
 import Select from 'react-select'
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { newFilterLocation, selectFilter, selectFilterLocation, getRowSubjects, newFilter } from '@/lib/features/ScheduleDataSlice';
+import { 
+    newFilterLocation, 
+    selectFilter, 
+    selectFilterLocation, 
+    selectRows, 
+    newFilter 
+} from '@/lib/features/ScheduleDataSlice';
+import { getRowSubjects } from '@/lib/features/Utilities';
 
 const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const filterRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
 
-    // const rows = useAppSelector(selectRows)
-    // const setRows: any = (val: string) => dispatch(newRows(val))
-    
-    // const columns = useAppSelector(selectColumns)
+    const rows = useAppSelector(selectRows)
 
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
@@ -20,8 +24,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
     const filterLocation = useAppSelector(selectFilterLocation) 
     const setFilterLocation: any = (val: string) => dispatch(newFilterLocation(val))
 
-    const subjects = useAppSelector(getRowSubjects)
-
+    const subjects = getRowSubjects(rows)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it

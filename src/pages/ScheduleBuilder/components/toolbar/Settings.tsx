@@ -4,8 +4,8 @@ import React, { useRef, useEffect, useState } from 'react'
 import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { newSettings, selectColumns, selectSettings } from '@/lib/features/ScheduleDataSlice';
-import { getRowSubjects } from '@/lib/features/ScheduleDataSlice';
+import { newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { getRowSubjects } from '@/lib/features/Utilities';
 
 import { TwitterPicker } from 'react-color';
 
@@ -18,11 +18,12 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
     const dispatch = useAppDispatch()
     
     const columns = useAppSelector(selectColumns)
+    const rows = useAppSelector(selectRows)
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
 
-    const subjects = useAppSelector(getRowSubjects)
+    const subjects = getRowSubjects(rows)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it

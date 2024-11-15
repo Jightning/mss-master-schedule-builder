@@ -38,6 +38,7 @@ import { selectRows, selectColumns } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 import { addState } from '@/lib/features/ScheduleDataSlice';
+import RowHeaderContextMenu from '@/src/components/RowHeaderContextMenu';
 
 // TODO Possibly introduce a memo system (useMemo or useCallback)
 
@@ -74,7 +75,6 @@ const ScheduleBuilder = () => {
 
     const [isFilterOpen, setIsFilterOpen] = useState(false)
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-
 
     // To check for window resize
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
@@ -326,7 +326,7 @@ const ScheduleBuilder = () => {
             <DndContext onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
                         onDragMove={handleDragMove}
-                        modifiers={[restrictToWindowEdges]}
+                        modifiers={[]}
                         autoScroll={autoScroll}
                         collisionDetection={handleCollision}>
                 <div id="main-container">
@@ -399,6 +399,11 @@ const ScheduleBuilder = () => {
                     </div>
                     <SelectionColumn />
                 </div>
+                            
+                {/* Context menu for each row (here for absolute positioning) */}
+                {rows.map((row: Row) => (
+                    <RowHeaderContextMenu rowId={row.id} row={row} selectionsName={selectionsName} />
+                ))}
 
                 {/* To allow the selection to drag over its current div
                     Overlay is what is shown when dragging */}

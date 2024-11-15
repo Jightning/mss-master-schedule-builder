@@ -26,7 +26,7 @@ const defaultSelection = { name: "none", subject: "none", id: 0, oddEven: false 
 
 const defaultSettings: Settings = {
     isOddEvenToggle: true,
-    isOddEvenAutoAssign: true,
+    isOddEvenAutoAssign: false,
     hasSelectionLimit: true,
     selectionLimit: 4,
     isCopySelection: false,
@@ -149,15 +149,18 @@ export const scheduleDataSlice = createSlice({
             state.selections = action.payload
         },
         // History Reducers  
+        // BUG when setting autoassign and using it to split something, then moving the things, then disabling autoassign and then enabling copy selection to then replace on the of the things with the other, it wont work
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
             // Weird -> I could possibly improve
-            // console.log(action.payload)
+            console.log(action.payload)
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
             }
 
             const count = modifications.rows[action.payload.action.toChange]?.selectionCount
+            
+            console.log(modifications)
 
             if (count > state.settings.selectionLimit && state.settings.hasSelectionLimit) {
                 return
@@ -235,17 +238,6 @@ export const selectSettings = (state: { scheduleData: { settings: Settings } }) 
 
 export const selectCurrentStep = (state: { scheduleData: { currentStep: number } }) => state.scheduleData.currentStep
 export const selectHistory = (state: { scheduleData: { history: Array<{rows: Array<Row>, columns: Array<Column>}> } }) => state.scheduleData.history
-
-export const getRowSubjects = (state: { scheduleData: { rows: Array<Row> }}) => {
-    let subjects: Set<string> = new Set([])
-    let rows: Array<Row> = state.scheduleData.rows
-
-    for (let i in rows) {
-        subjects.add(rows[i].subject)
-    }
-
-    return Array.from(subjects)
-}
 
 
 export default scheduleDataSlice.reducer

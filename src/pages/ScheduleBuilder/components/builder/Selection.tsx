@@ -9,9 +9,9 @@ import {
     Selection as SelectionInterface
 } from '@/types'
 
-import {useContextMenu} from "react-contexify";  
+import { useContextMenu } from "react-contexify";  
 import "react-contexify/dist/ReactContexify.css";
-import ContextMenu from '../toolbar/ContextMenu'
+import ContextMenu from '@/src/components/ContextMenu'
 
 const Selection = (props: 
     { 
@@ -35,8 +35,6 @@ const Selection = (props:
     });
 
     const displayMenu = (e: any) => {
-        // put whatever custom logic you need
-        // you can even decide to not display the Menu
         show({
             event: e,
         });

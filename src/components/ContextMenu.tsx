@@ -3,9 +3,13 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Column, Selection, ScheduleBuilderAction } from '@/types'
 import {
     Menu,
-    Item
+    Item,
+    Submenu
 } from "react-contexify";  
-import "react-contexify/dist/ReactContexify.css";
+// import "react-contexify/dist/ReactContexify.css";
+import "./components.css"
+
+import { useEffect } from 'react';
 
 const ContextMenu = (
         { selectionId, selection, rowIndex, columnId }: 
@@ -16,6 +20,7 @@ const ContextMenu = (
     const settings = useAppSelector(selectSettings)
 
     return (
+        <>
         <Menu id={selectionId} className="absolute context-menu-container border-none" >
              {rowIndex !== undefined && columnId && <Item 
                                 className='context-menu-delete' 
@@ -23,11 +28,12 @@ const ContextMenu = (
                                 <p>Delete</p>
                         </Item>}
 
-            <div className='information-section'>
+            <Item disabled={true} className='information-section css-reset'>
                 <p className='info-name'>{selection.name}</p>
                 <p className='info-subject' style={{color: settings.colors[selection.subject]}}>{selection.subject.charAt(0).toUpperCase() + selection.subject.slice(1)}</p>
-            </div>
+            </Item >
         </Menu>
+        </>
     )
 }
 
