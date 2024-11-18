@@ -34,9 +34,15 @@
 .info-name {
     border-radius: 10px;
     margin: 5px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    word-break: break-word;
+    padding: 0 5px;
+
+
+    /*30 method east schedule in the*/ 
+    /* overflow-x: hidden; */
+    overflow-y: auto !important;
+    word-break: break-word !important;
+    white-space: initial;
+    hyphens: manual;
 
     background-color: #c7d2ff;
 }

@@ -168,6 +168,7 @@ export const scheduleDataSlice = createSlice({
 
             state.rows = modifications.rows
             state.columns = modifications.columns
+            if (modifications.selections) state.selections = modifications.selections
 
             if (!action.payload.action.ignoreHistory)
                 state.history = [...state.history.slice(0, state.currentStep + 1), {rows: modifications.rows, columns: modifications.columns}]

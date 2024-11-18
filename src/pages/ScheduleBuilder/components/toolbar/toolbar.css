@@ -1,4 +1,56 @@
-/* Seach box */
+/* Export */
+.export-container {
+    z-index: 9;
+    position: absolute;
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+    left: calc(30px + 4rem);
+    top: 120px;
+
+    padding: 5px;
+}
+
+.export-container div {
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.export-container div:hover {
+    color: #52556e
+}
+
+/* /Export */
+
+/* Import */
+
+.import-container {
+    z-index: 9;
+    position: absolute;
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+    left: 20px;
+    top: 120px;
+
+    padding: 5px;
+}
+
+.import-container div {
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.import-container div:hover {
+    color: #52556e
+}
+
+
+/* /Import */
+
+/* Search box */
 #search-input {
     resize: none;
     outline: none;

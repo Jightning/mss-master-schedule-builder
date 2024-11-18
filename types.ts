@@ -9,7 +9,7 @@ export interface Selection {
 export interface Column {
     name: string,
     id: string,
-    oddEven: boolean | "EVEN" | "ODD",
+    oddEven: false | "EVEN" | "ODD",
 }
 
 // export interface Tile {
@@ -55,13 +55,16 @@ export interface Settings {
 }
 
 export type ScheduleBuilderAction = {
-    type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD",
+    type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD" | "POST",
     action: {
         columnId: Column["id"],
         toChange: number,
         prevColumnId?: Column["id"],
         prevToChange?: number,
         selection: Selection,
-        ignoreHistory?: boolean
+        ignoreHistory?: boolean,
+        selections: Array<Selection>,
+        rows: Array<Row>,
+        columns: Array<Column>
     },
 }

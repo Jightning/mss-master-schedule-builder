@@ -1,4 +1,4 @@
-import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "../../types";
+import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "@/types";
 // REMINDER: TEST THIS
 
 export const modifyRows = (
@@ -6,7 +6,7 @@ export const modifyRows = (
     rows: Array<Row>, 
     columns: Array<Column>, 
     settings: Settings
-): { rows: Array<Row>, columns: Array<Column>, failed?: boolean } => {
+): { rows: Array<Row>, columns: Array<Column>, selections?: Array<Selection>, failed?: boolean } => {
     // Default selection for blank spaces
     let defaultSelection: Selection = { name: "none", subject: "none", id: 0 }
 
@@ -34,6 +34,8 @@ export const modifyRows = (
             return assignOddEven(rows, columns, action)
         case "DELETE_EVEN_ODD":
             return removeEvenOdd(rows, columns, action)
+        case "POST":
+            return {rows: action.rows, columns: action.columns, selections: action.selections}
         default:
             return {rows, columns}
     }

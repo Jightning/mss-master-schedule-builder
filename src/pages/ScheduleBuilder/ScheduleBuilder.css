@@ -84,12 +84,17 @@ img {
     flex-grow: 1;
  }
 
+#import-btn {
+    width: 4rem;
+}
+#export-btn {
+    width: 4rem;
+}
 
 .settings-btn, .filter-btn {
     position: relative;
     right: calc(1rem);
 }
- 
 
 .toolbar .settings-btn .animating {
     animation: rotate-gear 0.5s;

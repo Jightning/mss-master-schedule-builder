@@ -39,6 +39,8 @@ import { useAppSelector } from '@/lib/hooks';
 
 import { addState } from '@/lib/features/ScheduleDataSlice';
 import RowHeaderContextMenu from '@/src/components/RowHeaderContextMenu';
+import Export from './components/toolbar/Export';
+import Import from './components/toolbar/Import';
 
 // TODO Possibly introduce a memo system (useMemo or useCallback)
 
@@ -75,14 +77,22 @@ const ScheduleBuilder = () => {
 
     const [isFilterOpen, setIsFilterOpen] = useState(false)
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+    const [isExportOpen, setIsExportOpen] = useState(false)
+    const [isImportOpen, setIsImportOpen] = useState(false)
 
-    // To check for window resize
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
+    
     useEffect(() => {
+        // Prevent default right click behavior (to avoid annoying complications)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // To check for window resize
         function changeDims() {
             setWindowDims([window.innerWidth, window.innerHeight])
-            
         }
+
         function selectSearch(event: any) {
             const input = document.getElementById('search-input');
             if (!input) {
@@ -315,9 +325,21 @@ const ScheduleBuilder = () => {
     // FOR DRAG SCROLL, NOT FOR DRAGGABLE
     const drag_scroll_ref = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
     const { events } = useDraggableScroll(drag_scroll_ref)
+
+    const closePopups = (dontClose?: string) => {
+        if (isSettingsOpen && dontClose !== "settings") {
+            setIsSettingsOpen(false)
+        } else if (isFilterOpen && dontClose !== "filter") {
+            setIsFilterOpen(false)
+        } else if (isImportOpen && dontClose !== "import") {
+            setIsImportOpen(false)
+        } else if (isExportOpen && dontClose !== "export") {
+            setIsExportOpen(false)
+        }
+    }
     
     return (
-        <div id="sb-container">
+        <div id="sb-container" >
             {openPopup ?    
                 (<Popup closePopup={() => setOpenPopup(null)}>
                     {openPopup}
@@ -340,31 +362,37 @@ const ScheduleBuilder = () => {
                     </div>
 
                     <UndoRedo />
-
-                    {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
-                    {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
+                    
+                    {isImportOpen && <Import setIsImportOpen={setIsImportOpen} />}
+                    {isExportOpen && <Export setIsExportOpen={setIsExportOpen} />}
+                    {isFilterOpen && <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} />}
+                    {isSettingsOpen && <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} />}
 
                     <div className="toolbar">
                         <ul>
-                            <li className='import-btn rounded-tl-md rounded-bl-md'>Import</li>
-                            <li className='export-btn rounded-tr-md rounded-br-md'>Export</li>
+                            <li id="import-btn" className='rounded-tl-md rounded-bl-md' onClick={() => setIsImportOpen((prevIsImportOpen) => {
+                                closePopups("import")
+                                return !prevIsImportOpen
+                            })}>Import</li>
+                            <li id='export-btn' className='rounded-tr-md rounded-br-md' onClick={() => setIsExportOpen((prevIsExportOpen) => {
+                                closePopups("export")
+                                return !prevIsExportOpen
+                            })}>Export</li>
+
                             <span/>
+
                             <li className='search-box rounded-tl-md rounded-bl-md'><SearchBar searchLocation="rows" /></li>
                             <span/>
 
                             <li className='filter-btn rounded-md' id="filter-btn" onClick={() => setIsFilterOpen((prevIsFilterOpen) => {
-                                if (isSettingsOpen) {
-                                    setIsSettingsOpen(false)
-                                }
+                                closePopups("filter")
                                 return !prevIsFilterOpen
                             })}>
                                 <svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
                             </li>
                     
                             <li className='settings-btn rounded-md' id="settings-btn" onClick={() => setIsSettingsOpen((prevIsSettingsOpen) => {
-                                if (isFilterOpen) {
-                                    setIsFilterOpen(false)
-                                }
+                                closePopups("settings")
                                 return !prevIsSettingsOpen
                             })}>
                                 <svg className={(isAnimating ? "animating" : "")} 
@@ -402,7 +430,7 @@ const ScheduleBuilder = () => {
                             
                 {/* Context menu for each row (here for absolute positioning) */}
                 {rows.map((row: Row) => (
-                    <RowHeaderContextMenu rowId={row.id} row={row} selectionsName={selectionsName} />
+                    <RowHeaderContextMenu rowId={row.id} key={row.id} row={row} selectionsName={selectionsName} />
                 ))}
 
                 {/* To allow the selection to drag over its current div
