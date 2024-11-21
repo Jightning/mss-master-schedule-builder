@@ -162,7 +162,7 @@ img {
 
     background-color: #ffc368;
   
-    word-break: break-all;
+    word-break: break-word;
     text-align: center;
     border-right: 1px solid #fff;
     position: sticky;
@@ -319,7 +319,7 @@ img {
     padding: 0 5px;
     padding-bottom: 0;
   
-    word-break: break-all;
+    word-break: break-word;
     text-align: center;
     display: inline-block;
     
@@ -341,7 +341,7 @@ img {
     z-index: 2;
   
     overflow: hidden;
-    word-break: break-all;
+    word-break: break-word;
 }
 .selection-overlay {
     bottom: 0.65rem;

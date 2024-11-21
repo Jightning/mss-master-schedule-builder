@@ -23,9 +23,9 @@ const SearchBar = ({ searchLocation }: { searchLocation: string }) => {
     })
 
     const handleChange = (e: any) => {
-        // V-V. 
-        // Could use type assertion to access fitler[filterLocation], but selections and rows might be different
-        // Check later, if they are not different, just use type assertion
+        // V-V
+        // Could use type assertion to access filter[filterLocation], but selections and rows might be different
+        // TODO Check later, if they are not different, just use type assertion
         setFilter({...filter, [searchLocation]: 
             {...filter[searchLocation as keyof typeof filter], searchTerm: e.target.value}})
         setRows([...rows])
@@ -33,7 +33,7 @@ const SearchBar = ({ searchLocation }: { searchLocation: string }) => {
 
     return (
         <div>
-            <textarea id="search-input" onChange={handleChange} value={filter[searchLocation as keyof typeof filter].searchTerm} placeholder='Search' />
+            <textarea className="search-input" onChange={handleChange} value={filter[searchLocation as keyof typeof filter].searchTerm} placeholder='Search' />
             <div className="erase-search-icon" onClick={() => {setFilter({...filter, [searchLocation]: {...filter[searchLocation as keyof typeof filter], searchTerm: ""}}); setRows([...rows]);}}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
             </div>

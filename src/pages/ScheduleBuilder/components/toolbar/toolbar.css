@@ -25,33 +25,190 @@
 
 /* Import */
 
+.shade {
+    z-index: 99;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .import-container {
     z-index: 9;
     position: absolute;
     border: solid;
-    border-radius: 5px;
-
+    border-radius: 10px;
     background-color: white;
-    left: 20px;
-    top: 120px;
 
-    padding: 5px;
+    padding: 10px;
+    width: 80vw;
+    height: 80vh;
+
+    display: flex;
+    flex-flow: column;
+}
+.import-container h1 {
+    padding: 0 10px;
+    margin: 0 auto;
+    height: 3rem;
+    border-bottom: solid;
+    width: fit-content;
+    height: fit-content;
+    display: inline-block;
 }
 
-.import-container div {
-    margin: 5px 0;
+/* Imports Choices */
+.imports-choices {
+    position: relative;
+    margin-top: calc(1.5rem + 5px);
+    height: calc(80vh - 4.5rem - 30px);
+
+    display: flex;
+    justify-content: space-evenly;
+}
+.choice {
+    border: solid;  
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    /* space to take up minus total margin/padding */
+    width: calc(33.3333333% - 20px);
+    /* height: 60vh; */
+}
+.choice h3 {
+    width: fit-content;
+    border-bottom: solid;
+    padding: 0 5px;
+    margin: auto;
+}
+.choice-elements-container {
+    margin: 5px;    
+    height: calc(80vh - 4.5rem - 95px);
+    overflow: auto;
+}
+
+.column-choice-element, .row-choice-element, .selection-choice-element {
+    border: solid;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px;
+    word-break: break-all;
+
+    overflow-x: none;
+    cursor: pointer;
+    background-color: white;
+}
+
+.choice-top-sticky {
+    background-color: white;
+    border-radius: 0 0 15px 15px;
+    padding-bottom: 0;
+    margin: 0 10px 0 10px;
+
+    display: flex;
+    flex-direction: row;
+}
+.choice-search {
+    box-sizing: border-box !important;
+    border: solid black !important;
+    border-radius: 10px;
+
+    height: 2.5rem !important;
+    margin: 0 5px 0 0;
+
+    padding: 0.3rem 5px 0 5px;
+}
+.add-btn {
+    transition: color 0.2s;
+
+    margin: 0 !important;
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.add-btn svg {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+.add-btn:hover {
+    color: rgb(93, 99, 184);
+}
+
+/* /Imports Choices */
+
+.importAll-editSubjects-container {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+    width: fit-content;
+    height: 4.5rem;
+
+    display: flex;
+    flex-flow: row-reverse;
+    align-items: center;
+}
+
+/* Edit Subjects */
+
+.edit-subjects-btn {
+    border: solid;
+    border-radius: 10px;
+
+    height: fit-content;
+
+    margin-right: 10px;
+    padding: 5px;
+
     cursor: pointer;
     transition: all 0.2s;
 }
-.import-container div:hover {
-    color: #52556e
+.edit-subjects-btn:hover {
+    border-color: rgb(93, 99, 184);
 }
 
+/* /Edit Subjects */
+
+/* ImportAll */
+
+.importAll-container {
+    z-index: 100;
+    /* position: absolute; */
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+
+    padding: 5px;
+    height: 4.5rem;
+    width: fit-content;
+
+    display: flex;
+    flex-flow: column;
+    justify-content: space-evenly;
+}
+
+.importAll-container div {
+    /* margin: 0; */
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.importAll-container div:hover {
+    color: #2c3cc7
+}
+
+/* /ImportAll */
 
 /* /Import */
 
 /* Search box */
-#search-input {
+.search-input {
     resize: none;
     outline: none;
     border: none;
@@ -69,7 +226,7 @@
     overflow-x: auto;
     /* text-overflow: ellipsis; */
 }
-#search-input::-webkit-scrollbar {
+.search-input::-webkit-scrollbar {
     display: none;
 }
 .erase-search-icon {
