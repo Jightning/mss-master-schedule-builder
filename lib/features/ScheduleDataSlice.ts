@@ -5,7 +5,8 @@ import {
     Selection,
     Filter,
     Settings,
-    ScheduleBuilderAction
+    ScheduleBuilderAction,
+    Subject
 } from "@/types"
 import { modifyRows } from "./Utilities"
 
@@ -17,8 +18,8 @@ interface InitialStateType {
     rows: Array<Row>,
     columns: Array<Column>,
     selections: Array<Selection>,
+    subjects: Array<Subject>,
     history: Array<{rows: Array<Row>, columns: Array<Column>}>,
-    // settingsHistory: Array<Settings & {step: number}>,
     currentStep: number
 }
 
@@ -32,11 +33,6 @@ const defaultSettings: Settings = {
     isCopySelection: false,
     isColorSelectionSubjects: false,
     isColorRowSubjects: false,
-    colors: {
-        "math": "#EB144C",
-        "science": "#00D084",
-        "english": "#FCB900"
-    }
 }
 
 const initialState: InitialStateType = 
@@ -120,6 +116,7 @@ const initialState: InitialStateType =
         { name: "AP Physics 38", subject: "science", id: 33424228108 },
         { name: "AP Physics 39", subject: "science", id: 33424228118 }
     ],
+    subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}, {name: "none", color: "#"}],
     history: [],
     // settingsHistory: [{...defaultSettings, step: -1}],
     currentStep: -1
@@ -139,20 +136,22 @@ export const scheduleDataSlice = createSlice({
         newFilter: (state, action) => {
             state.filter = action.payload
         },
-        newRows: (state, action) => {
+        newRows: (state, action: {payload: Array<Row>}) => {
             state.rows = action.payload
         },
-        newColumns: (state, action) => {
+        newColumns: (state, action: {payload: Array<Column>}) => {
             state.columns = action.payload
         },
-        newSelections: (state, action) => {
+        newSelections: (state, action: {payload: Array<Selection>}) => {
             state.selections = action.payload
+        },
+        newSubjects: (state, action: {payload: Array<Subject>}) => {
+            state.subjects = Array.from(new Set(action.payload))
         },
         // History Reducers  
         // BUG when setting autoassign and using it to split something, then moving the things, then disabling autoassign and then enabling copy selection to then replace on the of the things with the other, it wont work
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
             // Weird -> I could possibly improve
-            console.log(action.payload)
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
@@ -160,8 +159,6 @@ export const scheduleDataSlice = createSlice({
 
             const count = modifications.rows[action.payload.action.toChange]?.selectionCount
             
-            console.log(modifications)
-
             if (count > state.settings.selectionLimit && state.settings.hasSelectionLimit) {
                 return
             }
@@ -223,7 +220,7 @@ export const scheduleDataSlice = createSlice({
     },
 })
 
-export const { newRows, newColumns, newSelections, newFilterLocation, newFilter, newSettings } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newFilterLocation, newFilter, newSettings, newSubjects } = scheduleDataSlice.actions
 export const { addState, undoState, redoState, resetHistory } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
@@ -232,6 +229,7 @@ export const { addState, undoState, redoState, resetHistory } = scheduleDataSlic
 export const selectRows = (state: { scheduleData: { rows: Array<Row> } }) => state.scheduleData.rows
 export const selectColumns = (state: { scheduleData: { columns: Array<Column> }}) => state.scheduleData.columns
 export const selectSelections = (state: { scheduleData: { selections: Array<Selection> }}) => state.scheduleData.selections
+export const selectSubjects = (state: { scheduleData: { subjects: Array<Subject> } }) => state.scheduleData.subjects
 
 export const selectFilterLocation = (state: { scheduleData: { filterLocation: string } }) => state.scheduleData.filterLocation
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter

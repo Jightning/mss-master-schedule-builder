@@ -1,6 +1,6 @@
 import { ActiveSelectionInterface, Row } from '@/types'
 
-import { selectRows, selectSettings, selectFilter } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectSettings, selectFilter, selectSubjects } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 import { useContextMenu } from "react-contexify";  
@@ -19,6 +19,13 @@ const Rows = (
 
     const filter = useAppSelector(selectFilter)
     const settings = useAppSelector(selectSettings)
+    const subjects = useAppSelector(selectSubjects)
+
+    const subjectsObject = subjects.reduce((acc: any, item) => {
+        acc[item.name] = item.color
+        return acc
+    }, {})
+
 
     return (
         <div className='rows-container' key={1}>
@@ -44,7 +51,7 @@ const Rows = (
                         key={row.id}
                         style={{
                             height: `${props.heights[index]}px`,
-                            color: props.activeSelection?.currentRowIndex == index ? "blue" : (settings.isColorRowSubjects ? settings.colors[row.subject] : "black")
+                            color: props.activeSelection?.currentRowIndex == index ? "blue" : (settings.isColorRowSubjects ? subjectsObject[row.subject] : "black")
                             // color: settings.isColorRowSubjects ? settings.colors[row.subject] : "black"
                         }}
                         onContextMenu={displayMenu}>

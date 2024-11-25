@@ -8,9 +8,10 @@ import {
     selectFilter, 
     selectFilterLocation, 
     selectRows, 
-    newFilter 
+    newFilter, 
+    selectSubjects
 } from '@/lib/features/ScheduleDataSlice';
-import { getRowSubjects } from '@/lib/features/Utilities';
+import { Subject } from '@/types';
 
 const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const filterRef = useRef<HTMLDivElement>(null)
@@ -24,7 +25,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
     const filterLocation = useAppSelector(selectFilterLocation) 
     const setFilterLocation: any = (val: string) => dispatch(newFilterLocation(val))
 
-    const subjects = getRowSubjects(rows)
+    const subjects = useAppSelector(selectSubjects)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -47,9 +48,9 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         };
     }, []);
 
-    const subject_object = subjects.map((subject: string) => ({
-        value: subject,
-        label: subject.charAt(0).toUpperCase() + subject.slice(1)
+    const subject_object = subjects.map((subject: Subject) => ({
+        value: subject.name,
+        label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
     }))
 
     return (

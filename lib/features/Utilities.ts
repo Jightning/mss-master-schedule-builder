@@ -16,10 +16,9 @@ export const modifyRows = (
 
             // Deleting old selection when moving element and not copying
             if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
-                console.log('here')
                 newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId, defaultSelection)
             }
-            console.log(newRowArray)
+
             newRowArray = addSelection(newRowArray, columns, action.toChange, action.columnId, action.selection)
             
             return {rows: newRowArray, columns: columns};
@@ -43,6 +42,9 @@ export const modifyRows = (
 
 // toChange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], selection: Selection) => {
+    // If we are replacing a selection, the selectionCount should not change
+    const isReplacing = rows[toChange].columns[columnId].id !== 0
+
     let newRows: Array<Row> = [
         ...rows.slice(0, toChange), 
         {
@@ -51,7 +53,7 @@ const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number
                 ...rows[toChange].columns, 
                 [columnId]: selection
             },
-            selectionCount: rows[toChange].selectionCount + (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1)
+            selectionCount: rows[toChange].selectionCount + (!isReplacing ? (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1) : 0)
         }, 
         ...rows.slice(toChange + 1)
     ]
@@ -184,12 +186,12 @@ const removeEvenOdd = (
     return {rows: tempRows, columns: tempColumns}
 }
 
-export const getRowSubjects = (rows: Array<Row>) => {
-    let subjects: Set<string> = new Set([])
+// export const getRowSubjects = (rows: Array<Row>) => {
+//     let subjects: Set<string> = new Set([])
 
-    for (let i in rows) {
-        subjects.add(rows[i].subject)
-    }
+//     for (let i in rows) {
+//         subjects.add(rows[i].subject)
+//     }
 
-    return Array.from(subjects)
-}
+//     return Array.from(subjects)
+// }

@@ -1,8 +1,14 @@
 type HEX = `#${string}`
 
+// Name must be unique -> no need for an id
+export type Subject = {
+    name: string,
+    color: HEX
+}
+
 export interface Selection {
     name: string,
-    subject: string,
+    subject: Subject["name"],
     id: number | string,
 }
 
@@ -19,7 +25,7 @@ export interface Column {
 // }
 export interface Row {
     name: string,
-    subject: string,
+    subject: Subject["name"],
     id: number,
     selectionCount: number
     columns: Record<Column["id"], Selection>
@@ -49,9 +55,6 @@ export interface Settings {
     isCopySelection: boolean,
     isColorSelectionSubjects: boolean,
     isColorRowSubjects: boolean
-    colors: {
-        [subject: string]: HEX
-    }
 }
 
 export type ScheduleBuilderAction = {

@@ -1,4 +1,4 @@
-import { addState, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { addState, selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Column, Selection, ScheduleBuilderAction } from '@/types'
 import {
@@ -9,15 +9,18 @@ import {
 // import "react-contexify/dist/ReactContexify.css";
 import "./components.css"
 
-import { useEffect } from 'react';
-
 const ContextMenu = (
         { selectionId, selection, rowIndex, columnId }: 
         { selectionId: Selection["id"], selection: Selection, rowIndex?: number, columnId?: Column["id"] }) => {
         
     const dispatch = useAppDispatch()
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
-    const settings = useAppSelector(selectSettings)
+    const subjects = useAppSelector(selectSubjects)
+    const subjectsObject = subjects.reduce((acc: any, item) => {
+        acc[item.name] = item.color
+        return acc
+    }, {})
+
 
     return (
         <>
@@ -30,7 +33,7 @@ const ContextMenu = (
 
             <Item disabled={true} className='information-section css-reset'>
                 <p className='info-name'>{selection.name}</p>
-                <p className='info-subject' style={{color: settings.colors[selection.subject]}}>{selection.subject.charAt(0).toUpperCase() + selection.subject.slice(1)}</p>
+                <p className='info-subject' style={{color: subjectsObject[selection.subject]}}>{selection.subject.charAt(0).toUpperCase() + selection.subject.slice(1)}</p>
             </Item >
         </Menu>
         </>

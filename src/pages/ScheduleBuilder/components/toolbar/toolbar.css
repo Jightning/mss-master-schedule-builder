@@ -28,6 +28,8 @@
 .shade {
     z-index: 99;
     position: absolute;
+    left: 0;
+    top: 0;
     background-color: rgba(0, 0, 0, 0.2);
     width: 100vw;
     height: 100vh;
@@ -38,7 +40,6 @@
 }
 .import-container {
     z-index: 9;
-    position: absolute;
     border: solid;
     border-radius: 10px;
     background-color: white;
@@ -144,8 +145,7 @@
 
 .importAll-editSubjects-container {
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: calc(10vw + 10px);
 
     width: fit-content;
     height: 4.5rem;
@@ -172,14 +172,74 @@
 .edit-subjects-btn:hover {
     border-color: rgb(93, 99, 184);
 }
+.edit-subjects-container {
+    z-index: 9;
+    position: absolute;
+    border: solid;
+    border-radius: 10px;
+    background-color: white;
+
+    padding: 10px 10px 0 10px;
+    width: 55vw;
+    height: 60vh;
+
+    display: flex;
+    flex-flow: column;
+}
+.edit-subjects-container h2 {
+    padding: 0 5px;
+    margin: 0 auto;
+    border-bottom: solid;
+
+    width: fit-content;
+    height: 2.5rem;
+    display: inline-block;  
+}
+
+.edit-subjects-content {
+    display: flex;
+    flex-flow: row;
+    height: calc(60vh - 2.5rem - 10px);
+    padding: 10px;
+}
+
+.subjects-container {
+    margin: auto;
+    height: 100%;
+    overflow-y: auto;
+    border-right: solid;
+    padding: 10px;
+    width: 50%;
+}
+
+.subject {
+    border: solid;
+    border-radius: 10px;
+    width: fit-content;
+    padding: 0 10px;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+.edit-subject-container {
+    width: 50%;
+    height: 100%;
+    border: solid;
+}
+.editting-container {
+    border: solid;
+    width: 100%;
+    height: 50%;
+    margin-left: 10px;
+}
+
 
 /* /Edit Subjects */
 
 /* ImportAll */
 
 .importAll-container {
-    z-index: 100;
-    /* position: absolute; */
+    z-index: 10;
     border: solid;
     border-radius: 5px;
 

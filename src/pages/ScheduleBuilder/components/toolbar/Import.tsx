@@ -1,18 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { addState, newColumns, newRows, newSelections, selectColumns, selectRows, selectSelections } from '@/lib/features/ScheduleDataSlice';
-import { Column, ScheduleBuilderAction } from '@/types';
-import ContentEditable from '../../../../components/ContentEditable';
+import { 
+    addState, 
+    newColumns, 
+    newRows, 
+    newSelections, 
+    selectColumns, 
+    selectRows, 
+    selectSelections, 
+    selectSettings, 
+    selectSubjects
+} from '@/lib/features/ScheduleDataSlice';
+import { 
+    Column, 
+    Row, 
+    ScheduleBuilderAction,
+    Selection,
+    Subject
+} from '@/types';
 
 const ImportAll = () => {
     const inputCSVFile = useRef<HTMLInputElement>(null);
     const inputJSONFile = useRef<HTMLInputElement>(null);
 
     const dispatch = useAppDispatch()
-    const setColumns: any = (val: string) => dispatch(newColumns(val))
-    const setRows: any = (val: string) => dispatch(newRows(val))
-    const setSelections: any = (val: string) => dispatch(newSelections(val))
+    const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
+    const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
+    const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
     
     const clickCSV = () => inputCSVFile.current!.click();
@@ -126,23 +141,51 @@ const ImportAll = () => {
     )
 }
 
-const EditSubjects = () => {
-    return (
-        <div>
+const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
+    const subjects = useAppSelector(selectSubjects)
+    const settings = useAppSelector(selectSettings)
 
+    const [currentSubject, setCurrentSubject] = useState<Subject>()
+    
+    return (
+        <div className="shade" onClick={() => props.setIsEditSubjectsOpen(false)}>
+            <div className="edit-subjects-container" onClick={(e) => e.stopPropagation()}>
+                <h2>Subjects</h2>
+                <div className="edit-subjects-content">
+                    <div className='subjects-container'>
+                        <div>Add</div>
+                        {/* Subjects is a set */}
+                        {[...subjects].map((subject: Subject) => (
+                            <div style={{
+                                borderColor: subject.color
+                            }}
+                            className='subject'>
+                                {subject.name.slice(0, 1).toUpperCase() + subject.name.slice(1)}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="edit-subject-container">
+                        <h3>{currentSubject ? "Edit " + currentSubject.name : "Add"}</h3>
+                        <div className='flex'>
+                            <div className="editting-container">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
 
 // Rows on the right side of the table (teacher rows)
 const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
-    const importRef = useRef<HTMLDivElement>(null)
     const [isEditSubjectsOpen, setIsEditSubjectOpen] = useState(false)
     
     const dispatch = useAppDispatch()
-    const setColumns: any = (val: string) => dispatch(newColumns(val))
-    const setRows: any = (val: string) => dispatch(newRows(val))
-    const setSelections: any = (val: string) => dispatch(newSelections(val))
+    const setColumns: any = (val: any) => dispatch(newColumns(val))
+    const setRows: any = (val: any) => dispatch(newRows(val))
+    const setSelections: any = (val: any) => dispatch(newSelections(val))
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     const rows = useAppSelector(selectRows)
@@ -153,37 +196,17 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
     const [columnSearch, setColumnSearch] = useState("")
     const [selectionSearch, setSelectionSearch] = useState("")
     
-    useEffect(() => {
-        // To close the filter dropdown when the user clicks outside of it
-        const handleClickOutside = (event: any) => {
-            const import_btn = document.getElementById("import-btn")
-            if (importRef.current 
-                && !importRef.current.contains(event.target) 
-                && event.target !== import_btn 
-                && !import_btn?.contains(event.target)) {
-    
-                props.setIsImportOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);   
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-    
     return (
-        <div className="shade">
-            <div className="import-container" ref={importRef}>
+        <div className="shade" onClick={() => props.setIsImportOpen(false)}>
+            <div className="import-container" onClick={(e) => e.stopPropagation()}>
                 <h1>Import</h1>
                 <div className="importAll-editSubjects-container">
                     <ImportAll />
-                    <div className="edit-subjects-btn">Edit Subjects</div>
+                    <div className="edit-subjects-btn" onClick={() => (setIsEditSubjectOpen(prevState => !prevState))}>Edit Subjects</div>
                 </div>
 
-                {isEditSubjectsOpen && <EditSubjects />}
-                
+                {isEditSubjectsOpen && <EditSubjects setIsEditSubjectsOpen={setIsEditSubjectOpen} />}
+
                 <div className='imports-choices'>
                     <div className='choice'>
                         <h3>Columns</h3>
@@ -199,6 +222,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                                 if (column.oddEven == "EVEN" ||
                                     (columnSearch !== "" && !(column.name.trim().toLowerCase()).includes(columnSearch.trim().toLowerCase())) 
                                 ) return
+
                                 return (
                                     <div className="column-choice-element">
                                         {column.oddEven == "ODD" ? column.name.slice(0, column.name.length - 4) : column.name}
@@ -216,7 +240,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                                 </div>
                             </div>
-                            {rows.map((row) => {
+                            {rows.map((row: Row) => {
                                 if (rowSearch !== "" && !(row.name.trim().toLowerCase()).includes(rowSearch.trim().toLowerCase())) return
                                 return (
                                     <div className="row-choice-element">
@@ -235,7 +259,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                                 </div>
                             </div>
-                            {selections.map((selection) => {
+                            {selections.map((selection: Selection) => {
                                 if (selectionSearch !== "" && !(selection.name.trim().toLowerCase()).includes(selectionSearch.trim().toLowerCase())) return
                                 return (
                                     <div className="selection-choice-element">

@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from "@dnd-kit/utilities"
 
-import { selectSettings } from '@/lib/features/ScheduleDataSlice'
+import { selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice'
 import { useAppSelector } from '@/lib/hooks'
 
 import { 
@@ -27,6 +27,12 @@ const Selection = (props:
     }
 
     const settings = useAppSelector(selectSettings)
+    const subjects = useAppSelector(selectSubjects)
+
+    const subjectsObject = subjects.reduce((acc: any, item) => {
+        acc[item.name] = item.color
+        return acc
+    }, {})
     // const [isContextMenuOpen, setIsContextMenuOpen] = useState<boolean>(true)
     // const [contextMenuPoints, setContextMenuPoints] = useState({x: 0, y: 0})
 
@@ -52,7 +58,7 @@ const Selection = (props:
     const style = {
         transform: CSS.Translate.toString(transform),
         display: (props.selection.name === 'none' ? "none" : "block"),
-        backgroundColor: (settings.isColorSelectionSubjects ? settings.colors[props.selection.subject] : "")
+        backgroundColor: (settings.isColorSelectionSubjects ? subjectsObject[props.selection.subject] : "")
     }
 
     return (
