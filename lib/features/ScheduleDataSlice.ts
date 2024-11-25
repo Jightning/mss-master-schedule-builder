@@ -12,7 +12,6 @@ import { modifyRows } from "./Utilities"
 
 
 interface InitialStateType {
-    filterLocation: string,
     settings: Settings,
     filter: Filter,
     rows: Array<Row>,
@@ -37,7 +36,6 @@ const defaultSettings: Settings = {
 
 const initialState: InitialStateType = 
 {
-    filterLocation: "rows",
     settings: defaultSettings,
     filter: {
         selections: {
@@ -79,7 +77,6 @@ const initialState: InitialStateType =
         { name: "AP Physics 2", subject: "science", id: 334348 },
         { name: "AP English Literature", subject: "english", id: 3343238 },
         { name: "Economics", subject: "science", id: 3343328 },
-        { name: "Lunch", subject: "none", id: 3343548 },
         { name: "AP Physics 6", subject: "science", id: 3343068 },
         { name: "AP Physics 7", subject: "science", id: 334398 },
         { name: "AP Physics 8", subject: "science", id: 334868 },
@@ -116,7 +113,7 @@ const initialState: InitialStateType =
         { name: "AP Physics 38", subject: "science", id: 33424228108 },
         { name: "AP Physics 39", subject: "science", id: 33424228118 }
     ],
-    subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}, {name: "none", color: "#"}],
+    subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}],
     history: [],
     // settingsHistory: [{...defaultSettings, step: -1}],
     currentStep: -1
@@ -126,9 +123,6 @@ export const scheduleDataSlice = createSlice({
     name: 'Schedule Data',
     initialState,
     reducers: {
-        newFilterLocation: (state, action) => {
-            state.filterLocation = action.payload
-        },
         newSettings: (state, action) => {
             state.settings = action.payload
             // state.settingsHistory.push({...state.settings, step: state.currentStep})
@@ -220,7 +214,7 @@ export const scheduleDataSlice = createSlice({
     },
 })
 
-export const { newRows, newColumns, newSelections, newFilterLocation, newFilter, newSettings, newSubjects } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newFilter, newSettings, newSubjects } = scheduleDataSlice.actions
 export const { addState, undoState, redoState, resetHistory } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
@@ -231,7 +225,6 @@ export const selectColumns = (state: { scheduleData: { columns: Array<Column> }}
 export const selectSelections = (state: { scheduleData: { selections: Array<Selection> }}) => state.scheduleData.selections
 export const selectSubjects = (state: { scheduleData: { subjects: Array<Subject> } }) => state.scheduleData.subjects
 
-export const selectFilterLocation = (state: { scheduleData: { filterLocation: string } }) => state.scheduleData.filterLocation
 export const selectFilter = (state: { scheduleData: { filter: Filter } }) => state.scheduleData.filter
 export const selectSettings = (state: { scheduleData: { settings: Settings } }) => state.scheduleData.settings
 

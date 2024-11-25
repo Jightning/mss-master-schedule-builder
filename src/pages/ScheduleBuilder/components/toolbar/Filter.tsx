@@ -4,9 +4,7 @@ import Select from 'react-select'
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
-    newFilterLocation, 
     selectFilter, 
-    selectFilterLocation, 
     selectRows, 
     newFilter, 
     selectSubjects
@@ -21,9 +19,6 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
 
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
-
-    const filterLocation = useAppSelector(selectFilterLocation) 
-    const setFilterLocation: any = (val: string) => dispatch(newFilterLocation(val))
 
     const subjects = useAppSelector(selectSubjects)
 
@@ -57,9 +52,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         <div className="filter-dropdown" ref={filterRef}>
             <h2>Filter</h2>
             <div className="filter-rows" >
-                <h3 onClick={() => setFilterLocation("rows")} className={filterLocation === "rows" ? "text-blue-500" : ""}>
-                    {props.rowsName}
-                </h3>
+                <h3>{props.rowsName}</h3>
                 <ul>
                     <li>Search: <span className="underline">{filter.rows.searchTerm === "" ? "None" : filter.rows.searchTerm}</span></li>
                     <li>Subjects: 
@@ -75,9 +68,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
                 </ul>
             </div>
             <div className={"filter-selections"}>
-                <h3 onClick={() => setFilterLocation("selections")} className={filterLocation === "selections" ? "text-blue-500" : ""}>
-                    {props.selectionsName}
-                </h3>
+                <h3>{props.selectionsName}</h3>
                 <ul>
                     <li>Search: <span className="underline">{filter.selections.searchTerm === "" ? "None" : filter.selections.searchTerm}</span></li>
                     <li>Subjects: 

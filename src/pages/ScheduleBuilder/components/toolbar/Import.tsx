@@ -145,7 +145,7 @@ const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetSta
     const subjects = useAppSelector(selectSubjects)
     const settings = useAppSelector(selectSettings)
 
-    const [currentSubject, setCurrentSubject] = useState<Subject>()
+    const [currentSubject, setCurrentSubject] = useState<Subject | undefined>()
     
     return (
         <div className="shade" onClick={() => props.setIsEditSubjectsOpen(false)}>
@@ -153,24 +153,27 @@ const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetSta
                 <h2>Subjects</h2>
                 <div className="edit-subjects-content">
                     <div className='subjects-container'>
-                        <div>Add</div>
+                        <div className='add-subject-btn subject' onClick={() => setCurrentSubject(undefined)}>Add</div>
                         {/* Subjects is a set */}
                         {[...subjects].map((subject: Subject) => (
                             <div style={{
                                 borderColor: subject.color
                             }}
-                            className='subject'>
+                            className='subject'
+                            onClick={() => setCurrentSubject(subject)}>
                                 {subject.name.slice(0, 1).toUpperCase() + subject.name.slice(1)}
                             </div>
                         ))}
                     </div>
                     <div className="edit-subject-container">
-                        <h3>{currentSubject ? "Edit " + currentSubject.name : "Add"}</h3>
+                        <h3>{currentSubject ? "Edit" : "Add"}</h3>
+                        <div className='delete-subject-btn'>Delete</div>
                         <div className='flex'>
-                            <div className="editting-container">
-
+                            <div className="editting-container" style={{borderColor: currentSubject ? currentSubject.color : "black"}}>
+                                <h4>{currentSubject && currentSubject.name.slice(0, 1).toUpperCase() + currentSubject.name.slice(1)}</h4>
                             </div>
                         </div>
+                        <div className='finish-subject-btn'>Finish</div>
                     </div>
                 </div>
             </div>

@@ -219,18 +219,39 @@
     padding: 0 10px;
     margin: 10px auto;
     cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+.add-subject-btn:hover {
+    border-color: rgb(93, 99, 184);
 }
 
 .edit-subject-container {
     width: 50%;
     height: 100%;
-    border: solid;
 }
+.delete-subject-btn, .finish-subject-btn {
+    border: solid;
+    border-radius: 10px;
+    margin: 5px 10px;
+    padding: 5px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+.delete-subject-btn:hover {
+    border-color: rgb(247, 49, 49);
+}
+/* Height of h3 is 28px */
+/* Height of delete is 58px (including margin/padding) */
 .editting-container {
     border: solid;
+    border-radius: 10px;
     width: 100%;
-    height: 50%;
-    margin-left: 10px;
+    height: calc(60vh - 2.5rem - 154px);
+    margin: 0 10px;
+}
+.finish-subject-btn:hover {
+    border-color: rgb(49, 95, 247);
 }
 
 
