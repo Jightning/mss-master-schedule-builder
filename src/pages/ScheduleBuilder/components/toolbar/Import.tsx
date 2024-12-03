@@ -3,6 +3,7 @@ import Papa from 'papaparse'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
     addState, 
+    defaultSelection, 
     newColumns, 
     newRows, 
     newSelections, 
@@ -337,14 +338,57 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
         if (currentEdit?.value) {
             setRows(rows.map((row) => row.id === newValue?.id ? newValue :row)) 
         } else {
-            setRows([...rows, {...newValue, id: uuidv4()}])
+            setRows([...rows, 
+                {...newValue, 
+                    subject: (newValue as Row).subject ? (newValue as Row).subject : "none", 
+                    id: uuidv4(),
+                    selectionCount: 0,
+                    columns: columns.reduce((acc: Row["columns"], column: Column) => {
+                        acc[column.id] = defaultSelection
+                        return acc
+                    }, {})
+                }])
         }
 
         setCurrentEdit(undefined)
         setNewValue(undefined)
     }
     const deleteRow = () => {
-        setRows([...rows.filter((row) => {console.log(row); return row.id !== currentEdit?.value?.id})])
+        setRows([...rows.filter((row) => row.id !== currentEdit?.value?.id)])
+
+        setCurrentEdit(undefined)
+        setNewValue(undefined)
+        return
+    }
+
+    const editSelection = () => {
+        if (currentEdit?.value) {
+            setSelections(selections.map((selection) => selection.id === newValue?.id ? newValue : selection)) 
+            // Change rows to update subject change in selection
+            if ((currentEdit.value as Selection).subject !== (newValue as Selection).subject) {
+                setRows(rows.map((row: Row) => {
+                    const newColumns = Object.keys(row.columns).reduce((acc: Row["columns"], item: any) => {
+                        acc[item] = {...row.columns[item], subject: row.columns[item].id === newValue?.id ? (newValue as Selection).subject : row.columns[item].subject}
+                        return acc
+                    }, {})
+
+                    return {...row, columns: newColumns}
+                }))
+            }
+
+        } else {
+            setSelections([...selections, 
+                {...newValue,
+                    subject: (newValue as Row).subject ? (newValue as Row).subject : "none", 
+                    id: uuidv4()
+                }])
+        }
+
+        setCurrentEdit(undefined)
+        setNewValue(undefined)
+    }
+    const deleteSelection = () => {
+        setSelections([...selections.filter((selection) => selection.id !== currentEdit?.value?.id)])
 
         setCurrentEdit(undefined)
         setNewValue(undefined)
@@ -413,17 +457,41 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                         <h4>Subject:</h4>
                         <Select 
                             options={subject_object}
-                            value={{value: (newValue as Row).subject, label: (newValue as Row).subject.charAt(0).toUpperCase() + (newValue as Row).subject.slice(1)}}
+                            value={{value: newValue as Row ? (newValue as Row).subject : 'none', label: newValue as Row && (newValue as Row).subject ? (newValue as Row).subject.charAt(0).toUpperCase() + (newValue as Row).subject.slice(1) : "None"}}
                             backspaceRemovesValue
                             onChange={(e: any) => {setNewValue((prevNewValue: any) => ({...prevNewValue, subject: e["value"]}))}}/>
                     </div>
                 </Edit>}
                 {currentEdit?.editting === "selections" && 
                 <Edit 
-                closeEdit={() => (setCurrentEdit(undefined))}
-                onConfirm={() => editColumn}
-                onDelete={() => (console.log(''))}>
+                    closeEdit={() => (setCurrentEdit(undefined))}
+                    onConfirm={() => {setOpenConfirmationPopup({
+                        children: (
+                        <div>
+                            <h3>Confirm Change Selection?</h3>
+                        </div>), onConfirm: editSelection
+                    })}}
+                    onDelete={() => {setOpenConfirmationPopup({
+                        children: (
+                        <div>
+                            <h3>Confirm Delete Selection?</h3>
+                            <p><b className='text-red-700'>WARNING</b> This will remove all data related to row <b>{currentEdit?.value?.name}</b> (Selections already placed will not be deleted)</p>
+                        </div>), onConfirm: deleteSelection
+                    })}}>
                     <h3>{currentEdit?.value ? `Edit \"${currentEdit?.value?.name}\"` : "Add Selection"}</h3>
+                    <div className='edit-content'>
+                        <h4>Name:</h4>
+                        <textarea className="edit-subject-textarea choice-search search-input" 
+                            onChange={(e) => {setNewValue((prevNewValue: any) => ({...prevNewValue, name: e.target.value}))}} 
+                            value={newValue?.name} 
+                            placeholder={currentEdit.value ? currentEdit.value.name : 'Name'} />
+                        <h4>Subject:</h4>
+                        <Select 
+                            options={subject_object}
+                            value={{value: newValue as Selection ? (newValue as Selection).subject : "none", label: newValue as Selection && (newValue as Selection).subject ? (newValue as Selection).subject.charAt(0).toUpperCase() + (newValue as Row).subject.slice(1) : "None"}}
+                            backspaceRemovesValue
+                            onChange={(e: any) => {setNewValue((prevNewValue: any) => ({...prevNewValue, subject: e["value"]}))}}/>
+                    </div>
                 </Edit>}
 
                 {openConfirmationPopup !== undefined && 
@@ -490,7 +558,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                             {selections.map((selection: Selection) => {
                                 if (selectionSearch !== "" && !(selection.name.trim().toLowerCase()).includes(selectionSearch.trim().toLowerCase())) return
                                 return (
-                                    <div className="selection-choice-element" onClick={() => setCurrentEdit({editting: "selections", value: selection})}>
+                                    <div className="selection-choice-element" onClick={() => {setCurrentEdit({editting: "selections", value: selection}); setNewValue(selection)}}>
                                         {selection.name}
                                     </div>
                                 )

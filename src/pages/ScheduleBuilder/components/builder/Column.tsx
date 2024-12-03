@@ -56,7 +56,7 @@ const Cell = ({activeSelection, heights, index, columnId, row}: any) => {
         opacity: (isOver ? 0.5 : 1)
     }
     
-    // BUG -> Fid a  way to make the the tile only change height when the shade is higher to prevent overflow
+    // BUG -> Fid a way to make the the tile only change height when the shade is higher to prevent overflow
     useEffect(() => {
         if (isOver) {
             // strange way to signal the useEffect which changes the height on hover over

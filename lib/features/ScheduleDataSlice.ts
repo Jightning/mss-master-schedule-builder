@@ -22,7 +22,7 @@ interface InitialStateType {
     currentStep: number
 }
 
-const defaultSelection = { name: "none", subject: "none", id: 0, oddEven: false }
+export const defaultSelection = { name: "none", subject: "none", id: 0, oddEven: false }
 
 const defaultSettings: Settings = {
     isOddEvenToggle: true,

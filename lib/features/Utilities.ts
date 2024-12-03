@@ -43,7 +43,6 @@ export const modifyRows = (
 // toChange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], selection: Selection) => {
     // If we are replacing a selection, the selectionCount should not change
-    console.log([...rows].map((row) => console.log({...row.columns})), [...columns].map((row) => console.log({...columns})))
     const isReplacing = rows[toChange].columns[columnId] && rows[toChange].columns[columnId].id !== 0
 
     let newRows: Array<Row> = [
