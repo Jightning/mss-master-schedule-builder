@@ -50,16 +50,8 @@ const ScheduleBuilder = () => {
 
     const rows = useAppSelector(selectRows)
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
-
     const columns = useAppSelector(selectColumns)
-    // const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
-
-    // const filter = useAppSelector(selectFilter)
-    // const setFilter: any = (val: object) => dispatch(newFilter(val))
-
     const settings = useAppSelector(selectSettings)
-    // const setSettings: any = (val: object) => dispatch(newSettings(val))
-
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     // \Redux\

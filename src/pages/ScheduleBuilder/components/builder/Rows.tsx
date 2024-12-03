@@ -40,11 +40,13 @@ const Rows = (
                         event: e
                     });
                 }
+
+                const isSubjectNone = !subjects.some((subject) => subject.name === row.subject)
                 
                 return (                    
                     (filter.rows.searchTerm === "" || (row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
                     && 
-                    (filter.rows.subjects.length === 0 || filter.rows.subjects.includes(row.subject)) ?
+                    (filter.rows.subjects.length === 0 || filter.rows.subjects.includes(row.subject) || isSubjectNone) ?
                     
                     <div className={"single-row-container"} 
                         id={"row-" + row.id}

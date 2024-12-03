@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { Children, FC, ReactElement, useEffect, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
@@ -6,6 +6,7 @@ import {
     newColumns, 
     newRows, 
     newSelections, 
+    newSubjects, 
     selectColumns, 
     selectRows, 
     selectSelections, 
@@ -19,6 +20,13 @@ import {
     Selection,
     Subject
 } from '@/types';
+import ConfirmationPopup from '@/src/components/ConfirmationPopup';
+
+import { SliderPicker  } from 'react-color';
+import { v4 as uuidv4 } from 'uuid';
+import Select from 'react-select';
+
+import '@/src/components/components.css'
 
 const ImportAll = () => {
     const inputCSVFile = useRef<HTMLInputElement>(null);
@@ -143,42 +151,123 @@ const ImportAll = () => {
 
 const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
     const subjects = useAppSelector(selectSubjects)
-    const settings = useAppSelector(selectSettings)
+    
+    const dispatch = useAppDispatch()
+    const setSubjects: any = (val: Array<Subject>) => dispatch(newSubjects(val))
 
-    const [currentSubject, setCurrentSubject] = useState<Subject | undefined>()
+    const [currentSubject, setCurrentSubject] = useState<Subject>()
+    const [newSubject, setNewSubject] = useState<Subject>({name: "", color: "#"})
+    
+    const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false)
+    const [deleteConfirmationResult, setDeleteConfirmationResult] = useState(false)
+    
+    const [isFinishConfirmationOpen, setIsFinishConfirmationOpen] = useState(false)
+    const [finishConfirmationResult, setFinishConfirmationResult] = useState(false)
+
+    const [subjectSearch, setSubjectSearch] = useState("")
+
+    useEffect(() => {
+        if (deleteConfirmationResult && isDeleteConfirmationOpen) {
+            setIsDeleteConfirmationOpen(false)
+
+            setSubjects([...subjects].filter((subject) => (subject != currentSubject)))
+            setCurrentSubject(undefined)
+            setNewSubject({name: "", color: "#000000"})
+            setDeleteConfirmationResult(false)
+        } else if (finishConfirmationResult && isFinishConfirmationOpen) {
+            setIsFinishConfirmationOpen(false)
+            if (!currentSubject) {
+                setSubjects([...subjects, newSubject])
+            } else {
+                setSubjects([...subjects].map((subject) => (subject.name === currentSubject.name ? newSubject : subject)))
+            }
+            setCurrentSubject(newSubject)
+            setFinishConfirmationResult(false)
+        }
+    }, [deleteConfirmationResult, finishConfirmationResult, newSubject])
     
     return (
         <div className="shade" onClick={() => props.setIsEditSubjectsOpen(false)}>
             <div className="edit-subjects-container" onClick={(e) => e.stopPropagation()}>
+                {isDeleteConfirmationOpen && 
+                    <ConfirmationPopup setConfirmationResult={setDeleteConfirmationResult} close={() => setIsDeleteConfirmationOpen(false)}>
+                        <h3>Delete Subject: {currentSubject && currentSubject?.name.charAt(0).toUpperCase() + currentSubject?.name.slice(1)}?</h3>
+                        <p>Subject assignment will not be erased, but subject data will. This subject will be filterable as "None".</p>
+                    </ConfirmationPopup>}
+                {isFinishConfirmationOpen && 
+                    <ConfirmationPopup setConfirmationResult={setFinishConfirmationResult} close={() => setIsFinishConfirmationOpen(false)}>
+                        <h3>Finish Working on Subject: {newSubject?.name.charAt(0).toUpperCase() + newSubject?.name.slice(1)}?</h3>
+                    </ConfirmationPopup>}
                 <h2>Subjects</h2>
                 <div className="edit-subjects-content">
                     <div className='subjects-container'>
-                        <div className='add-subject-btn subject' onClick={() => setCurrentSubject(undefined)}>Add</div>
-                        {/* Subjects is a set */}
-                        {[...subjects].map((subject: Subject) => (
-                            <div style={{
-                                borderColor: subject.color
-                            }}
-                            className='subject'
-                            onClick={() => setCurrentSubject(subject)}>
-                                {subject.name.slice(0, 1).toUpperCase() + subject.name.slice(1)}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="edit-subject-container">
-                        <h3>{currentSubject ? "Edit" : "Add"}</h3>
-                        <div className='delete-subject-btn'>Delete</div>
-                        <div className='flex'>
-                            <div className="editting-container" style={{borderColor: currentSubject ? currentSubject.color : "black"}}>
-                                <h4>{currentSubject && currentSubject.name.slice(0, 1).toUpperCase() + currentSubject.name.slice(1)}</h4>
+                        <div className='subjects-header'>
+                            <textarea className="subjects-search choice-search search-input" onChange={(e) => setSubjectSearch(e.target.value)} value={subjectSearch} placeholder='Search ' />
+                            <div className="column-choice-element add-btn sticky top-0" onClick={() => {setCurrentSubject(undefined); setNewSubject({name: "", color: "#000000"})}}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                             </div>
                         </div>
-                        <div className='finish-subject-btn'>Finish</div>
+                        <div className='subjects'>   
+                            {/* Subjects is a set */}
+                            {[...subjects].map((subject: Subject) => {
+                                if (subjectSearch.trim() !== "" && !subject.name.toLowerCase().includes(subjectSearch.trim().toLowerCase())) return
+                                return (
+                                    <div style={{
+                                        borderColor: subject.color
+                                        }}
+                                        className='subject'
+                                        onClick={() => {setCurrentSubject(subject); setNewSubject(subject)}}
+                                    >
+                                        {subject.name.slice(0, 1).toUpperCase() + subject.name.slice(1)}
+                                    </div>
+                            )})}
+                        </div>
+                    </div>
+                    <div className="edit-subject-container">
+                        <h3>{currentSubject ? "Edit " + currentSubject.name.slice(0, 1).toUpperCase() + currentSubject.name.slice(1) : "Add"}</h3> 
+                        <div className='edit-subject-container-child'>
+                            <div className="editting-container" style={{borderColor: newSubject ? newSubject.color : "black"}}>
+                                <div className="editting-container-child">
+                                    <h4>Name:</h4><textarea className="edit-subject-textarea choice-search search-input" onChange={(e) => {setNewSubject((prevNewSubject) => ({name: e.target.value.toLowerCase(), color: prevNewSubject.color}))}} value={newSubject.name} placeholder={currentSubject ? currentSubject.name : 'Name'} />
+                                    <h4>Color: </h4>
+                                    <SliderPicker color={ newSubject.color } onChange={(e: {hex: any}) => {setNewSubject((prevNewSubject) => ({name: prevNewSubject.name, color: e.hex}))}} className='color-picker' />
+                                </div>
+                            </div>
+                            <div className="flex flex-row">
+                                <div className={'finish-subject-btn ' + (!currentSubject && "w-full")} onClick={() => setIsFinishConfirmationOpen(true)}>Confirm</div>
+                                {currentSubject && <div className='delete-subject-btn' onClick={() => setIsDeleteConfirmationOpen(true)}>Delete</div>}  
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     )
+}
+
+const Edit = (props: {children: React.ReactNode, onConfirm: any, onDelete: () => void, setValue?: React.Dispatch<React.SetStateAction<any>>, closeEdit: () => void}) => { 
+    return (
+        <div className='shade' onClick={props.closeEdit}>
+            <div className="edit-container" onClick={(e) => e.stopPropagation()}>
+                {props.children}
+                <div className="flex flex-row">
+                    <div className="confirmation-btn y-confirmation" onClick={() => {props.onConfirm()}}>Confirm</div>
+                    <div className="confirmation-btn n-confirmation" onClick={() => {props.onDelete()}}>Delete</div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Turns an odd/even column back to normal
+function normalizeColumn(column: Column): Column {
+    if (column.oddEven === "ODD") {
+        return {...column, id: column.id.slice(0, column.id.length - 4), name: column.name.slice(0, column.name.length - 4)}
+    } else if (column.oddEven === "EVEN") {
+        return {...column, id: column.id.slice(0, column.id.length - 5), name: column.name.slice(0, column.name.length - 5)}
+    }
+
+    return column
 }
 
 // Rows on the right side of the table (teacher rows)
@@ -194,14 +283,78 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
     const rows = useAppSelector(selectRows)
     const columns = useAppSelector(selectColumns)
     const selections = useAppSelector(selectSelections)
+    const subjects = useAppSelector(selectSubjects)
+    const subject_object = [...subjects.map((subject: Subject) => ({
+        value: subject.name,
+        label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
+    })), {value: "none", label: "None"}]
 
     const [rowSearch, setRowSearch] = useState("")
     const [columnSearch, setColumnSearch] = useState("")
     const [selectionSearch, setSelectionSearch] = useState("")
+    const [openConfirmationPopup, setOpenConfirmationPopup] = useState<undefined | {children: ReactElement, onConfirm: () => void}>(undefined)
+
+    // Value currently being changed, (never actually changed, just used as reference)
+    const [currentEdit, setCurrentEdit] = useState<{editting: string, value: Column | Selection | Row | undefined}>()
+    // Value which gets actively changed, for column this value gets normalized, set as the regular version of columns
+    const [newValue, setNewValue] = useState<Column | Selection | Row>()
+
+    const editColumn = () => {
+        if (currentEdit?.value) {
+            setColumns(columns.map((column) => {
+                if (column.oddEven === "ODD" && column.id.slice(0, column.id.length - 4) === String(currentEdit?.value?.id).slice(0, column.id.length - 4)) {
+                    return {...newValue, id: column.id, name: newValue?.name + " Odd"}
+                } else if (column.oddEven === "EVEN" && column.id.slice(0, column.id.length - 5) === String(currentEdit?.value?.id).slice(0, column.id.length - 5)) {
+                    return {...newValue, id: newValue?.id + "-even", name: newValue?.name + " Even", oddEven: "EVEN"}
+                } else if (column.id === newValue?.id) {return newValue}
+                else { return column }
+            })) 
+        } else {
+            let newId = uuidv4();
+            while (newId.endsWith("odd") || newId.endsWith('even')) {
+                newId = uuidv4()
+            }
+            setColumns([...columns, {...newValue, id: newId}])
+        }
+
+        setCurrentEdit(undefined)
+        setNewValue(undefined)
+    }
+    const deleteColumn = () => {
+        setColumns(
+            columns.filter((column) => 
+                column.id !== currentEdit?.value?.id &&
+                !(column.oddEven === "EVEN" && 
+                    column.id.slice(0, column.id.length - 5) === String(currentEdit?.value?.id).slice(0, column.id.length - 5)
+                )
+            )
+        )
+        setCurrentEdit(undefined)
+        setNewValue(undefined)
+    }
+
+    const editRow = () => {
+        if (currentEdit?.value) {
+            setRows(rows.map((row) => row.id === newValue?.id ? newValue :row)) 
+        } else {
+            setRows([...rows, {...newValue, id: uuidv4()}])
+        }
+
+        setCurrentEdit(undefined)
+        setNewValue(undefined)
+    }
+    const deleteRow = () => {
+        setRows([...rows.filter((row) => {console.log(row); return row.id !== currentEdit?.value?.id})])
+
+        setCurrentEdit(undefined)
+        setNewValue(undefined)
+        return
+    }
     
     return (
         <div className="shade" onClick={() => props.setIsImportOpen(false)}>
             <div className="import-container" onClick={(e) => e.stopPropagation()}>
+
                 <h1>Import</h1>
                 <div className="importAll-editSubjects-container">
                     <ImportAll />
@@ -209,6 +362,74 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                 </div>
 
                 {isEditSubjectsOpen && <EditSubjects setIsEditSubjectsOpen={setIsEditSubjectOpen} />}
+                {currentEdit?.editting === "columns" && 
+                <Edit 
+                    closeEdit={() => (setCurrentEdit(undefined))}
+                    onConfirm={() => {setOpenConfirmationPopup({
+                        children: (
+                        <div>
+                            <h3>Confirm Change Column Name?</h3>
+                        </div>), onConfirm: editColumn
+                    })}}
+                    onDelete={() => {setOpenConfirmationPopup({
+                        children: (
+                        <div>
+                            <h3>Confirm Delete Column?</h3>
+                            <p><b className='text-red-700'>WARNING</b> This will remove all data related to column <b>{currentEdit?.value?.name}</b></p>
+                        </div>), onConfirm: deleteColumn
+                    })}}>
+                    <h3>{currentEdit?.value ? `Edit \"${String(currentEdit?.value?.id).endsWith("-odd") ? currentEdit?.value?.name.slice(0, currentEdit?.value?.name.length - 4) : currentEdit?.value?.name}\"` : "Add Column"}</h3>
+                    <div className='edit-content'>
+                        <h4>Name:</h4>
+                        <textarea className="edit-subject-textarea choice-search search-input" 
+                            onChange={(e) => {setNewValue((prevNewValue: any) => ({...prevNewValue, name: e.target.value}))}} 
+                            value={newValue?.name} 
+                            placeholder={currentEdit.value ? normalizeColumn(currentEdit.value as Column).name : 'Name'} />
+                    </div>
+                </Edit>}
+                {currentEdit?.editting === "rows" && 
+                <Edit 
+                    closeEdit={() => (setCurrentEdit(undefined))}
+                    onConfirm={() => {setOpenConfirmationPopup({
+                        children: (
+                        <div>
+                            <h3>Confirm Change Rows?</h3>
+                        </div>), onConfirm: editRow
+                    })}}
+                    onDelete={() => {setOpenConfirmationPopup({
+                        children: (
+                        <div>
+                            <h3>Confirm Delete Row?</h3>
+                            <p><b className='text-red-700'>WARNING</b> This will remove all data related to row <b>{currentEdit?.value?.name}</b></p>
+                        </div>), onConfirm: deleteRow
+                    })}}>
+                    <h3>{currentEdit?.value ? `Edit \"${currentEdit?.value?.name}\"` : "Add Row"}</h3>
+                    <div className='edit-content'>
+                        <h4>Name:</h4>
+                        <textarea className="edit-subject-textarea choice-search search-input" 
+                            onChange={(e) => {setNewValue((prevNewValue: any) => ({...prevNewValue, name: e.target.value}))}} 
+                            value={newValue?.name} 
+                            placeholder={currentEdit.value ? currentEdit.value.name : 'Name'} />
+                        <h4>Subject:</h4>
+                        <Select 
+                            options={subject_object}
+                            value={{value: (newValue as Row).subject, label: (newValue as Row).subject.charAt(0).toUpperCase() + (newValue as Row).subject.slice(1)}}
+                            backspaceRemovesValue
+                            onChange={(e: any) => {setNewValue((prevNewValue: any) => ({...prevNewValue, subject: e["value"]}))}}/>
+                    </div>
+                </Edit>}
+                {currentEdit?.editting === "selections" && 
+                <Edit 
+                closeEdit={() => (setCurrentEdit(undefined))}
+                onConfirm={() => editColumn}
+                onDelete={() => (console.log(''))}>
+                    <h3>{currentEdit?.value ? `Edit \"${currentEdit?.value?.name}\"` : "Add Selection"}</h3>
+                </Edit>}
+
+                {openConfirmationPopup !== undefined && 
+                <ConfirmationPopup setConfirmationResult={(res: boolean) => {if (res) {openConfirmationPopup.onConfirm(); setOpenConfirmationPopup(undefined)}}} close={() => setOpenConfirmationPopup(undefined)}>
+                    {openConfirmationPopup.children}
+                </ConfirmationPopup>}
 
                 <div className='imports-choices'>
                     <div className='choice'>
@@ -216,7 +437,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                         <div className="choice-elements-container">
                             <div className="choice-top-sticky top-0 sticky">
                                 <textarea className="choice-search search-input" onChange={(e) => {setColumnSearch(e.target.value)}} value={columnSearch} placeholder='Search' />
-                                <div className="column-choice-element add-btn sticky top-0">
+                                <div className="column-choice-element add-btn sticky top-0" onClick={() => setCurrentEdit({editting: "columns", value: undefined})}>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                                 </div>
                             </div>
@@ -227,45 +448,49 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                                 ) return
 
                                 return (
-                                    <div className="column-choice-element">
+                                    <div className="column-choice-element" onClick={() => {setCurrentEdit({editting: "columns", value: column}); setNewValue(normalizeColumn(column))}}>
                                         {column.oddEven == "ODD" ? column.name.slice(0, column.name.length - 4) : column.name}
                                     </div>
                                 )
                             })}
                         </div>
                     </div>
+
+
                     <div className='choice'>
                         <h3>Rows</h3>
                         <div className="choice-elements-container">
                             <div className="choice-top-sticky top-0 sticky">
                                 <textarea className="choice-search search-input" onChange={(e) => {setRowSearch(e.target.value)}} value={rowSearch} placeholder='Search' />
-                                <div className="column-choice-element add-btn sticky top-0">
+                                <div className="column-choice-element add-btn sticky top-0" onClick={() => setCurrentEdit({editting: "rows", value: undefined})}>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                                 </div>
                             </div>
                             {rows.map((row: Row) => {
                                 if (rowSearch !== "" && !(row.name.trim().toLowerCase()).includes(rowSearch.trim().toLowerCase())) return
                                 return (
-                                    <div className="row-choice-element">
+                                    <div className="row-choice-element" onClick={() => {setCurrentEdit({editting: "rows", value: row}); setNewValue(row)}}>
                                         {row.name}
                                     </div>
                                 )
                             })}
                         </div>
                     </div>
+
+
                     <div className='choice'>
                         <h3>Selections</h3>
                         <div className="choice-elements-container">
                             <div className="choice-top-sticky top-0 sticky">
                                 <textarea className="choice-search search-input" onChange={(e) => {setSelectionSearch(e.target.value)}} value={selectionSearch} placeholder='Search' />
-                                <div className="column-choice-element add-btn sticky top-0">
+                                <div className="column-choice-element add-btn sticky top-0" onClick={() => setCurrentEdit({editting: "selections", value: undefined})}>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
                                 </div>
                             </div>
                             {selections.map((selection: Selection) => {
                                 if (selectionSearch !== "" && !(selection.name.trim().toLowerCase()).includes(selectionSearch.trim().toLowerCase())) return
                                 return (
-                                    <div className="selection-choice-element">
+                                    <div className="selection-choice-element" onClick={() => setCurrentEdit({editting: "selections", value: selection})}>
                                         {selection.name}
                                     </div>
                                 )

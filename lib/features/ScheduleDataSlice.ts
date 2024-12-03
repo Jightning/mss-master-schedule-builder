@@ -28,7 +28,7 @@ const defaultSettings: Settings = {
     isOddEvenToggle: true,
     isOddEvenAutoAssign: false,
     hasSelectionLimit: true,
-    selectionLimit: 4,
+    selectionLimit: 1,
     isCopySelection: false,
     isColorSelectionSubjects: false,
     isColorRowSubjects: false,

@@ -43,7 +43,8 @@ export const modifyRows = (
 // toChange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], selection: Selection) => {
     // If we are replacing a selection, the selectionCount should not change
-    const isReplacing = rows[toChange].columns[columnId].id !== 0
+    console.log([...rows].map((row) => console.log({...row.columns})), [...columns].map((row) => console.log({...columns})))
+    const isReplacing = rows[toChange].columns[columnId] && rows[toChange].columns[columnId].id !== 0
 
     let newRows: Array<Row> = [
         ...rows.slice(0, toChange), 
@@ -53,7 +54,7 @@ const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number
                 ...rows[toChange].columns, 
                 [columnId]: selection
             },
-            selectionCount: rows[toChange].selectionCount + (!isReplacing ? (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1) : 0)
+            selectionCount: rows[toChange].selectionCount + (!isReplacing ? (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.1 : 0.2) : 0)
         }, 
         ...rows.slice(toChange + 1)
     ]
@@ -70,7 +71,7 @@ const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: num
                 ...rows[toChange].columns,
                 [columnId]: {...defaultSelection}
             },
-            selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1)
+            selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.1 : 0.2)
         }, 
         ...rows.slice(toChange + 1)
     ]

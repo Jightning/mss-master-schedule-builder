@@ -43,10 +43,10 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         };
     }, []);
 
-    const subject_object = subjects.map((subject: Subject) => ({
+    const subject_object = [...subjects.map((subject: Subject) => ({
         value: subject.name,
         label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
-    }))
+    })), {value: "none", label: "None"}]
 
     return (
         <div className="filter-dropdown" ref={filterRef}>

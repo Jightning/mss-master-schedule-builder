@@ -1,18 +1,12 @@
 import './toolbar.css'
 
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { newSettings, newSubjects, selectColumns, selectRows, selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice';
-
-import { TwitterPicker } from 'react-color';
-import { Subject } from '@/types';
+import { newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
 
 const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
-    const [isChangeColorsDropdownOpen, setIsChangeColorsDropdownOpen] = useState<boolean>(false)
-    const [openColorPicker, setOpenColorPicker] = useState(-1)
-
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
     
@@ -21,9 +15,6 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
-    
-    const setSubjects: any = (val: Array<Subject>) => dispatch(newSubjects(val))
-    const subjects = useAppSelector(selectSubjects)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -77,11 +68,6 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
         }
     }
 
-    const handleColorChange = (event: any) => {
-        // setSettings({...settings, colors: {...settings.colors, [openColorPicker]: event.hex}})
-        setSubjects([...subjects.slice(0, openColorPicker), {...subjects[openColorPicker], color: event.hex}, subjects.slice(openColorPicker)])
-    }
-
     // TODO copy selection and the selection limit
     
     return (
@@ -130,21 +116,6 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                         <li>
                             <h4>{props.selectionsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.isColorSelectionSubjects} /></div>
                         </li>
-                    </div>
-                    
-                    <div className={"change-colors-container " + (isChangeColorsDropdownOpen ? "trigger" : "")}>
-                        <h4 className={"change-colors-btn"} onClick={() => {setIsChangeColorsDropdownOpen((prevValue: boolean) => (!prevValue)); setOpenColorPicker(-1);}}>Change Colors {">"}</h4>
-                        <ul className="change-colors-dropdown"> 
-                            {subjects.map((subject: Subject, index: number) => (
-                                <li className='h-fit flex-col'>
-                                    <div className='flex-row flex items-center justify-center'>
-                                        <p className='h-fit w-fit'>{subject.name.charAt(0).toUpperCase() + subject.name.slice(1)}:</p> 
-                                        <div className={'color-picker-btn'} style={{backgroundColor: subject.color}} onClick={() => setOpenColorPicker((prevValue) => (prevValue === index ? -1 : index))}></div>
-                                    </div>
-                                    {openColorPicker === index ? <TwitterPicker color={ subject.color } onChangeComplete={handleColorChange} triangle='hide' width={"280px"} className='justify-center m-auto w-fit' /> : <></>}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
                 </li>
             </ul>

@@ -155,26 +155,36 @@
     align-items: center;
 }
 
-/* Edit Subjects */
+/* Regular Edit */
 
-.edit-subjects-btn {
+.edit-container {
     border: solid;
     border-radius: 10px;
+    background-color: white;
 
+    padding: 10px 10px 0 10px;
+    min-width: 40vw;
+    min-height: 40vh;
+    width: fit-content;
     height: fit-content;
 
-    margin-right: 10px;
-    padding: 5px;
+    display: flex;
+    flex-flow: column;
+}
+.edit-content {
+    margin: 10px;
+    height: 100%;
+}
 
-    cursor: pointer;
-    transition: all 0.2s;
+#react-select-3-input {
+    box-shadow: none !important;
 }
-.edit-subjects-btn:hover {
-    border-color: rgb(93, 99, 184);
-}
+
+/* /Regular Edit */
+
+/* Edit Subjects */
+
 .edit-subjects-container {
-    z-index: 9;
-    position: absolute;
     border: solid;
     border-radius: 10px;
     background-color: white;
@@ -195,6 +205,21 @@
     height: 2.5rem;
     display: inline-block;  
 }
+.edit-subjects-btn {
+    border: solid;
+    border-radius: 10px;
+
+    height: fit-content;
+
+    margin-right: 10px;
+    padding: 5px;
+
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.edit-subjects-btn:hover {
+    border-color: rgb(93, 99, 184);
+}
 
 .edit-subjects-content {
     display: flex;
@@ -208,10 +233,18 @@
     height: 100%;
     overflow-y: auto;
     border-right: solid;
-    padding: 10px;
+    padding: 0 10px;
     width: 50%;
 }
-
+.subjects-header {
+    display: flex;
+    flex-flow: row;
+    padding: 0;
+    height: fit-content;
+}
+.subjects {
+    height: calc(60vh - 2.5rem - 94px);
+}
 .subject {
     border: solid;
     border-radius: 10px;
@@ -220,12 +253,21 @@
     margin: 10px auto;
     cursor: pointer;
     transition: all 0.2s;
+    font-size: large;
     font-weight: bold;
 }
 .add-subject-btn:hover {
     border-color: rgb(93, 99, 184);
 }
+.add-subject-btn {
+    margin: 0 10px;
+}
 
+.edit-subject-container-child {
+    display: flex;
+    flex-flow: column;
+    height: calc(60vh - 2.5rem - 58px);
+}
 .edit-subject-container {
     width: 50%;
     height: 100%;
@@ -237,6 +279,7 @@
     padding: 5px;
     transition: all 0.2s;
     cursor: pointer;
+    width: 50%;
 }
 .delete-subject-btn:hover {
     border-color: rgb(247, 49, 49);
@@ -246,14 +289,28 @@
 .editting-container {
     border: solid;
     border-radius: 10px;
-    width: 100%;
-    height: calc(60vh - 2.5rem - 154px);
+    flex: 1;
     margin: 0 10px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}
+.editting-container-child {
+    width: 100%;
+    flex: 1;
+    padding: 5px;
 }
 .finish-subject-btn:hover {
     border-color: rgb(49, 95, 247);
 }
+.edit-subject-textarea {
+    margin: auto;
+    float: none !important;
+}
 
+.color-picker {
+    margin: 10px;
+}
 
 /* /Edit Subjects */
 
@@ -343,7 +400,8 @@
     border: solid;
     border-radius: 10px;
 
-    height: 71vh;
+    height: fit-content;
+    max-height: 70vh;
     width: 25rem;
     padding: 5px;
 
@@ -387,61 +445,7 @@
 
 .color-settings-container {
     padding: 10px;
-}
-
-.change-colors-btn {
-    cursor: pointer;
-    width: fit-content;
-}
-/* .change-colors-container {
-    margin-bottom: 10px;
-} */
-/* Changing the parameter in parentheses changes the event */
-/* This is the list prior to clicking on it */
-.change-colors-container:not(.trigger) > .change-colors-dropdown > * {
-    visibility: hidden;
-    height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin: 0;
-    color: rgba(25,25,25,0);
-    transition: 
-      0.5s 0.1s height,
-      0.5s 0.1s padding,
-      0.5s 0.1s margin,
-      0.3s color,
-      0.6s visibility;
-    z-index: 99;
-}
-/* This is after */
-.change-colors-dropdown > * {
-    overflow: hidden;
-    height: 30px;
-    padding: 1px 0px;
-    background: rgba(0,0,0,0);
-    white-space: nowrap;
-    transition: 
-      0.5s height cubic-bezier(.73,.32,.34,1.5),
-      0.5s padding cubic-bezier(.73,.32,.34,1.5),
-      0.5s margin cubic-bezier(.73,.32,.34,1.5),
-      0.5s 0.2s color,
-      0.2s background-color;
-} 
-
-.color-picker-btn {
-    width: 1rem;
-    height:1rem;
-    margin: 5px;
-    border: solid;
-    border-radius: 5px;
-    cursor: pointer;
 }   
-/* CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
-.change-colors-dropdown li input {
-    background-color: white !important;
-    height: 1 !important;
-    padding: 0.08em;
-}
 
 .subject-limit-switch {
     position: relative;
