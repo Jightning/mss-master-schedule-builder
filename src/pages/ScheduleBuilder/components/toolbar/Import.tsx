@@ -3,7 +3,6 @@ import Papa from 'papaparse'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
     addState, 
-    defaultSelection, 
     newColumns, 
     newRows, 
     newSelections, 
@@ -28,6 +27,18 @@ import { v4 as uuidv4 } from 'uuid';
 import Select from 'react-select';
 
 import '@/src/components/components.css'
+import { defaultSelection, selectionCountValue } from '@/lib/features/Utilities';
+
+function convertStringToBoolean(value: string): string | boolean {
+    if (typeof value == "string") {
+        if (value.toLowerCase() === 'true') {
+            return true;
+        } else if (value.toLowerCase() === 'false') {
+            return false;
+        }
+    }
+    return value;
+}
 
 const ImportAll = () => {
     const inputCSVFile = useRef<HTMLInputElement>(null);
@@ -38,6 +49,8 @@ const ImportAll = () => {
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
     const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
+
+    const selections = useAppSelector(selectSelections)
     
     const clickCSV = () => inputCSVFile.current!.click();
     const clickJSON = () => inputJSONFile.current!.click();
@@ -53,44 +66,72 @@ const ImportAll = () => {
             header: true,
             dynamicTyping: false,
             complete: (results: any) => {
-                try {
-                    console.log(results)
+                // try {
                     const columnNames = results.meta.fields.slice(1);
-                    setColumns(columnNames.map((x: any, i: any) => { 
-                        return {name: x, id: i, oddEven: results.data[results.data.length - 1][x]}; 
+                    let columnObject: any = {}
+                    // Keep track of our ids to match the id of odd/even
+                    let idObject: any = {}
+                    setColumns(columnNames.map((x: any) => { 
+                        let thisId = uuidv4()
+                        const oddEven = convertStringToBoolean(results.data[results.data.length - 1][x])
+                        // Ensure id matches it's pairing
+                        // TODO Bad -> Uses name which isn't confirmed to be always different
+                        if (oddEven) {
+                            const baseName = oddEven === "ODD" ? x.slice(0, -4) : x.slice(0, -5)
+                            if (idObject[baseName]) {
+                                thisId = idObject[baseName]
+                            } else {
+                                idObject[baseName] = thisId
+                            }
+                        }
+
+                        columnObject[x] = {id: thisId + (oddEven === "ODD" ? "-odd" : oddEven === "EVEN" ? "-even" : ""), oddEven: oddEven}
+                        return {name: x, ...columnObject[x]}; 
                     }));
 
                     // TODO: maybe handle nones and make them always have id = 0
-                    const selections = [...new Set(results.data.map((row: any) => Object.values(row).slice(1)).flat())].map((x: any, i: any) => { 
-                            return {name: x, id: i}; 
+                    const newSelections = [
+                        ...new Set(results.data.slice(0, -1).map((row: any) => Object.values(row).slice(1)).flat().filter((x: any) => (x !== null && x!== undefined && x !== 'none' && x !== ''))
+                    )].map((x: any) => {
+                            return {name: x, id: uuidv4(), subject: "none"}; 
                         }
                     );
 
-                    setSelections(selections);
-                    
-                    const selectionsDict = selections.reduce((acc: any, current: any) => { 
-                        acc[current.name] = current; 
+                    const selectionsDict = [...selections, ...newSelections].reduce((acc: any, current: any) => { 
+                        if (!acc[current.name]) {
+                            acc[current.name] = current; 
+                        }
                         return acc; 
                     }, {});
 
-                    const rows = results.data.map((row: any, i: any) => { 
-                        return { 
-                            name: row[""], 
+                    setSelections(Object.values(selectionsDict));
+                    
+                    const rows = results.data.slice(0, -1).map((row: any) => { 
+                        let count = 0;
+                        const col = columnNames.reduce((acc: any, name: any) => { 
+                            if (selectionsDict[row[name]] === undefined) {
+                                acc[columnObject[name].id] = {...defaultSelection, oddEven: false}
+                            } else {
+                                count += convertStringToBoolean(columnObject[name].oddEven) ? selectionCountValue/2 : selectionCountValue
+                                acc[columnObject[name].id] = selectionsDict[row[name]]; 
+                            }
+        
+                            return acc; 
+                        }, {})
+
+                        return {
+                            name: row[""],
                             subject: "none",
-                            id: i,
-                            // Have to count selections
-                            selectionCount: 0,
-                            columns: columnNames.reduce((acc: any, name: any, j: any) => { 
-                                acc[j] = selectionsDict[row[name]]; 
-                                return acc; 
-                            }, {}) 
+                            id: uuidv4(),
+                            selectionCount: count,
+                            columns: col
                         }; 
                     }); 
 
                     setRows(rows);
-                } catch (error) {
-                    console.error("Invalid CSV format");
-                }
+                // } catch (error) {
+                //     console.error("Invalid CSV format");
+                // }
             },
             error: (error: any) => {
                 console.error("Error parsing CSV:", error);
@@ -394,6 +435,8 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
         setNewValue(undefined)
         return
     }
+
+
     
     return (
         <div className="shade" onClick={() => props.setIsImportOpen(false)}>

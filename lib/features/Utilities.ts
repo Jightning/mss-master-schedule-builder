@@ -1,6 +1,9 @@
 import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "@/types";
 // REMINDER: TEST THIS
 
+export const defaultSelection: Selection = { name: "none", subject: "none", id: 0 }
+export const selectionCountValue = 0.2
+
 export const modifyRows = (
     { type, action }: ScheduleBuilderAction, 
     rows: Array<Row>, 
@@ -8,7 +11,6 @@ export const modifyRows = (
     settings: Settings
 ): { rows: Array<Row>, columns: Array<Column>, selections?: Array<Selection>, failed?: boolean } => {
     // Default selection for blank spaces
-    let defaultSelection: Selection = { name: "none", subject: "none", id: 0 }
 
     switch (type) {
         case "PATCH_SIMPLE_ROW":
@@ -16,14 +18,14 @@ export const modifyRows = (
 
             // Deleting old selection when moving element and not copying
             if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
-                newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId, defaultSelection)
+                newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId)
             }
 
             newRowArray = addSelection(newRowArray, columns, action.toChange, action.columnId, action.selection)
             
             return {rows: newRowArray, columns: columns};
         case "DELETE_SIMPLE_ROW":   
-            let newRowsArray: Array<Row> = removeSelection(rows, columns, action.toChange, action.columnId, defaultSelection)
+            let newRowsArray: Array<Row> = removeSelection(rows, columns, action.toChange, action.columnId)
             return {rows: newRowsArray, columns}
         case "PATCH_EVEN_ODD":
             if (!settings.isOddEvenToggle) {
@@ -53,7 +55,7 @@ const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number
                 ...rows[toChange].columns, 
                 [columnId]: selection
             },
-            selectionCount: rows[toChange].selectionCount + (!isReplacing ? (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.1 : 0.2) : 0)
+            selectionCount: rows[toChange].selectionCount + (!isReplacing ? (columns[columns.findIndex(column => column.id === columnId)].oddEven ? selectionCountValue/2 : selectionCountValue) : 0)
         }, 
         ...rows.slice(toChange + 1)
     ]
@@ -61,7 +63,7 @@ const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number
     return newRows
 }
 
-const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], defaultSelection: Selection) => {    
+const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"]) => {    
     let newRows: Array<Row> = [
         ...rows.slice(0, toChange), 
         {
@@ -70,7 +72,7 @@ const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: num
                 ...rows[toChange].columns,
                 [columnId]: {...defaultSelection}
             },
-            selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.1 : 0.2)
+            selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? selectionCountValue/2 : selectionCountValue)
         }, 
         ...rows.slice(toChange + 1)
     ]
@@ -144,6 +146,7 @@ const removeEvenOdd = (
     let tempRows = [...rows]
     for (let i = 0; i < rows.length; i++) {
         // Miss-matched even odd -> early termination to ensure data isn't erased by mistake
+        console.log({...rows[i].columns[columnId + "-odd"]}, columnId, "her")
         if (rows[i].columns[columnId + '-odd'].id !== rows[i].columns[columnId + '-even'].id && !isUndo) {
             return { rows, columns, failed: true }
         }

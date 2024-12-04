@@ -8,7 +8,7 @@ import {
     ScheduleBuilderAction,
     Subject
 } from "@/types"
-import { modifyRows } from "./Utilities"
+import { defaultSelection, modifyRows } from "./Utilities"
 
 
 interface InitialStateType {
@@ -21,8 +21,6 @@ interface InitialStateType {
     history: Array<{rows: Array<Row>, columns: Array<Column>}>,
     currentStep: number
 }
-
-export const defaultSelection = { name: "none", subject: "none", id: 0, oddEven: false }
 
 const defaultSettings: Settings = {
     isOddEvenToggle: true,
@@ -153,7 +151,7 @@ export const scheduleDataSlice = createSlice({
 
             const count = modifications.rows[action.payload.action.toChange]?.selectionCount
             
-            if (count > state.settings.selectionLimit && state.settings.hasSelectionLimit) {
+            if (count > state.settings.selectionLimit && state.settings.hasSelectionLimit && !action.payload.type.includes("DELETE")) {
                 return
             }
 
