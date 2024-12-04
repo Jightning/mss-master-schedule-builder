@@ -146,7 +146,6 @@ const removeEvenOdd = (
     let tempRows = [...rows]
     for (let i = 0; i < rows.length; i++) {
         // Miss-matched even odd -> early termination to ensure data isn't erased by mistake
-        console.log({...rows[i].columns[columnId + "-odd"]}, columnId, "her")
         if (rows[i].columns[columnId + '-odd'].id !== rows[i].columns[columnId + '-even'].id && !isUndo) {
             return { rows, columns, failed: true }
         }

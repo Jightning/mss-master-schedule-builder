@@ -5,8 +5,8 @@ const ConfirmationPopup = ({setConfirmationResult, close, children}: any) => {
             <div className="confirmation-popup-container" onClick={(e) => e.stopPropagation()}>
                 <div>{children}</div>
                 <div className="flex flex-row">
-                    <div className="confirmation-btn y-confirmation" onClick={() => {setConfirmationResult(true)}}>Yes</div>
-                    <div className="confirmation-btn n-confirmation" onClick={() => {setConfirmationResult(false); close()}}>No</div>
+                    <div className="confirmation-btn y-confirmation highlight" onClick={() => {setConfirmationResult(true)}}>Yes</div>
+                    <div className="confirmation-btn n-confirmation highlight" onClick={() => {setConfirmationResult(false); close()}}>No</div>
                 </div>
             </div>
         </div>

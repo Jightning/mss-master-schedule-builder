@@ -281,6 +281,9 @@
     cursor: pointer;
     width: 50%;
 }
+.finish-subject-btn {
+    cursor: initial;
+}
 .delete-subject-btn:hover {
     border-color: rgb(247, 49, 49);
 }
@@ -299,9 +302,6 @@
     width: 100%;
     flex: 1;
     padding: 5px;
-}
-.finish-subject-btn:hover {
-    border-color: rgb(49, 95, 247);
 }
 .edit-subject-textarea {
     margin: auto;

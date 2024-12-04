@@ -126,7 +126,7 @@ const ScheduleBuilder = () => {
             })  
             setOriginalRowHeights(rowHeights)
         }
-    }, [])
+    }, [Object.keys(rows).length])
 
     // Auto Adjusts the heights of each row in the table
     // To match up the column row heights and the row column heights
@@ -405,8 +405,7 @@ const ScheduleBuilder = () => {
                             activeSelection={activeSelection}  />
                         <ScheduleTable 
                             activeSelection={activeSelection} 
-                            heights={heights}
-                             />
+                            heights={heights}  />
                     </div> 
                 </div>
 
@@ -419,6 +418,7 @@ const ScheduleBuilder = () => {
                     </div>
                     <SelectionColumn />
                 </div>
+
                             
                 {/* Context menu for each row (here for absolute positioning) */}
                 {rows.map((row: Row) => (

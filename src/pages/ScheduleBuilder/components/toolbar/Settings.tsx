@@ -5,13 +5,13 @@ import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { selectionCountValue } from '@/lib/features/Utilities';
 
 const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
     
     const columns = useAppSelector(selectColumns)
-    const rows = useAppSelector(selectRows)
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
@@ -67,9 +67,9 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                 break
         }
     }
+    const countDigits = selectionCountValue.toString().split('.')[1]?.length || 0
 
     // TODO copy selection and the selection limit
-    
     return (
         <div className="settings-dropdown" ref={settingsRef}>
             <h2>Settings</h2>
@@ -93,10 +93,11 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                         <input
                             className="number-input"
                             type="number"
+                            step={countDigits > 0 ? '0.' + '0'.repeat(countDigits - 1) + '1' : 10**(Math.abs(Math.round(selectionCountValue)).toString().length-1)}
                             value={settings.hasSelectionLimit ? settings.selectionLimit : 0}
                             onChange={(e) => {
                                 if (!settings.hasSelectionLimit) return 
-                                const newLimit = parseInt(e.target.value)
+                                const newLimit = parseFloat(e.target.value)
                                 setSettings({...settings, selectionLimit: isNaN(newLimit) ? 0 : newLimit})
                             }}
                             min='0'/>

@@ -40,20 +40,17 @@ function convertStringToBoolean(value: string): string | boolean {
     return value;
 }
 
-const ImportAll = () => {
+const ImportByCSV = ({getValues}: {getValues: Array<string>} = {getValues: []}) => {
     const inputCSVFile = useRef<HTMLInputElement>(null);
-    const inputJSONFile = useRef<HTMLInputElement>(null);
 
     const dispatch = useAppDispatch()
     const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
     const setSelections: any = (val: Array<Selection>) => dispatch(newSelections(val))
-    const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
-
     const selections = useAppSelector(selectSelections)
-    
+    const prevRows = useAppSelector(selectRows)
+
     const clickCSV = () => inputCSVFile.current!.click();
-    const clickJSON = () => inputJSONFile.current!.click();
 
     const importCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -66,13 +63,18 @@ const ImportAll = () => {
             header: true,
             dynamicTyping: false,
             complete: (results: any) => {
-                // try {
+                try {
                     const columnNames = results.meta.fields.slice(1);
                     let columnObject: any = {}
                     // Keep track of our ids to match the id of odd/even
                     let idObject: any = {}
                     setColumns(columnNames.map((x: any) => { 
                         let thisId = uuidv4()
+                        // Id cannot end with odd or even
+                        while (thisId.endsWith("odd") || thisId.endsWith("even")) {
+                            thisId = uuidv4()
+                        }
+
                         const oddEven = convertStringToBoolean(results.data[results.data.length - 1][x])
                         // Ensure id matches it's pairing
                         // TODO Bad -> Uses name which isn't confirmed to be always different
@@ -105,7 +107,6 @@ const ImportAll = () => {
                     }, {});
 
                     setSelections(Object.values(selectionsDict));
-                    
                     const rows = results.data.slice(0, -1).map((row: any) => { 
                         let count = 0;
                         const col = columnNames.reduce((acc: any, name: any) => { 
@@ -119,6 +120,16 @@ const ImportAll = () => {
                             return acc; 
                         }, {})
 
+                        // TODO dependent on name
+                        const prevRowIndex = prevRows.findIndex((prevRow: Row) => prevRow.name === row[""])
+                        if (prevRowIndex !== -1) {
+                            return {
+                                ...prevRows[prevRowIndex],
+                                selectionCount: count,
+                                columns: col
+                            }
+                        }
+
                         return {
                             name: row[""],
                             subject: "none",
@@ -129,15 +140,37 @@ const ImportAll = () => {
                     }); 
 
                     setRows(rows);
-                // } catch (error) {
-                //     console.error("Invalid CSV format");
-                // }
+                } catch (error) {
+                    console.error("Invalid CSV format");
+                }
             },
             error: (error: any) => {
                 console.error("Error parsing CSV:", error);
             },
         });
     }
+
+    return (
+        <div onClick={clickCSV}>
+            Import from CSV
+            <input
+                style={{ display: "none" }}
+                accept=".csv"
+                ref={inputCSVFile}  
+                onChange={importCSV}
+                type="file"
+            />
+        </div>
+    )
+}
+
+const ImportAll = () => {
+    const inputJSONFile = useRef<HTMLInputElement>(null);
+
+    const dispatch = useAppDispatch()
+    const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
+    
+    const clickJSON = () => inputJSONFile.current!.click();
     
     const importJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -167,17 +200,8 @@ const ImportAll = () => {
     
     return (
         <div className='importAll-container'>
-            <div onClick={clickCSV}>
-                 Import from CSV
-                 <input
-                     style={{ display: "none" }}
-                     accept=".csv"
-                     ref={inputCSVFile}  
-                     onChange={importCSV}
-                     type="file"
-                 />
-             </div>
-             <div onClick={clickJSON}>
+            <ImportByCSV getValues={[]} />
+            <div onClick={clickJSON}>
                  Import from JSON
                  <input
                      style={{ display: "none" }}
@@ -227,6 +251,7 @@ const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetSta
             setFinishConfirmationResult(false)
         }
     }, [deleteConfirmationResult, finishConfirmationResult, newSubject])
+
     
     return (
         <div className="shade" onClick={() => props.setIsEditSubjectsOpen(false)}>
@@ -255,9 +280,9 @@ const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetSta
                                 if (subjectSearch.trim() !== "" && !subject.name.toLowerCase().includes(subjectSearch.trim().toLowerCase())) return
                                 return (
                                     <div style={{
-                                        borderColor: subject.color
+                                            borderColor: subject.color
                                         }}
-                                        className='subject'
+                                        className={'subject'}
                                         onClick={() => {setCurrentSubject(subject); setNewSubject(subject)}}
                                     >
                                         {subject.name.slice(0, 1).toUpperCase() + subject.name.slice(1)}
@@ -276,7 +301,13 @@ const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetSta
                                 </div>
                             </div>
                             <div className="flex flex-row">
-                                <div className={'finish-subject-btn ' + (!currentSubject && "w-full")} onClick={() => setIsFinishConfirmationOpen(true)}>Confirm</div>
+                                <div 
+                                    className={'finish-subject-btn ' + 
+                                        (!currentSubject && "w-full ") + 
+                                        (newSubject.name.trim() !== "" && " highlight")} 
+                                        onClick={() => (newSubject.name.trim() !== "" && setIsFinishConfirmationOpen(true))}>
+                                            Confirm
+                                </div>
                                 {currentSubject && <div className='delete-subject-btn' onClick={() => setIsDeleteConfirmationOpen(true)}>Delete</div>}  
                             </div>
                         </div>
@@ -287,14 +318,14 @@ const EditSubjects = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetSta
     )
 }
 
-const Edit = (props: {children: React.ReactNode, onConfirm: any, onDelete: () => void, setValue?: React.Dispatch<React.SetStateAction<any>>, closeEdit: () => void}) => { 
+const Edit = (props: {children: React.ReactNode, onConfirm: any, onDelete: () => void, setValue?: React.Dispatch<React.SetStateAction<any>>, closeEdit: () => void, disabled: boolean}) => { 
     return (
         <div className='shade' onClick={props.closeEdit}>
             <div className="edit-container" onClick={(e) => e.stopPropagation()}>
                 {props.children}
                 <div className="flex flex-row">
-                    <div className="confirmation-btn y-confirmation" onClick={() => {props.onConfirm()}}>Confirm</div>
-                    <div className="confirmation-btn n-confirmation" onClick={() => {props.onDelete()}}>Delete</div>
+                    <div className={"confirmation-btn y-confirmation " + (!props.disabled && "highlight")} onClick={() => {props.onConfirm()}}>Confirm</div>
+                    <div className={"confirmation-btn n-confirmation " + (!props.disabled && "highlight")} onClick={() => {props.onDelete()}}>Delete</div>
                 </div>
             </div>
         </div>
@@ -320,7 +351,6 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
     const setColumns: any = (val: any) => dispatch(newColumns(val))
     const setRows: any = (val: any) => dispatch(newRows(val))
     const setSelections: any = (val: any) => dispatch(newSelections(val))
-    const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     const rows = useAppSelector(selectRows)
     const columns = useAppSelector(selectColumns)
@@ -342,6 +372,9 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
     const [newValue, setNewValue] = useState<Column | Selection | Row>()
 
     const editColumn = () => {
+        if (columns.findIndex((col) => col.name === newValue?.name && col.id !== newValue?.id) !== -1) {
+            return
+        }
         if (currentEdit?.value) {
             setColumns(columns.map((column) => {
                 if (column.oddEven === "ODD" && column.id.slice(0, column.id.length - 4) === String(currentEdit?.value?.id).slice(0, column.id.length - 4)) {
@@ -396,7 +429,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
     }
     const deleteRow = () => {
         setRows([...rows.filter((row) => row.id !== currentEdit?.value?.id)])
-
+        
         setCurrentEdit(undefined)
         setNewValue(undefined)
         return
@@ -435,8 +468,6 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
         setNewValue(undefined)
         return
     }
-
-
     
     return (
         <div className="shade" onClick={() => props.setIsImportOpen(false)}>
@@ -449,10 +480,12 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                 </div>
 
                 {isEditSubjectsOpen && <EditSubjects setIsEditSubjectsOpen={setIsEditSubjectOpen} />}
+                
                 {currentEdit?.editting === "columns" && 
                 <Edit 
                     closeEdit={() => (setCurrentEdit(undefined))}
-                    onConfirm={() => {setOpenConfirmationPopup({
+                    disabled={newValue?.name.trim() === ""}
+                    onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
                         <div>
                             <h3>Confirm Change Column Name?</h3>
@@ -465,6 +498,7 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                             <p><b className='text-red-700'>WARNING</b> This will remove all data related to column <b>{currentEdit?.value?.name}</b></p>
                         </div>), onConfirm: deleteColumn
                     })}}>
+
                     <h3>{currentEdit?.value ? `Edit \"${String(currentEdit?.value?.id).endsWith("-odd") ? currentEdit?.value?.name.slice(0, currentEdit?.value?.name.length - 4) : currentEdit?.value?.name}\"` : "Add Column"}</h3>
                     <div className='edit-content'>
                         <h4>Name:</h4>
@@ -477,7 +511,8 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                 {currentEdit?.editting === "rows" && 
                 <Edit 
                     closeEdit={() => (setCurrentEdit(undefined))}
-                    onConfirm={() => {setOpenConfirmationPopup({
+                    disabled={newValue?.name.trim() === ""}
+                    onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
                         <div>
                             <h3>Confirm Change Rows?</h3>
@@ -508,7 +543,8 @@ const Import = (props: {setIsImportOpen: React.Dispatch<React.SetStateAction<boo
                 {currentEdit?.editting === "selections" && 
                 <Edit 
                     closeEdit={() => (setCurrentEdit(undefined))}
-                    onConfirm={() => {setOpenConfirmationPopup({
+                    disabled={newValue?.name.trim() === ""}
+                    onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
                         <div>
                             <h3>Confirm Change Selection?</h3>
