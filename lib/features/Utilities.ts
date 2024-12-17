@@ -1,7 +1,7 @@
 import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "@/types";
 // REMINDER: TEST THIS
 
-export const defaultSelection: Selection = { name: "none", subject: "none", id: 0 }
+export const defaultSelection: Selection = { name: "none", subject: "none", id: '0' }
 export const selectionCountValue = 0.2
 
 export const modifyRows = (
@@ -45,7 +45,7 @@ export const modifyRows = (
 // toChange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], selection: Selection) => {
     // If we are replacing a selection, the selectionCount should not change
-    const isReplacing = rows[toChange].columns[columnId] && rows[toChange].columns[columnId].id !== 0
+    const isReplacing = rows[toChange].columns[columnId] && rows[toChange].columns[columnId].id !== '0'
 
     let newRows: Array<Row> = [
         ...rows.slice(0, toChange), 

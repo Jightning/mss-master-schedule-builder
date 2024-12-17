@@ -80,4 +80,32 @@ const Export = (props: { setIsExportOpen: React.Dispatch<React.SetStateAction<bo
     )
 }
 
+export const ExportOneDataByCSV = (props: {headerArray: Array<string>, data: any, name: string}) => {
+    function exportByCSV() {
+        const header = props.headerArray.map((head: string) => head).toString()
+
+        const setData = props.data.map((el: any) => {
+            return props.headerArray.map(head => {
+                return el[head].toString();
+            }).join(',');
+        }).join('\n');
+
+        const table = header + "\n" + setData;
+        const blob: Blob = new Blob([table], { type: 'text/csv;charset=utf-8;' });
+
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', `${props.name}.csv`);
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    return (
+        <div onClick={exportByCSV}>Export to CSV</div>
+    )
+}
+
 export default Export

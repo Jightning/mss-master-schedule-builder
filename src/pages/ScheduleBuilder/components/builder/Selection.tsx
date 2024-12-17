@@ -37,7 +37,7 @@ const Selection = (props:
     // const [contextMenuPoints, setContextMenuPoints] = useState({x: 0, y: 0})
 
     const { show } = useContextMenu({
-        id: props.selectionId
+        id: "selection-" + props.selectionId
     });
 
     const displayMenu = (e: any) => {

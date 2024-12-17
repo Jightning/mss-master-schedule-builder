@@ -32,7 +32,7 @@ const Rows = (
             <div className={"rows-header"}>{props.rowsName}</div>
             {rows && rows.map((row: Row, index: number) => {
                 const { show } = useContextMenu({
-                    id: row.id
+                    id: "row-header-" + row.id
                 });
 
                 const displayMenu = (e: any) => {

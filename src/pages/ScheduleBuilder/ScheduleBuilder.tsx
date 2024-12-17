@@ -40,7 +40,8 @@ import { useAppSelector } from '@/lib/hooks';
 import { addState } from '@/lib/features/ScheduleDataSlice';
 import RowHeaderContextMenu from '@/src/components/RowHeaderContextMenu';
 import Export from './components/toolbar/Export';
-import Import from './components/toolbar/Import';
+import Import from './components/toolbar/ImportPopup';
+import UndoRedoContextMenu from './components/toolbar/UndoRedoPopup';
 
 // TODO Possibly introduce a memo system (useMemo or useCallback)
 
@@ -225,8 +226,8 @@ const ScheduleBuilder = () => {
 
         // find the current column and check if it's oddEven
         let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
-        
-        if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
+
+        if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id != '0' && !oddEven && settings.isOddEvenToggle) {
             if (draggable.data.current.rowIndex !== toChange || draggable.data.current.columnId !== columnId) {
                 // BUG This will call, but will only create the column split and fail to update rows when double clicking an element (without the if)
                 addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
@@ -278,20 +279,28 @@ const ScheduleBuilder = () => {
         });
 
         if (rectIntersectionCollisions.length > 0) {
-            const trash = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id === 'trash-droppable')
-
-            if (trash.length > 0) {
-                // The trash is intersecting, return early
-                return trash;
-            } else {
-                // Otherwise, we're intersecting with the cover, return the cover to ignore the selection
-                const coverDroppable: any = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id.toString().substring(0, 15) === 'cover-droppable')
-                for (let cover of coverDroppable) {
-                    if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
-                        return coverDroppable
-                    }
+            const coverDroppable: any = rectIntersectionCollisions.filter(({id}: any) => id.toString().substring(0, 15) === 'cover-droppable')
+            for (let cover of coverDroppable) {
+                if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
+                    return coverDroppable
                 }
-            }   
+            }
+            
+            // If there is a trash collision to detect
+            // const trash = rectIntersectionCollisions.filter(({id}: any) => {console.log(id); id === 'trash-droppable'})
+
+            // if (trash.length > 0) {
+            //     // The trash is intersecting, return early
+            //     return trash;
+            // } else {
+            //     // Otherwise, we're intersecting with the cover, return the cover to ignore the selection
+            //     const coverDroppable: any = rectIntersectionCollisions.filter(({id}: any) => id.toString().substring(0, 15) === 'cover-droppable')
+            //     for (let cover of coverDroppable) {
+            //         if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
+            //             return coverDroppable
+            //         }
+            //     }
+            // }   
         }
 
         // default return for a droppable -> collision algo
@@ -354,6 +363,7 @@ const ScheduleBuilder = () => {
                     </div>
 
                     <UndoRedo />
+
                     
                     {isImportOpen && <Import setIsImportOpen={setIsImportOpen} />}
                     {isExportOpen && <Export setIsExportOpen={setIsExportOpen} />}

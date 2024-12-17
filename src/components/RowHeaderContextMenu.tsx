@@ -21,7 +21,7 @@ const RowHeaderContextMenu = (
     const countDigits = selectionCountValue.toString().split('.')[1]?.length || 0
 
     return (
-        <Menu id={rowId} className="context-menu-container border-none" >
+        <Menu id={"row-header-" + rowId} className="context-menu-container border-none" >
             <Item disabled={true} className='information-section css-reset'>
                 <p className='info-name'>{row.name}</p>
                 <p className='info-subject'>{selectionsName}: {Math.round(row.selectionCount * (10**countDigits))/(10**countDigits)}</p>

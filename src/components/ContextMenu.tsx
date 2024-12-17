@@ -24,7 +24,7 @@ const ContextMenu = (
 
     return (
         <>
-        <Menu id={selectionId} className="absolute context-menu-container border-none" >
+        <Menu id={"selection-" + selectionId} className="absolute context-menu-container border-none" >
              {rowIndex !== undefined && columnId && <Item 
                                 className='context-menu-delete' 
                                 onClick={() => addHistoryState({type: "DELETE_SIMPLE_ROW", action: {columnId: columnId, toChange: rowIndex, selection: selection}})}>

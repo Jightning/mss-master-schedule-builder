@@ -9,7 +9,7 @@ export type Subject = {
 export interface Selection {
     name: string,
     subject: Subject["name"],
-    id: number | string,
+    id: string,
 }
 
 export interface Column {
@@ -18,15 +18,10 @@ export interface Column {
     oddEven: false | "EVEN" | "ODD",
 }
 
-// export interface Tile {
-//     name: string,
-//     subject: string
-//     id: number | string,
-// }
 export interface Row {
     name: string,
     subject: Subject["name"],
-    id: number,
+    id: string,
     selectionCount: number
     columns: Record<Column["id"], Selection>
 }

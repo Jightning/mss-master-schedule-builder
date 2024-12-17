@@ -96,7 +96,7 @@
     border-radius: 10px;
     margin: 10px;
     padding: 5px;
-    word-break: break-all;
+    word-break: break-word;
 
     overflow-x: none;
     cursor: pointer;
@@ -316,7 +316,7 @@
 
 /* ImportAll */
 
-.importAll-container {
+.importAll-container, .imports-container, .exports-container {
     z-index: 10;
     border: solid;
     border-radius: 5px;
@@ -332,16 +332,27 @@
     justify-content: space-evenly;
 }
 
-.importAll-container div {
+.importAll-container div, .imports-container div, .exports-container div {
     /* margin: 0; */
     cursor: pointer;
     transition: all 0.2s;
 }
-.importAll-container div:hover {
+.importAll-container div:hover, .imports-container div:hover, .exports-container div:hover {
     color: #2c3cc7
 }
 
 /* /ImportAll */
+
+.imports-container {
+    position: absolute;
+    right: -5px;
+    transform: translateX(100%);
+}
+.exports-container {
+    position: absolute;
+    left: -5px;
+    transform: translateX(-100%);
+}
 
 /* /Import */
 
@@ -511,15 +522,22 @@
 /* Undo */
 .undoredo-container {
     position: absolute;
-    margin: 10px;
+    margin: 5px;
 }
 .undoredo-container svg {
-    margin: 3px;
     cursor: pointer;
     transition: box-shadow 0.2s;
+    margin: -2px 0 0 -2px;
 }
 .undoredo-container svg:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.09);
+}
+.svg-container {
+    display: inline-block;
+    height: 28px;
+    width: 28px;
+    margin: 10px;
+    padding: 0;
 }
 
 .btn-disabled {

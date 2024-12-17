@@ -5,6 +5,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    overscroll-behavior-x: contain;
 }
   
 body {
@@ -237,7 +238,8 @@ img {
     position: sticky;
     display: flex;
     flex-flow: row nowrap;
-
+    /* height: 39px; */
+    overflow-x: none;
     top: 0;
     z-index: 4;
 }
@@ -245,6 +247,7 @@ img {
     display: inline-block;
     min-width: 170px;
     flex: 1;
+    height: 100%;
 
     background-color: #000;
     color: #fff;
@@ -254,7 +257,12 @@ img {
     padding: 5px;
     padding-bottom: 10px;
 
-
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.column-header::-webkit-scrollbar {
+    display: none;
 }
 .column-row {
     padding: 5px;
