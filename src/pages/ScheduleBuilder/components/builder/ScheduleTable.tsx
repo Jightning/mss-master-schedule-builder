@@ -6,7 +6,7 @@ import {
 } from '@/types'
 
 import { useAppDispatch } from '@/lib/hooks';
-import { selectColumns, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
+import { selectColumns, selectSettings, addState, selectRows } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 
@@ -19,6 +19,7 @@ const ScheduleTable = (props: {
     let dispatch = useAppDispatch()
     const columns = useAppSelector(selectColumns)
     const settings = useAppSelector(selectSettings)
+    const rows = useAppSelector(selectRows)
 
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
@@ -45,11 +46,18 @@ const ScheduleTable = (props: {
         }
     }
 
-    
+    // if (columns.length < 1) {
+    //     return (
+    //         <div className='w-full'>
+    //             <h3 className='p-2 relative text-red-500'>No Columns to Display</h3>
+    //         </div>
+    //     )
+    // }
     
     return (
         <div className="schedule-table-container">
             <div className='schedule-table-headers' >
+                {columns.length < 1 && <div className='column-header'>No Columns Found</div>}
                 {columns && columns.map((column: ColumnInterface, index: number) => (
                     <div 
                     key={column.id} 
@@ -65,7 +73,8 @@ const ScheduleTable = (props: {
                     </div>
                 ))}
             </div>
-
+            
+            {/* Main Body */}
             <div className='schedule-table-columns'>
                 {columns && columns.map((column: ColumnInterface) => (
                     <div key={column.id} className='column-container'>  

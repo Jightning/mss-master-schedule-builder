@@ -29,7 +29,12 @@ const Rows = (
 
     return (
         <div className='rows-container' key={1}>
-            <div className={"rows-header"}>{props.rowsName}</div>
+            <div className={"rows-header"}>
+                {rows.length >= 1 
+                ? <p>{props.rowsName}</p>
+                : <p>No Rows Found</p>}
+            </div>
+
             {rows && rows.map((row: Row, index: number) => {
                 const { show } = useContextMenu({
                     id: "row-header-" + row.id

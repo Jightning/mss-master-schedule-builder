@@ -22,7 +22,9 @@ const Column = (props: {
 
     return (
         <div>  
-            {rows && rows.map((row: Row, index: number) => <Cell activeSelection={props.activeSelection} row={row} heights={props.heights} index={index} columnId={props.column.id} key={"overlay-" + row.id} />)}
+            {rows && rows.map((row: Row, index: number) => 
+                <Cell activeSelection={props.activeSelection} row={row} heights={props.heights} index={index} columnId={props.column.id} key={"overlay-" + row.id} />
+            )}
 
             <DragOverlay dropAnimation={null} modifiers={[restrictToWindowEdges]}>
                 {props.activeSelection ? (

@@ -1,4 +1,3 @@
-// import { addState, newColumns, newRows, newSelections, selectRows, selectSelections } from "@/lib/features/ScheduleDataSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Column, Row, Selection, ScheduleBuilderAction } from "@/types";
 import { useRef } from "react";
@@ -16,8 +15,6 @@ import {
     selectSelections, 
 } from '@/lib/features/ScheduleDataSlice';
 
-
-
 export const convertStringToBoolean = (value: string): string | boolean => {
     if (typeof value == "string") {
         if (value.toLowerCase() === 'true') {
@@ -29,7 +26,7 @@ export const convertStringToBoolean = (value: string): string | boolean => {
     return value;
 }
 
-const ImportByCSV = ({getValues}: {getValues: Array<string>} = {getValues: []}) => {
+const ImportByCSV = () => {
     const inputCSVFile = useRef<HTMLInputElement>(null);
 
     const dispatch = useAppDispatch()
@@ -189,16 +186,16 @@ export const ImportAll = () => {
     
     return (
         <div className='importAll-container'>
-            <ImportByCSV getValues={[]} />
+            <ImportByCSV />
 
             <div onClick={clickJSON}>
                  Import from JSON
                  <input
-                     style={{ display: "none" }}
-                     accept=".json"
-                     ref={inputJSONFile}
-                     onChange={importJSON}
-                     type="file"
+                    style={{ display: "none" }}
+                    accept=".json"
+                    ref={inputJSONFile}
+                    onChange={importJSON}
+                    type="file"
                  />
              </div>      
         </div>

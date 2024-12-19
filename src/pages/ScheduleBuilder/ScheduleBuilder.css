@@ -144,7 +144,7 @@ img {
     border-top: solid;
     display: flex;
     flex-flow: row nowrap;
-
+    padding: 0;
     overflow: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -159,13 +159,12 @@ img {
 
     height: fit-content;
 
-    border-right: solid;
-
     background-color: #ffc368;
   
     word-break: break-word;
     text-align: center;
     border-right: 1px solid #fff;
+
     position: sticky;
     left: 0;
     z-index: 5;
@@ -175,6 +174,7 @@ img {
     background-color: #000;
     color: #fff;
     font-weight: 600;
+    height: 39px;
   
     /* margin-bottom: 5px; */
     padding: 5px;
@@ -238,7 +238,7 @@ img {
     position: sticky;
     display: flex;
     flex-flow: row nowrap;
-    /* height: 39px; */
+    height: 39px;
     overflow-x: none;
     top: 0;
     z-index: 4;
@@ -255,7 +255,7 @@ img {
   
     /* margin-bottom: 5px;  */
     padding: 5px;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
 
     overflow-y: hidden;
     overflow-x: auto;
@@ -279,9 +279,6 @@ img {
 }
 .column-row:last-child {
     border-bottom: none;
-}
-.column-container:not(:first-child) .column-row{
-    border-left: solid 1px #d9d9d9;
 }
 
 /* \Schedule Table */

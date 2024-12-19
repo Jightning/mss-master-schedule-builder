@@ -45,7 +45,8 @@ const initialState: InitialStateType =
             subjects: []
         }
     },
-    rows: [{ name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },],
+    rows: [],
+    // rows: [{ name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },],
     // rows: [
     //     { name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     //     { name: "B. Teacher", subject: "science", id: '10324', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
@@ -59,7 +60,8 @@ const initialState: InitialStateType =
     //     { name: "H. Teacher", subject: "math", id: '10320', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     //     { name: "I. Teacher", subject: "english", id: '10349', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     // ],
-    columns: [{ name: "Period 1", id: "period_31", oddEven: false},],
+    columns: [],
+    // columns: [{ name: "Period 1", id: "period_31", oddEven: false},],
     // columns: [
     //     { name: "Period 1", id: "period_1", oddEven: false},
     //     { name: "Period 2", id: "period_2", oddEven: false},
@@ -71,7 +73,8 @@ const initialState: InitialStateType =
     //     { name: "Period 8", id: "period_8", oddEven: false},
     //     { name: "Period 9", id: "period_9", oddEven: false}
     // ],
-    selections: [{ name: "Computer Science", subject: "math", id: '33437' }],
+    selections: [],
+    // selections: [{ name: "Computer Science", subject: "math", id: '33437' }],
     // selections: [
     //     { name: "Computer Science", subject: "math", id: '33437' },
     //     { name: "AP Physics 1", subject: "science", id: '3343855' },
