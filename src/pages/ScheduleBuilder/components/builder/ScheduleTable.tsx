@@ -6,9 +6,18 @@ import {
 } from '@/types'
 
 import { useAppDispatch } from '@/lib/hooks';
-import { selectColumns, selectSettings, addState, selectRows } from '@/lib/features/ScheduleDataSlice';
+import { selectColumns, selectSettings, addState } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
+function normalizeColumn(column: ColumnInterface): ColumnInterface {
+    if (column.oddEven === "ODD") {
+        return {...column, id: column.id.slice(0, column.id.length - 4), name: column.name.slice(0, column.name.length - 4)}
+    } else if (column.oddEven === "EVEN") {
+        return {...column, id: column.id.slice(0, column.id.length - 5), name: column.name.slice(0, column.name.length - 5)}
+    }
+
+    return column
+}
 
 
 const ScheduleTable = (props: {
@@ -19,7 +28,6 @@ const ScheduleTable = (props: {
     let dispatch = useAppDispatch()
     const columns = useAppSelector(selectColumns)
     const settings = useAppSelector(selectSettings)
-    const rows = useAppSelector(selectRows)
 
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
@@ -39,10 +47,10 @@ const ScheduleTable = (props: {
                 id = id.toString().substring(0, id.toString().length - 5)
             }
             
-            addHistoryState({type: "DELETE_EVEN_ODD", action: {columnId: id}})
+            addHistoryState({type: "DELETE_EVEN_ODD", message: `Merged ${normalizeColumn(column).name}`, action: {columnId: id}})
 
         } else {
-            addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId: id}})
+            addHistoryState({type: "PATCH_EVEN_ODD", message: `Split ${column.name} into Even/Odd`, action: {columnId: id}})
         }
     }
 

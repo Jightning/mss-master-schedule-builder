@@ -1,10 +1,9 @@
-import { addState, selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice';
+import { addState, selectSubjects } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Column, Selection, ScheduleBuilderAction } from '@/types'
 import {
     Menu,
     Item,
-    Submenu
 } from "react-contexify";  
 // import "react-contexify/dist/ReactContexify.css";
 import "./components.css"

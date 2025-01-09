@@ -54,6 +54,7 @@ export interface Settings {
 
 export type ScheduleBuilderAction = {
     type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD" | "POST",
+    message?: string,
     action: {
         columnId: Column["id"],
         toChange: number,

@@ -108,4 +108,25 @@ export const ExportOneDataByCSV = (props: {headerArray: Array<string>, data: any
     )
 }
 
+
+export const ExportOneDataByJSON = (props: {data: any, name: string}) => {
+    function exportByJSON() {
+        const json = JSON.stringify(props.data);
+        const blob = new Blob([json], { type: 'text/json' });
+
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', `${props.name}.json`);
+
+        document.body.appendChild(link);
+        link.click();  
+        document.body.removeChild(link);
+    }
+
+    return (
+        <div onClick={exportByJSON}>Export to JSON</div>
+    )
+}
+
 export default Export

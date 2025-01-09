@@ -546,6 +546,37 @@
     pointer-events: none !important;
     box-shadow: none !important;
 }
+
+.undoredo-context-menu {
+    position: absolute !important;
+    top: 45px !important;
+    left: 15px;
+    z-index: 50;
+
+    width: 100px;
+    height: fit-content;
+    max-height: 200px;
+
+    overflow-y: auto;
+
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+}
+.history-item {
+    margin: 5px;
+    cursor: pointer;
+}
+.history-item:not(:last-child) {
+    border-bottom: solid;
+}
+.history-item:hover {
+    background-color: #f0f0f0;
+}
+.history-text {
+
+}
 /* \Undo */
 
 /* Trashcan */

@@ -244,3 +244,48 @@ export const ImportOneDataByCSV = ({setNewData}: any) => {
         </div>
     )
 }
+
+export const ImportOneDataByJSON = ({setNewData}: any) => {
+    const inputJSONFile = useRef<HTMLInputElement>(null);
+    
+    const clickJSON = () => inputJSONFile.current!.click();
+    
+    const importJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || file.type !== 'application/json') {
+            console.error("Invalid file type.");
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            if (ev.target && typeof ev.target.result === 'string') {
+                try {
+                    const json = JSON.parse(ev.target.result);
+
+                    if (json.rows || json.columns || json.selections){
+                        setNewData(json)
+                    } else {
+                        console.error("Invalid JSON format");
+                    }
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                }
+            }
+        }
+        reader.readAsText(file);
+    }
+    
+    return (
+        <div onClick={clickJSON}>
+             Import from JSON
+             <input
+                style={{ display: "none" }}
+                accept=".json"
+                ref={inputJSONFile}
+                onChange={importJSON}
+                type="file"
+             />
+        </div>      
+    )
+}

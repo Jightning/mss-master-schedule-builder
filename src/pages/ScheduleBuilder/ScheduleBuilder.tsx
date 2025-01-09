@@ -41,7 +41,6 @@ import { addState } from '@/lib/features/ScheduleDataSlice';
 import RowHeaderContextMenu from '@/src/components/RowHeaderContextMenu';
 import Export from './components/toolbar/Export';
 import Import from './components/toolbar/ImportPopup';
-import UndoRedoContextMenu from './components/toolbar/UndoRedoPopup';
 
 // TODO Possibly introduce a memo system (useMemo or useCallback)
 
@@ -210,6 +209,7 @@ const ScheduleBuilder = () => {
             }
 
             addHistoryState({type: "DELETE_SIMPLE_ROW", 
+                            message: `Removed ${draggable.data.current.selection.name}`,
                             action: {
                                 columnId: draggable.data.current.columnId, 
                                 toChange: draggable.data.current.rowIndex,
@@ -226,30 +226,40 @@ const ScheduleBuilder = () => {
 
         // find the current column and check if it's oddEven
         let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
+        let col = columns[columns.findIndex(column => columnId === column.id)].name
 
+        // odd even autoassign, also checks to make sure the selection is in a new area
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id != '0' && !oddEven && settings.isOddEvenToggle) {
             if (draggable.data.current.rowIndex !== toChange || draggable.data.current.columnId !== columnId) {
                 // BUG This will call, but will only create the column split and fail to update rows when double clicking an element (without the if)
                 addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
                 
-                addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
-                    selection: draggable.data.current.selection, 
-                    toChange: toChange, columnId: columnId + "-odd",
-                    prevToChange: draggable.data.current.rowIndex,
-                    prevColumnId: draggable.data.current.columnId
-                }})
+                addHistoryState({
+                    type: "PATCH_SIMPLE_ROW", 
+                    message: `Split ${col} Into Odd and Even`, 
+                    action: {
+                        selection: draggable.data.current.selection, 
+                        toChange: toChange, columnId: columnId + "-odd",
+                        prevToChange: draggable.data.current.rowIndex,
+                        prevColumnId: draggable.data.current.columnId
+                    }
+                })
             }
 
             return
         }
         
         // Sets the row for regular situations
-        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
-            selection: draggable.data.current.selection, 
-            toChange, columnId,
-            prevToChange: draggable.data.current.rowIndex,
-            prevColumnId: draggable.data.current.columnId
-        }})
+        addHistoryState({
+            type: "PATCH_SIMPLE_ROW",
+            message: !draggable.columnId ? `Added ${draggable.data.current.selection.name} to ${col} for ${rows[toChange].name}` : `Replaced ${rows[toChange].columns[columnId].name} with ${draggable.data.current.selection.name}`,
+            action: {
+                selection: draggable.data.current.selection, 
+                toChange, columnId,
+                prevToChange: draggable.data.current.rowIndex,
+                prevColumnId: draggable.data.current.columnId
+            }
+        })
 
     }
     

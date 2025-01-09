@@ -25,8 +25,8 @@ import Select from 'react-select';
 import '@/src/components/components.css'
 import { defaultSelection } from '@/lib/features/Utilities';
 import { EditSubjectPopup } from './EditSubjectPopup';
-import { ImportAll, ImportOneDataByCSV } from './ImportAll';
-import { ExportOneDataByCSV } from './Export';
+import { ImportAll, ImportOneDataByCSV, ImportOneDataByJSON } from './ImportAll';
+import { ExportOneDataByCSV, ExportOneDataByJSON } from './Export';
 
 const Edit = (props: {children: React.ReactNode, onConfirm: any, onDelete: () => void, setValue?: React.Dispatch<React.SetStateAction<any>>, closeEdit: () => void, disabled: boolean}) => { 
     return (
@@ -298,9 +298,11 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                     })}}>
                     <div className="imports-container">
                         <ImportOneDataByCSV setNewData={setImportedColumns} />
+                        <ImportOneDataByJSON setNewData={(json: any) => {setColumns(json.columns)}} />
                     </div>
                     <div className="exports-container">
                         <ExportOneDataByCSV headerArray={Object.keys(columns.length > 0 ? columns[0] : [])} data={columns} name={"schedule_data_columns"}/>
+                        <ExportOneDataByJSON data={{columns: columns}} name="schedule_data_columns" />
                     </div>
                     <h3>{currentEdit?.value ? `Edit \"${String(currentEdit?.value?.id).endsWith("-odd") ? currentEdit?.value?.name.slice(0, currentEdit?.value?.name.length - 4) : currentEdit?.value?.name}\"` : "Add Column"}</h3>
                     <div className='edit-content'>
@@ -330,9 +332,12 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                     })}}>
                     <div className="imports-container">
                         <ImportOneDataByCSV setNewData={setImportedRows} />
+                        <ImportOneDataByJSON setNewData={(json: any) => {setRows(json.rows)}} />
+
                     </div>
                     <div className="exports-container">
                         <ExportOneDataByCSV headerArray={["name", "id", "subject"]} data={rows} name={"schedule_data_rows"}/>
+                        <ExportOneDataByJSON data={{rows: rows}} name="schedule_data_rows" />
                     </div>
                     <h3>{currentEdit?.value ? `Edit \"${currentEdit?.value?.name}\"` : "Add Row"}</h3>
                     <div className='edit-content'>
@@ -368,9 +373,11 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                     })}}>
                     <div className="imports-container">
                         <ImportOneDataByCSV setNewData={setImportedSelections} />
+                        <ImportOneDataByJSON setNewData={(json: any) => {setSelections(json.selections)}} />
                     </div>
                     <div className="exports-container">
                         <ExportOneDataByCSV headerArray={["name", "id", "subject"]} data={selections} name={"schedule_data_selections"}/>
+                        <ExportOneDataByJSON data={{selections: selections}} name="schedule_data_selections" />
                     </div>
 
                     <h3>{currentEdit?.value ? `Edit \"${currentEdit?.value?.name}\"` : "Add Selection"}</h3>
