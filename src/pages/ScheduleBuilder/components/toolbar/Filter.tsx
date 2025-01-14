@@ -4,13 +4,12 @@ import Select from 'react-select'
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
-    newFilterLocation, 
     selectFilter, 
-    selectFilterLocation, 
     selectRows, 
-    newFilter 
+    newFilter, 
+    selectSubjects
 } from '@/lib/features/ScheduleDataSlice';
-import { getRowSubjects } from '@/lib/features/Utilities';
+import { Subject } from '@/types';
 
 const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const filterRef = useRef<HTMLDivElement>(null)
@@ -21,10 +20,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
 
-    const filterLocation = useAppSelector(selectFilterLocation) 
-    const setFilterLocation: any = (val: string) => dispatch(newFilterLocation(val))
-
-    const subjects = getRowSubjects(rows)
+    const subjects = useAppSelector(selectSubjects)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -47,18 +43,16 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         };
     }, []);
 
-    const subject_object = subjects.map((subject: string) => ({
-        value: subject,
-        label: subject.charAt(0).toUpperCase() + subject.slice(1)
-    }))
+    const subject_object = [...subjects.map((subject: Subject) => ({
+        value: subject.name,
+        label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
+    })), {value: "none", label: "None"}]
 
     return (
         <div className="filter-dropdown" ref={filterRef}>
             <h2>Filter</h2>
             <div className="filter-rows" >
-                <h3 onClick={() => setFilterLocation("rows")} className={filterLocation === "rows" ? "text-blue-500" : ""}>
-                    {props.rowsName}
-                </h3>
+                <h3>{props.rowsName}</h3>
                 <ul>
                     <li>Search: <span className="underline">{filter.rows.searchTerm === "" ? "None" : filter.rows.searchTerm}</span></li>
                     <li>Subjects: 
@@ -74,9 +68,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
                 </ul>
             </div>
             <div className={"filter-selections"}>
-                <h3 onClick={() => setFilterLocation("selections")} className={filterLocation === "selections" ? "text-blue-500" : ""}>
-                    {props.selectionsName}
-                </h3>
+                <h3>{props.selectionsName}</h3>
                 <ul>
                     <li>Search: <span className="underline">{filter.selections.searchTerm === "" ? "None" : filter.selections.searchTerm}</span></li>
                     <li>Subjects: 

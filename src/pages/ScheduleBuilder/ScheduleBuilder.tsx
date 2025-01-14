@@ -39,6 +39,8 @@ import { useAppSelector } from '@/lib/hooks';
 
 import { addState } from '@/lib/features/ScheduleDataSlice';
 import RowHeaderContextMenu from '@/src/components/RowHeaderContextMenu';
+import Export from './components/toolbar/Export';
+import Import from './components/toolbar/ImportPopup';
 
 // TODO Possibly introduce a memo system (useMemo or useCallback)
 
@@ -48,16 +50,8 @@ const ScheduleBuilder = () => {
 
     const rows = useAppSelector(selectRows)
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
-
     const columns = useAppSelector(selectColumns)
-    // const setColumns: any = (val: Array<Column>) => dispatch(newColumns(val))
-
-    // const filter = useAppSelector(selectFilter)
-    // const setFilter: any = (val: object) => dispatch(newFilter(val))
-
     const settings = useAppSelector(selectSettings)
-    // const setSettings: any = (val: object) => dispatch(newSettings(val))
-
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
     // \Redux\
@@ -75,14 +69,22 @@ const ScheduleBuilder = () => {
 
     const [isFilterOpen, setIsFilterOpen] = useState(false)
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+    const [isExportOpen, setIsExportOpen] = useState(false)
+    const [isImportOpen, setIsImportOpen] = useState(false)
 
-    // To check for window resize
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
+    
     useEffect(() => {
+        // Prevent default right click behavior (to avoid annoying complications)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // To check for window resize
         function changeDims() {
             setWindowDims([window.innerWidth, window.innerHeight])
-            
         }
+
         function selectSearch(event: any) {
             const input = document.getElementById('search-input');
             if (!input) {
@@ -124,7 +126,7 @@ const ScheduleBuilder = () => {
             })  
             setOriginalRowHeights(rowHeights)
         }
-    }, [])
+    }, [Object.keys(rows).length])
 
     // Auto Adjusts the heights of each row in the table
     // To match up the column row heights and the row column heights
@@ -207,6 +209,7 @@ const ScheduleBuilder = () => {
             }
 
             addHistoryState({type: "DELETE_SIMPLE_ROW", 
+                            message: `Removed ${draggable.data.current.selection.name}`,
                             action: {
                                 columnId: draggable.data.current.columnId, 
                                 toChange: draggable.data.current.rowIndex,
@@ -223,30 +226,40 @@ const ScheduleBuilder = () => {
 
         // find the current column and check if it's oddEven
         let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
-        
-        if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id !== 0 && !oddEven && settings.isOddEvenToggle) {
+        let col = columns[columns.findIndex(column => columnId === column.id)].name
+
+        // odd even autoassign, also checks to make sure the selection is in a new area
+        if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id != '0' && !oddEven && settings.isOddEvenToggle) {
             if (draggable.data.current.rowIndex !== toChange || draggable.data.current.columnId !== columnId) {
                 // BUG This will call, but will only create the column split and fail to update rows when double clicking an element (without the if)
                 addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
                 
-                addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
-                    selection: draggable.data.current.selection, 
-                    toChange: toChange, columnId: columnId + "-odd",
-                    prevToChange: draggable.data.current.rowIndex,
-                    prevColumnId: draggable.data.current.columnId
-                }})
+                addHistoryState({
+                    type: "PATCH_SIMPLE_ROW", 
+                    message: `Split ${col} Into Odd and Even`, 
+                    action: {
+                        selection: draggable.data.current.selection, 
+                        toChange: toChange, columnId: columnId + "-odd",
+                        prevToChange: draggable.data.current.rowIndex,
+                        prevColumnId: draggable.data.current.columnId
+                    }
+                })
             }
 
             return
         }
         
         // Sets the row for regular situations
-        addHistoryState({type: "PATCH_SIMPLE_ROW", action: {
-            selection: draggable.data.current.selection, 
-            toChange, columnId,
-            prevToChange: draggable.data.current.rowIndex,
-            prevColumnId: draggable.data.current.columnId
-        }})
+        addHistoryState({
+            type: "PATCH_SIMPLE_ROW",
+            message: !draggable.columnId ? `Added ${draggable.data.current.selection.name} to ${col} for ${rows[toChange].name}` : `Replaced ${rows[toChange].columns[columnId].name} with ${draggable.data.current.selection.name}`,
+            action: {
+                selection: draggable.data.current.selection, 
+                toChange, columnId,
+                prevToChange: draggable.data.current.rowIndex,
+                prevColumnId: draggable.data.current.columnId
+            }
+        })
 
     }
     
@@ -276,20 +289,28 @@ const ScheduleBuilder = () => {
         });
 
         if (rectIntersectionCollisions.length > 0) {
-            const trash = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id === 'trash-droppable')
-
-            if (trash.length > 0) {
-                // The trash is intersecting, return early
-                return trash;
-            } else {
-                // Otherwise, we're intersecting with the cover, return the cover to ignore the selection
-                const coverDroppable: any = rectIntersectionCollisions.filter(({id}: {id: SelectionInterface["id"]}) => id.toString().substring(0, 15) === 'cover-droppable')
-                for (let cover of coverDroppable) {
-                    if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
-                        return coverDroppable
-                    }
+            const coverDroppable: any = rectIntersectionCollisions.filter(({id}: any) => id.toString().substring(0, 15) === 'cover-droppable')
+            for (let cover of coverDroppable) {
+                if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
+                    return coverDroppable
                 }
-            }   
+            }
+            
+            // If there is a trash collision to detect
+            // const trash = rectIntersectionCollisions.filter(({id}: any) => {console.log(id); id === 'trash-droppable'})
+
+            // if (trash.length > 0) {
+            //     // The trash is intersecting, return early
+            //     return trash;
+            // } else {
+            //     // Otherwise, we're intersecting with the cover, return the cover to ignore the selection
+            //     const coverDroppable: any = rectIntersectionCollisions.filter(({id}: any) => id.toString().substring(0, 15) === 'cover-droppable')
+            //     for (let cover of coverDroppable) {
+            //         if (cover.data && pointerCoordinates.x <= cover.data.droppableContainer.rect.current.right && pointerCoordinates.x >= cover.data.droppableContainer.rect.current.left) {
+            //             return coverDroppable
+            //         }
+            //     }
+            // }   
         }
 
         // default return for a droppable -> collision algo
@@ -315,9 +336,21 @@ const ScheduleBuilder = () => {
     // FOR DRAG SCROLL, NOT FOR DRAGGABLE
     const drag_scroll_ref = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
     const { events } = useDraggableScroll(drag_scroll_ref)
+
+    const closePopups = (dontClose?: string) => {
+        if (isSettingsOpen && dontClose !== "settings") {
+            setIsSettingsOpen(false)
+        } else if (isFilterOpen && dontClose !== "filter") {
+            setIsFilterOpen(false)
+        } else if (isImportOpen && dontClose !== "import") {
+            setIsImportOpen(false)
+        } else if (isExportOpen && dontClose !== "export") {
+            setIsExportOpen(false)
+        }
+    }
     
     return (
-        <div id="sb-container">
+        <div id="sb-container" >
             {openPopup ?    
                 (<Popup closePopup={() => setOpenPopup(null)}>
                     {openPopup}
@@ -341,30 +374,37 @@ const ScheduleBuilder = () => {
 
                     <UndoRedo />
 
-                    {isFilterOpen ? <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
-                    {isSettingsOpen ? <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} /> : <></>}
+                    
+                    {isImportOpen && <Import setIsImportOpen={setIsImportOpen} />}
+                    {isExportOpen && <Export setIsExportOpen={setIsExportOpen} />}
+                    {isFilterOpen && <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} />}
+                    {isSettingsOpen && <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} />}
 
                     <div className="toolbar">
                         <ul>
-                            <li className='import-btn rounded-tl-md rounded-bl-md'>Import</li>
-                            <li className='export-btn rounded-tr-md rounded-br-md'>Export</li>
+                            <li id="import-btn" className='rounded-tl-md rounded-bl-md' onClick={() => setIsImportOpen((prevIsImportOpen) => {
+                                closePopups("import")
+                                return !prevIsImportOpen
+                            })}>Import</li>
+                            <li id='export-btn' className='rounded-tr-md rounded-br-md' onClick={() => setIsExportOpen((prevIsExportOpen) => {
+                                closePopups("export")
+                                return !prevIsExportOpen
+                            })}>Export</li>
+
                             <span/>
+
                             <li className='search-box rounded-tl-md rounded-bl-md'><SearchBar searchLocation="rows" /></li>
                             <span/>
 
                             <li className='filter-btn rounded-md' id="filter-btn" onClick={() => setIsFilterOpen((prevIsFilterOpen) => {
-                                if (isSettingsOpen) {
-                                    setIsSettingsOpen(false)
-                                }
+                                closePopups("filter")
                                 return !prevIsFilterOpen
                             })}>
                                 <svg className="filter-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000"><path d="M400-240v-80h160v80H400ZM240-440v-80h480v80H240ZM120-640v-80h720v80H120Z"/></svg>
                             </li>
                     
                             <li className='settings-btn rounded-md' id="settings-btn" onClick={() => setIsSettingsOpen((prevIsSettingsOpen) => {
-                                if (isFilterOpen) {
-                                    setIsFilterOpen(false)
-                                }
+                                closePopups("settings")
                                 return !prevIsSettingsOpen
                             })}>
                                 <svg className={(isAnimating ? "animating" : "")} 
@@ -385,8 +425,7 @@ const ScheduleBuilder = () => {
                             activeSelection={activeSelection}  />
                         <ScheduleTable 
                             activeSelection={activeSelection} 
-                            heights={heights}
-                             />
+                            heights={heights}  />
                     </div> 
                 </div>
 
@@ -399,10 +438,11 @@ const ScheduleBuilder = () => {
                     </div>
                     <SelectionColumn />
                 </div>
+
                             
                 {/* Context menu for each row (here for absolute positioning) */}
                 {rows.map((row: Row) => (
-                    <RowHeaderContextMenu rowId={row.id} row={row} selectionsName={selectionsName} />
+                    <RowHeaderContextMenu rowId={row.id} key={row.id} row={row} selectionsName={selectionsName} />
                 ))}
 
                 {/* To allow the selection to drag over its current div

@@ -5,6 +5,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    overscroll-behavior-x: contain;
 }
   
 body {
@@ -84,12 +85,17 @@ img {
     flex-grow: 1;
  }
 
+#import-btn {
+    width: 4rem;
+}
+#export-btn {
+    width: 4rem;
+}
 
 .settings-btn, .filter-btn {
     position: relative;
     right: calc(1rem);
 }
- 
 
 .toolbar .settings-btn .animating {
     animation: rotate-gear 0.5s;
@@ -138,7 +144,7 @@ img {
     border-top: solid;
     display: flex;
     flex-flow: row nowrap;
-
+    padding: 0;
     overflow: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -153,13 +159,12 @@ img {
 
     height: fit-content;
 
-    border-right: solid;
-
     background-color: #ffc368;
   
-    word-break: break-all;
+    word-break: break-word;
     text-align: center;
     border-right: 1px solid #fff;
+
     position: sticky;
     left: 0;
     z-index: 5;
@@ -169,8 +174,9 @@ img {
     background-color: #000;
     color: #fff;
     font-weight: 600;
+    height: 39px;
   
-    /* margin-b ottom: 5px; */
+    /* margin-bottom: 5px; */
     padding: 5px;
     padding-bottom: 10px;
     
@@ -232,7 +238,8 @@ img {
     position: sticky;
     display: flex;
     flex-flow: row nowrap;
-
+    height: 39px;
+    overflow-x: none;
     top: 0;
     z-index: 4;
 }
@@ -240,6 +247,7 @@ img {
     display: inline-block;
     min-width: 170px;
     flex: 1;
+    height: 100%;
 
     background-color: #000;
     color: #fff;
@@ -247,9 +255,14 @@ img {
   
     /* margin-bottom: 5px;  */
     padding: 5px;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
 
-
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.column-header::-webkit-scrollbar {
+    display: none;
 }
 .column-row {
     padding: 5px;
@@ -257,7 +270,7 @@ img {
     height: 100%;
     width: 100%;
 
-    /* border: solid; */
+    /* border-right: solid; */
     border-bottom: 1px solid #d9d9d9;
 
     display: flex;
@@ -266,9 +279,6 @@ img {
 }
 .column-row:last-child {
     border-bottom: none;
-}
-.column-container:not(:first-child) .column-row{
-    border-left: solid 1px #d9d9d9;
 }
 
 /* \Schedule Table */
@@ -314,7 +324,7 @@ img {
     padding: 0 5px;
     padding-bottom: 0;
   
-    word-break: break-all;
+    word-break: break-word;
     text-align: center;
     display: inline-block;
     
@@ -336,7 +346,7 @@ img {
     z-index: 2;
   
     overflow: hidden;
-    word-break: break-all;
+    word-break: break-word;
 }
 .selection-overlay {
     bottom: 0.65rem;

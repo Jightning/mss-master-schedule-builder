@@ -1,29 +1,20 @@
 import './toolbar.css'
 
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
-import { getRowSubjects } from '@/lib/features/Utilities';
-
-import { TwitterPicker } from 'react-color';
+import { selectionCountValue } from '@/lib/features/Utilities';
 
 const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
-    const [isChangeColorsDropdownOpen, setIsChangeColorsDropdownOpen] = useState<boolean>(false)
-    const [openColorPicker, setOpenColorPicker] = useState("")
-
-
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
     
     const columns = useAppSelector(selectColumns)
-    const rows = useAppSelector(selectRows)
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
-
-    const subjects = getRowSubjects(rows)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -76,13 +67,9 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                 break
         }
     }
-
-    const handleColorChange = (event: any) => {
-        setSettings({...settings, colors: {...settings.colors, [openColorPicker]: event.hex}})
-    }
+    const countDigits = selectionCountValue.toString().split('.')[1]?.length || 0
 
     // TODO copy selection and the selection limit
-    
     return (
         <div className="settings-dropdown" ref={settingsRef}>
             <h2>Settings</h2>
@@ -106,10 +93,11 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                         <input
                             className="number-input"
                             type="number"
+                            step={countDigits > 0 ? '0.' + '0'.repeat(countDigits - 1) + '1' : 10**(Math.abs(Math.round(selectionCountValue)).toString().length-1)}
                             value={settings.hasSelectionLimit ? settings.selectionLimit : 0}
                             onChange={(e) => {
                                 if (!settings.hasSelectionLimit) return 
-                                const newLimit = parseInt(e.target.value)
+                                const newLimit = parseFloat(e.target.value)
                                 setSettings({...settings, selectionLimit: isNaN(newLimit) ? 0 : newLimit})
                             }}
                             min='0'/>
@@ -129,21 +117,6 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                         <li>
                             <h4>{props.selectionsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.isColorSelectionSubjects} /></div>
                         </li>
-                    </div>
-                    
-                    <div className={"change-colors-container " + (isChangeColorsDropdownOpen ? "trigger" : "")}>
-                        <h4 className={"change-colors-btn"} onClick={() => {setIsChangeColorsDropdownOpen((prevValue: boolean) => (!prevValue)); setOpenColorPicker("");}}>Change Colors {">"}</h4>
-                        <ul className="change-colors-dropdown"> 
-                            {subjects.map((subject: string) => (
-                                <li className='h-fit flex-col'>
-                                    <div className='flex-row flex items-center justify-center'>
-                                        <p className='h-fit w-fit'>{subject.charAt(0).toUpperCase() + subject.slice(1)}:</p> 
-                                        <div className={'color-picker-btn'} style={{backgroundColor: settings.colors[subject]}} onClick={() => setOpenColorPicker((prevValue) => (prevValue === subject ? "" : subject))}></div>
-                                    </div>
-                                    {openColorPicker === subject ? <TwitterPicker color={ settings.colors[subject] } onChangeComplete={handleColorChange} triangle='hide' width={"280px"} className='justify-center m-auto w-fit' /> : <></>}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
                 </li>
             </ul>

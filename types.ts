@@ -1,26 +1,27 @@
 type HEX = `#${string}`
 
+// Name must be unique -> no need for an id
+export type Subject = {
+    name: string,
+    color: HEX
+}
+
 export interface Selection {
     name: string,
-    subject: string,
-    id: number | string,
+    subject: Subject["name"],
+    id: string,
 }
 
 export interface Column {
     name: string,
     id: string,
-    oddEven: boolean | "EVEN" | "ODD",
+    oddEven: false | "EVEN" | "ODD",
 }
 
-// export interface Tile {
-//     name: string,
-//     subject: string
-//     id: number | string,
-// }
 export interface Row {
     name: string,
-    subject: string,
-    id: number,
+    subject: Subject["name"],
+    id: string,
     selectionCount: number
     columns: Record<Column["id"], Selection>
 }
@@ -49,19 +50,20 @@ export interface Settings {
     isCopySelection: boolean,
     isColorSelectionSubjects: boolean,
     isColorRowSubjects: boolean
-    colors: {
-        [subject: string]: HEX
-    }
 }
 
 export type ScheduleBuilderAction = {
-    type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD",
+    type: "PATCH_SIMPLE_ROW" | "DELETE_SIMPLE_ROW" | "PATCH_EVEN_ODD" | "DELETE_EVEN_ODD" | "POST",
+    message?: string,
     action: {
         columnId: Column["id"],
         toChange: number,
         prevColumnId?: Column["id"],
         prevToChange?: number,
         selection: Selection,
-        ignoreHistory?: boolean
+        ignoreHistory?: boolean,
+        selections: Array<Selection>,
+        rows: Array<Row>,
+        columns: Array<Column>
     },
 }

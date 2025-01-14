@@ -1,5 +1,363 @@
-/* Seach box */
-#search-input {
+/* Export */
+.export-container {
+    z-index: 9;
+    position: absolute;
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+    left: calc(30px + 4rem);
+    top: 120px;
+
+    padding: 5px;
+}
+
+.export-container div {
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.export-container div:hover {
+    color: #52556e
+}
+
+/* /Export */
+
+/* Import */
+
+.shade {
+    z-index: 99;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.import-container {
+    z-index: 9;
+    border: solid;
+    border-radius: 10px;
+    background-color: white;
+
+    padding: 10px;
+    width: 80vw;
+    height: 80vh;
+
+    display: flex;
+    flex-flow: column;
+}
+.import-container h1 {
+    padding: 0 10px;
+    margin: 0 auto;
+    height: 3rem;
+    border-bottom: solid;
+    width: fit-content;
+    height: fit-content;
+    display: inline-block;
+}
+
+/* Imports Choices */
+.imports-choices {
+    position: relative;
+    margin-top: calc(1.5rem + 5px);
+    height: calc(80vh - 4.5rem - 30px);
+
+    display: flex;
+    justify-content: space-evenly;
+}
+.choice {
+    border: solid;  
+    border-radius: 10px;
+    padding: 5px;
+    margin: 5px;
+    /* space to take up minus total margin/padding */
+    width: calc(33.3333333% - 20px);
+    /* height: 60vh; */
+}
+.choice h3 {
+    width: fit-content;
+    border-bottom: solid;
+    padding: 0 5px;
+    margin: auto;
+}
+.choice-elements-container {
+    margin: 5px;    
+    height: calc(80vh - 4.5rem - 95px);
+    overflow: auto;
+}
+
+.column-choice-element, .row-choice-element, .selection-choice-element {
+    border: solid;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px;
+    word-break: break-word;
+
+    overflow-x: none;
+    cursor: pointer;
+    background-color: white;
+}
+
+.choice-top-sticky {
+    background-color: white;
+    border-radius: 0 0 15px 15px;
+    padding-bottom: 0;
+    margin: 0 10px 0 10px;
+
+    display: flex;
+    flex-direction: row;
+}
+.choice-search {
+    box-sizing: border-box !important;
+    border: solid black !important;
+    border-radius: 10px;
+
+    height: 2.5rem !important;
+    margin: 0 5px 0 0;
+
+    padding: 0.3rem 5px 0 5px;
+}
+.add-btn {
+    transition: color 0.2s;
+
+    margin: 0 !important;
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.add-btn svg {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+.add-btn:hover {
+    color: rgb(93, 99, 184);
+}
+
+/* /Imports Choices */
+
+.importAll-editSubjects-container {
+    position: absolute;
+    right: calc(10vw + 10px);
+
+    width: fit-content;
+    height: 4.5rem;
+
+    display: flex;
+    flex-flow: row-reverse;
+    align-items: center;
+}
+
+/* Regular Edit */
+
+.edit-container {
+    border: solid;
+    border-radius: 10px;
+    background-color: white;
+
+    padding: 10px 10px 0 10px;
+    min-width: 40vw;
+    min-height: 40vh;
+    width: fit-content;
+    height: fit-content;
+
+    display: flex;
+    flex-flow: column;
+}
+.edit-content {
+    margin: 10px;
+    height: 100%;
+}
+
+#react-select-3-input {
+    box-shadow: none !important;
+}
+
+/* /Regular Edit */
+
+/* Edit Subjects */
+
+.edit-subjects-container {
+    border: solid;
+    border-radius: 10px;
+    background-color: white;
+
+    padding: 10px 10px 0 10px;
+    width: 55vw;
+    height: 60vh;
+
+    display: flex;
+    flex-flow: column;
+}
+.edit-subjects-container h2 {
+    padding: 0 5px;
+    margin: 0 auto;
+    border-bottom: solid;
+
+    width: fit-content;
+    height: 2.5rem;
+    display: inline-block;  
+}
+.edit-subjects-btn {
+    border: solid;
+    border-radius: 10px;
+
+    height: fit-content;
+
+    margin-right: 10px;
+    padding: 5px;
+
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.edit-subjects-btn:hover {
+    border-color: rgb(93, 99, 184);
+}
+
+.edit-subjects-content {
+    display: flex;
+    flex-flow: row;
+    height: calc(60vh - 2.5rem - 10px);
+    padding: 10px;
+}
+
+.subjects-container {
+    margin: auto;
+    height: 100%;
+    overflow-y: auto;
+    border-right: solid;
+    padding: 0 10px;
+    width: 50%;
+}
+.subjects-header {
+    display: flex;
+    flex-flow: row;
+    padding: 0;
+    height: fit-content;
+}
+.subjects {
+    height: calc(60vh - 2.5rem - 94px);
+}
+.subject {
+    border: solid;
+    border-radius: 10px;
+    width: fit-content;
+    padding: 0 10px;
+    margin: 10px auto;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: large;
+    font-weight: bold;
+}
+.add-subject-btn:hover {
+    border-color: rgb(93, 99, 184);
+}
+.add-subject-btn {
+    margin: 0 10px;
+}
+
+.edit-subject-container-child {
+    display: flex;
+    flex-flow: column;
+    height: calc(60vh - 2.5rem - 58px);
+}
+.edit-subject-container {
+    width: 50%;
+    height: 100%;
+}
+.delete-subject-btn, .finish-subject-btn {
+    border: solid;
+    border-radius: 10px;
+    margin: 5px 10px;
+    padding: 5px;
+    transition: all 0.2s;
+    cursor: pointer;
+    width: 50%;
+}
+.finish-subject-btn {
+    cursor: initial;
+}
+.delete-subject-btn:hover {
+    border-color: rgb(247, 49, 49);
+}
+/* Height of h3 is 28px */
+/* Height of delete is 58px (including margin/padding) */
+.editting-container {
+    border: solid;
+    border-radius: 10px;
+    flex: 1;
+    margin: 0 10px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}
+.editting-container-child {
+    width: 100%;
+    flex: 1;
+    padding: 5px;
+}
+.edit-subject-textarea {
+    margin: auto;
+    float: none !important;
+}
+
+.color-picker {
+    margin: 10px;
+}
+
+/* /Edit Subjects */
+
+/* ImportAll */
+
+.importAll-container, .imports-container, .exports-container {
+    z-index: 10;
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+
+    padding: 5px;
+    height: 4.5rem;
+    width: fit-content;
+
+    display: flex;
+    flex-flow: column;
+    justify-content: space-evenly;
+}
+
+.importAll-container div, .imports-container div, .exports-container div {
+    /* margin: 0; */
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.importAll-container div:hover, .imports-container div:hover, .exports-container div:hover {
+    color: #2c3cc7
+}
+
+/* /ImportAll */
+
+.imports-container {
+    position: absolute;
+    right: -5px;
+    transform: translateX(100%);
+}
+.exports-container {
+    position: absolute;
+    left: -5px;
+    transform: translateX(-100%);
+}
+
+/* /Import */
+
+/* Search box */
+.search-input {
     resize: none;
     outline: none;
     border: none;
@@ -17,7 +375,7 @@
     overflow-x: auto;
     /* text-overflow: ellipsis; */
 }
-#search-input::-webkit-scrollbar {
+.search-input::-webkit-scrollbar {
     display: none;
 }
 .erase-search-icon {
@@ -53,7 +411,8 @@
     border: solid;
     border-radius: 10px;
 
-    height: 71vh;
+    height: fit-content;
+    max-height: 70vh;
     width: 25rem;
     padding: 5px;
 
@@ -97,61 +456,7 @@
 
 .color-settings-container {
     padding: 10px;
-}
-
-.change-colors-btn {
-    cursor: pointer;
-    width: fit-content;
-}
-/* .change-colors-container {
-    margin-bottom: 10px;
-} */
-/* Changing the parameter in parentheses changes the event */
-/* This is the list prior to clicking on it */
-.change-colors-container:not(.trigger) > .change-colors-dropdown > * {
-    visibility: hidden;
-    height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin: 0;
-    color: rgba(25,25,25,0);
-    transition: 
-      0.5s 0.1s height,
-      0.5s 0.1s padding,
-      0.5s 0.1s margin,
-      0.3s color,
-      0.6s visibility;
-    z-index: 99;
-}
-/* This is after */
-.change-colors-dropdown > * {
-    overflow: hidden;
-    height: 30px;
-    padding: 1px 0px;
-    background: rgba(0,0,0,0);
-    white-space: nowrap;
-    transition: 
-      0.5s height cubic-bezier(.73,.32,.34,1.5),
-      0.5s padding cubic-bezier(.73,.32,.34,1.5),
-      0.5s margin cubic-bezier(.73,.32,.34,1.5),
-      0.5s 0.2s color,
-      0.2s background-color;
-} 
-
-.color-picker-btn {
-    width: 1rem;
-    height:1rem;
-    margin: 5px;
-    border: solid;
-    border-radius: 5px;
-    cursor: pointer;
 }   
-/* CHANGE THIS, THE TAG OF THE COLOR PICKER (TWITTER) CHANGES FOR SOME REASON > UNRELIABLE */
-.change-colors-dropdown li input {
-    background-color: white !important;
-    height: 1 !important;
-    padding: 0.08em;
-}
 
 .subject-limit-switch {
     position: relative;
@@ -217,15 +522,22 @@
 /* Undo */
 .undoredo-container {
     position: absolute;
-    margin: 10px;
+    margin: 5px;
 }
 .undoredo-container svg {
-    margin: 3px;
     cursor: pointer;
     transition: box-shadow 0.2s;
+    margin: -2px 0 0 -2px;
 }
 .undoredo-container svg:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.09);
+}
+.svg-container {
+    display: inline-block;
+    height: 28px;
+    width: 28px;
+    margin: 10px;
+    padding: 0;
 }
 
 .btn-disabled {
@@ -233,6 +545,37 @@
     fill: gray !important;
     pointer-events: none !important;
     box-shadow: none !important;
+}
+
+.undoredo-context-menu {
+    position: absolute !important;
+    top: 45px !important;
+    left: 15px;
+    z-index: 50;
+
+    width: 100px;
+    height: fit-content;
+    max-height: 200px;
+
+    overflow-y: auto;
+
+    border: solid;
+    border-radius: 5px;
+
+    background-color: white;
+}
+.history-item {
+    margin: 5px;
+    cursor: pointer;
+}
+.history-item:not(:last-child) {
+    border-bottom: solid;
+}
+.history-item:hover {
+    background-color: #f0f0f0;
+}
+.history-text {
+
 }
 /* \Undo */
 

@@ -1,14 +1,16 @@
-import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "../../types";
+import { ScheduleBuilderAction, Row, Settings, Column, Selection } from "@/types";
 // REMINDER: TEST THIS
+
+export const defaultSelection: Selection = { name: "none", subject: "none", id: '0' }
+export const selectionCountValue = 0.2
 
 export const modifyRows = (
     { type, action }: ScheduleBuilderAction, 
     rows: Array<Row>, 
     columns: Array<Column>, 
     settings: Settings
-): { rows: Array<Row>, columns: Array<Column>, failed?: boolean } => {
+): { rows: Array<Row>, columns: Array<Column>, selections?: Array<Selection>, failed?: boolean } => {
     // Default selection for blank spaces
-    let defaultSelection: Selection = { name: "none", subject: "none", id: 0 }
 
     switch (type) {
         case "PATCH_SIMPLE_ROW":
@@ -16,15 +18,14 @@ export const modifyRows = (
 
             // Deleting old selection when moving element and not copying
             if (!settings.isCopySelection && action.prevToChange !== undefined && action.prevColumnId !== undefined) {
-                console.log('here')
-                newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId, defaultSelection)
+                newRowArray = removeSelection(newRowArray, columns, action.prevToChange, action.prevColumnId)
             }
-            console.log(newRowArray)
+
             newRowArray = addSelection(newRowArray, columns, action.toChange, action.columnId, action.selection)
             
             return {rows: newRowArray, columns: columns};
         case "DELETE_SIMPLE_ROW":   
-            let newRowsArray: Array<Row> = removeSelection(rows, columns, action.toChange, action.columnId, defaultSelection)
+            let newRowsArray: Array<Row> = removeSelection(rows, columns, action.toChange, action.columnId)
             return {rows: newRowsArray, columns}
         case "PATCH_EVEN_ODD":
             if (!settings.isOddEvenToggle) {
@@ -34,6 +35,8 @@ export const modifyRows = (
             return assignOddEven(rows, columns, action)
         case "DELETE_EVEN_ODD":
             return removeEvenOdd(rows, columns, action)
+        case "POST":
+            return {rows: action.rows, columns: action.columns, selections: action.selections}
         default:
             return {rows, columns}
     }
@@ -41,6 +44,9 @@ export const modifyRows = (
 
 // toChange is the index of rows meant to be changed
 const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], selection: Selection) => {
+    // If we are replacing a selection, the selectionCount should not change
+    const isReplacing = rows[toChange].columns[columnId] && rows[toChange].columns[columnId].id !== '0'
+
     let newRows: Array<Row> = [
         ...rows.slice(0, toChange), 
         {
@@ -49,7 +55,7 @@ const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number
                 ...rows[toChange].columns, 
                 [columnId]: selection
             },
-            selectionCount: rows[toChange].selectionCount + (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1)
+            selectionCount: rows[toChange].selectionCount + (!isReplacing ? (columns[columns.findIndex(column => column.id === columnId)].oddEven ? selectionCountValue/2 : selectionCountValue) : 0)
         }, 
         ...rows.slice(toChange + 1)
     ]
@@ -57,7 +63,7 @@ const addSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number
     return newRows
 }
 
-const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"], defaultSelection: Selection) => {    
+const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: number, columnId: Column["id"]) => {    
     let newRows: Array<Row> = [
         ...rows.slice(0, toChange), 
         {
@@ -66,7 +72,7 @@ const removeSelection = (rows: Array<Row>, columns: Array<Column>, toChange: num
                 ...rows[toChange].columns,
                 [columnId]: {...defaultSelection}
             },
-            selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? 0.5 : 1)
+            selectionCount: rows[toChange].selectionCount - (columns[columns.findIndex(column => column.id === columnId)].oddEven ? selectionCountValue/2 : selectionCountValue)
         }, 
         ...rows.slice(toChange + 1)
     ]
@@ -182,12 +188,12 @@ const removeEvenOdd = (
     return {rows: tempRows, columns: tempColumns}
 }
 
-export const getRowSubjects = (rows: Array<Row>) => {
-    let subjects: Set<string> = new Set([])
+// export const getRowSubjects = (rows: Array<Row>) => {
+//     let subjects: Set<string> = new Set([])
 
-    for (let i in rows) {
-        subjects.add(rows[i].subject)
-    }
+//     for (let i in rows) {
+//         subjects.add(rows[i].subject)
+//     }
 
-    return Array.from(subjects)
-}
+//     return Array.from(subjects)
+// }
