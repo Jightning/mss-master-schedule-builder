@@ -232,6 +232,7 @@ const ScheduleBuilder = () => {
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id != '0' && !oddEven && settings.isOddEvenToggle) {
             if (draggable.data.current.rowIndex !== toChange || draggable.data.current.columnId !== columnId) {
                 // BUG This will call, but will only create the column split and fail to update rows when double clicking an element (without the if)
+                // Possibly Resolved
                 addHistoryState({type: "PATCH_EVEN_ODD", action: {columnId, toChange, selection: draggable.data.current.selection, ignoreHistory: true}})
                 
                 addHistoryState({

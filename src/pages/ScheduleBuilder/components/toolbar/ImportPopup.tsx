@@ -244,7 +244,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
             const prevSelectionIndex = newData.findIndex((prev: any) => prev.name === acc["name"])
             const prevSelectionIDIndex = newData.findIndex((prev: any) => prev.id === acc["id"])
    
-            // If there is one which already had the same name or id just use that data
+            // If there is one which already had the same name or id just use that data instead
             if (prevSelectionIndex === -1 && prevSelectionIDIndex === -1) {
                 const subjectIndex = subjects.findIndex((subj) => subj["name"] === acc["subject"])
                 if (subjectIndex === -1) {
@@ -281,7 +281,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 {/* All Popups */}
                 {currentEdit?.editting === "columns" && 
                 <Edit 
-                    closeEdit={() => (setCurrentEdit(undefined))}
+                    closeEdit={() => {setCurrentEdit(undefined); setNewValue(undefined)}}
                     disabled={newValue?.name.trim() === ""}
                     onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
@@ -298,7 +298,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                     })}}>
                     <div className="imports-container">
                         <ImportOneDataByCSV setNewData={setImportedColumns} />
-                        <ImportOneDataByJSON setNewData={(json: any) => {setColumns(json.columns)}} />
+                        <ImportOneDataByJSON setNewData={(json: any) => {setColumns(json.columns)}} prevData={columns}  />
                     </div>
                     <div className="exports-container">
                         <ExportOneDataByCSV headerArray={Object.keys(columns.length > 0 ? columns[0] : [])} data={columns} name={"schedule_data_columns"}/>
@@ -315,7 +315,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 </Edit>}
                 {currentEdit?.editting === "rows" && 
                 <Edit 
-                    closeEdit={() => (setCurrentEdit(undefined))}
+                    closeEdit={() => {setCurrentEdit(undefined); setNewValue(undefined)}}
                     disabled={newValue?.name.trim() === ""}
                     onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
@@ -332,7 +332,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                     })}}>
                     <div className="imports-container">
                         <ImportOneDataByCSV setNewData={setImportedRows} />
-                        <ImportOneDataByJSON setNewData={(json: any) => {setRows(json.rows)}} />
+                        <ImportOneDataByJSON setNewData={(json: any) => {setRows(json.rows)}} prevData={rows} />
 
                     </div>
                     <div className="exports-container">
@@ -356,7 +356,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 </Edit>}
                 {currentEdit?.editting === "selections" && 
                 <Edit 
-                    closeEdit={() => (setCurrentEdit(undefined))}
+                    closeEdit={() => {setCurrentEdit(undefined); setNewValue(undefined)}}
                     disabled={newValue?.name.trim() === ""}
                     onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
@@ -373,7 +373,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                     })}}>
                     <div className="imports-container">
                         <ImportOneDataByCSV setNewData={setImportedSelections} />
-                        <ImportOneDataByJSON setNewData={(json: any) => {setSelections(json.selections)}} />
+                        <ImportOneDataByJSON setNewData={(json: any) => {setSelections(json.selections)}} prevData={selections} />
                     </div>
                     <div className="exports-container">
                         <ExportOneDataByCSV headerArray={["name", "id", "subject"]} data={selections} name={"schedule_data_selections"}/>

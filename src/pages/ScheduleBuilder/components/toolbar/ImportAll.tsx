@@ -245,7 +245,7 @@ export const ImportOneDataByCSV = ({setNewData}: any) => {
     )
 }
 
-export const ImportOneDataByJSON = ({setNewData}: any) => {
+export const ImportOneDataByJSON = ({setNewData, prevData}: any) => {
     const inputJSONFile = useRef<HTMLInputElement>(null);
     
     const clickJSON = () => inputJSONFile.current!.click();
@@ -263,8 +263,17 @@ export const ImportOneDataByJSON = ({setNewData}: any) => {
                 try {
                     const json = JSON.parse(ev.target.result);
 
-                    if (json.rows || json.columns || json.selections){
-                        setNewData(json)
+                    if (json.rows || json.columns || json.selections) {
+                        console.log([...json[Object.keys(json)[0]]])
+                        const key = Object.keys(json)[0]
+                        let data = [...json[key]].reduce((newData: typeof prevData, acc: any) => {
+                            const prevIndex = newData.findIndex((prev: any) => prev.name === acc["name"])
+                            const prevIDIndex = newData.findIndex((prev: any) => prev.id === acc["id"])
+                            
+                            return (prevIndex === -1 && prevIDIndex === -1) ? [...newData, acc] : newData
+                        }, prevData)
+
+                        setNewData({[key]: data})
                     } else {
                         console.error("Invalid JSON format");
                     }
