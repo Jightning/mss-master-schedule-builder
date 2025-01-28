@@ -3,7 +3,6 @@
 ### WIP
 **Documentation:** Exalidraw in docs/.excalidraw
 ### Todo:
-- Import/export functionality
 - CSS Improvements for different screen sizes
 - Performance improvement
 - Create Tests

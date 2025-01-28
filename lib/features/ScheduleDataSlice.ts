@@ -1,4 +1,4 @@
-import { createSlice  } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import {
     Column,
     Row,
@@ -32,21 +32,23 @@ const defaultSettings: Settings = {
     isColorRowSubjects: false,
 }
 
+const defaultFilter: Filter = {
+    selections: {
+        searchTerm: "",
+        subjects: []
+    },
+    rows: {
+        searchTerm: "",
+        subjects: []
+    }
+}
+
 const initialState: InitialStateType = 
 {
-    settings: defaultSettings,
-    filter: {
-        selections: {
-            searchTerm: "",
-            subjects: []
-        },
-        rows: {
-            searchTerm: "",
-            subjects: []
-        }
-    },
-    // rows: [],
-    rows: [{ name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },],
+    settings: JSON.parse(localStorage.getItem("settings") ?? "null") ?? defaultSettings,
+    filter: JSON.parse(localStorage.getItem("filter") ?? "null") ?? defaultFilter,
+    rows: JSON.parse(localStorage.getItem("rows") ?? "null") ?? [],
+    // rows: [{ name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },],
     // rows: [
     //     { name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     //     { name: "B. Teacher", subject: "science", id: '10324', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
@@ -60,8 +62,8 @@ const initialState: InitialStateType =
     //     { name: "H. Teacher", subject: "math", id: '10320', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     //     { name: "I. Teacher", subject: "english", id: '10349', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     // ],
-    // columns: [],
-    columns: [{ name: "Period 1", id: "period_31", oddEven: false},],
+    columns: JSON.parse(localStorage.getItem("columns") ?? "null") ?? [],
+    // columns: [{ name: "Period 1", id: "period_31", oddEven: false},],
     // columns: [
     //     { name: "Period 1", id: "period_1", oddEven: false},
     //     { name: "Period 2", id: "period_2", oddEven: false},
@@ -73,8 +75,8 @@ const initialState: InitialStateType =
     //     { name: "Period 8", id: "period_8", oddEven: false},
     //     { name: "Period 9", id: "period_9", oddEven: false}
     // ],
-    // selections: [],
-    selections: [{ name: "Computer Science", subject: "math", id: '33437' }],
+    selections: JSON.parse(localStorage.getItem("selections") ?? "null") ?? [],
+    // selections: [{ name: "Computer Science", subject: "math", id: '33437' }],
     // selections: [
     //     { name: "Computer Science", subject: "math", id: '33437' },
     //     { name: "AP Physics 1", subject: "science", id: '3343855' },
@@ -117,7 +119,8 @@ const initialState: InitialStateType =
     //     { name: "AP Physics 38", subject: "science", id: '33424228108' },
     //     { name: "AP Physics 39", subject: "science", id: '33424228118' }
     // ],
-    subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}],
+    subjects: JSON.parse(localStorage.getItem("subjects") ?? "null") ?? [{name: "none", color: "#000000"}],
+    // subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}],
     history: [],
     // settingsHistory: [{...defaultSettings, step: -1}],
     currentStep: -1
@@ -129,23 +132,28 @@ export const scheduleDataSlice = createSlice({
     reducers: {
         newSettings: (state, action) => {
             state.settings = action.payload
+            localStorage.setItem("settings", JSON.stringify(state.settings))
             // state.settingsHistory.push({...state.settings, step: state.currentStep})
         },
         newFilter: (state, action) => {
             state.filter = action.payload
+            localStorage.setItem("filters", JSON.stringify(state.filter))
         },
         newRows: (state, action: {payload: Array<Row>}) => {
             state.rows = action.payload
+            localStorage.setItem("rows", JSON.stringify(state.rows))
         },
         newColumns: (state, action: {payload: Array<Column>}) => {
             state.columns = action.payload
+            localStorage.setItem("columns", JSON.stringify(state.columns))
         },
         newSelections: (state, action: {payload: Array<Selection>}) => {
             state.selections = action.payload
+            localStorage.setItem("selections", JSON.stringify(state.selections))
         },
         newSubjects: (state, action: {payload: Array<Subject>}) => {
-            console.log(action.payload)
             state.subjects = Array.from(new Set(action.payload))
+            localStorage.setItem("subjects", JSON.stringify(state.subjects))
         },
         // History Reducers  
         // BUG when setting autoassign and using it to split something, then moving the things, then disabling autoassign and then enabling copy selection to then replace on the of the things with the other, it wont work
@@ -164,6 +172,10 @@ export const scheduleDataSlice = createSlice({
             state.rows = modifications.rows
             state.columns = modifications.columns
             if (modifications.selections) state.selections = modifications.selections
+
+            localStorage.setItem("selections", JSON.stringify(state.columns))
+            localStorage.setItem("rows", JSON.stringify(state.rows))
+            localStorage.setItem("columns", JSON.stringify(state.columns))
 
             if (!action.payload.action.ignoreHistory)
                 state.history = [...state.history.slice(0, state.currentStep + 1), {message: action.payload.message || "Unknown", rows: modifications.rows, columns: modifications.columns}]
@@ -188,11 +200,16 @@ export const scheduleDataSlice = createSlice({
                     state.rows = initialState.rows
                     state.columns = initialState.columns
                     state.settings = initialState.settings
+
                     break
                 }
 
                 if (!action.payload) break
             }
+
+            localStorage.setItem("selections", JSON.stringify(state.columns))
+            localStorage.setItem("rows", JSON.stringify(state.rows))
+            localStorage.setItem("columns", JSON.stringify(state.columns))
         },
         redoState(state, action: {payload?: {step: number}}) {
             console.log(action, state.currentStep)

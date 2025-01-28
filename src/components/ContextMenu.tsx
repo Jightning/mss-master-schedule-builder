@@ -20,6 +20,8 @@ const ContextMenu = (
         return acc
     }, {})
 
+    console.log(subjectsObject)
+    const subject = selection.subject ?? "none"
 
     return (
         <>
@@ -32,7 +34,7 @@ const ContextMenu = (
 
             <Item disabled={true} className='information-section css-reset'>
                 <p className='info-name'>{selection.name}</p>
-                <p className='info-subject' style={{color: subjectsObject[selection.subject]}}>{selection.subject.charAt(0).toUpperCase() + selection.subject.slice(1)}</p>
+                <p className='info-subject' style={{color: subjectsObject[subject]}}>{subject.charAt(0).toUpperCase() + subject.slice(1)}</p>
             </Item >
         </Menu>
         </>
