@@ -41,6 +41,7 @@ import { addState } from '@/lib/features/ScheduleDataSlice';
 import RowHeaderContextMenu from '@/src/components/RowHeaderContextMenu';
 import Export from './components/toolbar/Export';
 import Import from './components/toolbar/ImportPopup';
+import { defaultSelection } from '@/lib/features/Utilities';
 
 // TODO Possibly introduce a memo system (useMemo or useCallback)
 
@@ -73,7 +74,7 @@ const ScheduleBuilder = () => {
     const [isImportOpen, setIsImportOpen] = useState(false)
 
     const [windowDims, setWindowDims] = useState<number[]>([window.innerWidth, window.innerHeight])
-    
+
     useEffect(() => {
         // Prevent default right click behavior (to avoid annoying complications)
         document.addEventListener('contextmenu', function(e) {
@@ -225,9 +226,23 @@ const ScheduleBuilder = () => {
         const columnId = droppable.data.current.columnId
 
         // find the current column and check if it's oddEven
-        let oddEven = columns[columns.findIndex(column => columnId === column.id)].oddEven
-        let col = columns[columns.findIndex(column => columnId === column.id)].name
+        const currentColumn = columns[columns.findIndex(column => columnId === column.id)]
+        let oddEven = currentColumn.oddEven
+        let col = currentColumn.name
 
+        // Row may not have the column registered
+        if (rows[toChange].columns[columnId] === undefined) {
+            let newRows = [...rows]
+            newRows[toChange] = {
+                ...newRows[toChange],
+                columns: {
+                    ...newRows[toChange].columns,
+                    [columnId]: defaultSelection
+                }
+            };
+            setRows(newRows)
+        }
+ 
         // odd even autoassign, also checks to make sure the selection is in a new area
         if (settings.isOddEvenAutoAssign && rows[toChange].columns[columnId].id != '0' && !oddEven && settings.isOddEvenToggle) {
             if (draggable.data.current.rowIndex !== toChange || draggable.data.current.columnId !== columnId) {

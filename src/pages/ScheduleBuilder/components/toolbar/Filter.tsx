@@ -5,7 +5,6 @@ import Select from 'react-select'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
     selectFilter, 
-    selectRows, 
     newFilter, 
     selectSubjects
 } from '@/lib/features/ScheduleDataSlice';
@@ -14,8 +13,6 @@ import { Subject } from '@/types';
 const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
     const filterRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
-
-    const rows = useAppSelector(selectRows)
 
     const filter = useAppSelector(selectFilter)
     const setFilter: any = (val: string) => dispatch(newFilter(val))
@@ -46,7 +43,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
     const subject_object = [...subjects.map((subject: Subject) => ({
         value: subject.name,
         label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
-    })), {value: "none", label: "None"}]
+    }))]
 
     return (
         <div className="filter-dropdown" ref={filterRef}>

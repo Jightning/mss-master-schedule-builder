@@ -102,7 +102,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
             while (newId.endsWith("odd") || newId.endsWith('even')) {
                 newId = uuidv4()
             }
-            setColumns([...columns, {...newValue, id: newId}])
+            setColumns([...columns, {...newValue, id: newId, oddEven: false}])
         }
 
         setCurrentEdit(undefined)
@@ -287,8 +287,8 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                         children: (
                         <div>
                             <h3>Confirm Change Column Name?</h3>
-                        </div>), onConfirm: editColumn
-                    })}}
+                        </div>), onConfirm: editColumn})
+                    }}
                     onDelete={() => {setOpenConfirmationPopup({
                         children: (
                         <div>

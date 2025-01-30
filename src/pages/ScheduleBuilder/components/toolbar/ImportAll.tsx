@@ -51,6 +51,7 @@ const ImportByCSV = () => {
             complete: (results: any) => {
                 try {
                     const columnNames = results.meta.fields.slice(1);
+                    console.log(columnNames)
                     let columnObject: any = {}
                     // Keep track of our ids to match the id of odd/even
                     let idObject: any = {}
@@ -214,13 +215,13 @@ export const ImportOneDataByCSV = ({setNewData}: any) => {
             console.error("Invalid file type.");
             return;
         }
-        
         Papa.parse(file, {
             header: true,
             dynamicTyping: false,
+            skipEmptyLines: true,
             complete: (results: any) => {
                 try {
-                    setNewData(results.data)
+                    if (results.data.length > 0) setNewData(results.data)
                 } catch (error) {
                     console.error("Invalid CSV format");
                 }

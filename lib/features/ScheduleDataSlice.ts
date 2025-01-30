@@ -43,11 +43,16 @@ const defaultFilter: Filter = {
     }
 }
 
+const parseLocalStorage = (key: string) => {
+    const item = localStorage.getItem(key)
+    return item ? JSON.parse(item) : undefined
+}
+
 const initialState: InitialStateType = 
 {
-    settings: JSON.parse(localStorage.getItem("settings") ?? "null") ?? defaultSettings,
-    filter: JSON.parse(localStorage.getItem("filter") ?? "null") ?? defaultFilter,
-    rows: JSON.parse(localStorage.getItem("rows") ?? "null") ?? [],
+    settings: parseLocalStorage("settings") ?? defaultSettings,
+    filter: parseLocalStorage("filter") ?? defaultFilter,
+    rows: parseLocalStorage("rows") ?? [],
     // rows: [{ name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },],
     // rows: [
     //     { name: "A. Teacher", subject: "math", id: '10394', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
@@ -62,7 +67,7 @@ const initialState: InitialStateType =
     //     { name: "H. Teacher", subject: "math", id: '10320', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     //     { name: "I. Teacher", subject: "english", id: '10349', selectionCount: 0, columns: {"period_1": defaultSelection, "period_2": defaultSelection, "period_3": defaultSelection, "period_4": defaultSelection, "period_5": defaultSelection, "period_6": defaultSelection, "period_7": defaultSelection, "period_8": defaultSelection, "period_9": defaultSelection} },
     // ],
-    columns: JSON.parse(localStorage.getItem("columns") ?? "null") ?? [],
+    columns: parseLocalStorage("columns") ?? [],
     // columns: [{ name: "Period 1", id: "period_31", oddEven: false},],
     // columns: [
     //     { name: "Period 1", id: "period_1", oddEven: false},
@@ -75,7 +80,7 @@ const initialState: InitialStateType =
     //     { name: "Period 8", id: "period_8", oddEven: false},
     //     { name: "Period 9", id: "period_9", oddEven: false}
     // ],
-    selections: JSON.parse(localStorage.getItem("selections") ?? "null") ?? [],
+    selections: parseLocalStorage("selections") ?? [],
     // selections: [{ name: "Computer Science", subject: "math", id: '33437' }],
     // selections: [
     //     { name: "Computer Science", subject: "math", id: '33437' },
@@ -119,7 +124,7 @@ const initialState: InitialStateType =
     //     { name: "AP Physics 38", subject: "science", id: '33424228108' },
     //     { name: "AP Physics 39", subject: "science", id: '33424228118' }
     // ],
-    subjects: JSON.parse(localStorage.getItem("subjects") ?? "null") ?? [{name: "none", color: "#000000"}],
+    subjects: parseLocalStorage("subjects") ?? [{name: "none", color: "#000000"}],
     // subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}],
     history: [],
     // settingsHistory: [{...defaultSettings, step: -1}],
@@ -158,6 +163,7 @@ export const scheduleDataSlice = createSlice({
         // History Reducers  
         // BUG when setting autoassign and using it to split something, then moving the things, then disabling autoassign and then enabling copy selection to then replace on the of the things with the other, it wont work
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
+            console.log(action.payload, "here")
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
@@ -173,7 +179,7 @@ export const scheduleDataSlice = createSlice({
             state.columns = modifications.columns
             if (modifications.selections) state.selections = modifications.selections
 
-            localStorage.setItem("selections", JSON.stringify(state.columns))
+            localStorage.setItem("selections", JSON.stringify(state.selections))
             localStorage.setItem("rows", JSON.stringify(state.rows))
             localStorage.setItem("columns", JSON.stringify(state.columns))
 
@@ -184,7 +190,6 @@ export const scheduleDataSlice = createSlice({
         },
         // payload represents the history step to go back to ( if its 1, go until currentStep is 1)
         undoState(state, action: {payload?: {step: number}}) {
-            console.log(action.payload)
             while (action.payload?.step !== state.currentStep) {
                 if (state.currentStep > 0) {
                     state.currentStep--;
@@ -207,12 +212,11 @@ export const scheduleDataSlice = createSlice({
                 if (!action.payload) break
             }
 
-            localStorage.setItem("selections", JSON.stringify(state.columns))
+            localStorage.setItem("selections", JSON.stringify(state.selections))
             localStorage.setItem("rows", JSON.stringify(state.rows))
             localStorage.setItem("columns", JSON.stringify(state.columns))
         },
         redoState(state, action: {payload?: {step: number}}) {
-            console.log(action, state.currentStep)
             while (action.payload?.step !== state.currentStep) {
                 if (state.currentStep < state.history.length - 1) {
                     state.currentStep++;

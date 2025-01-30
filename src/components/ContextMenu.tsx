@@ -20,7 +20,6 @@ const ContextMenu = (
         return acc
     }, {})
 
-    console.log(subjectsObject)
     const subject = selection.subject ?? "none"
 
     return (
