@@ -66,10 +66,10 @@ const Cell = ({activeSelection, heights, index, columnId, row}: any) => {
         }        
     }, [isOver])
 
-    const isSubjectNone = !subjects.some((subject: any) => subject.name === row.subject)
+    // const isSubjectNone = !subjects.some((subject: any) => subject.name === row.subject)
 
     if ((filter.rows.searchTerm !== "" && !(row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
-     || (filter.rows.subjects.length !== 0 && !(filter.rows.subjects).includes(row.subject) && !isSubjectNone)
+     || (filter.rows.subjects.length !== 0 && !(filter.rows.subjects).includes(row.subject))
     ) return
 
     return (

@@ -1,6 +1,6 @@
 import { ActiveSelectionInterface, Row } from '@/types'
 
-import { selectRows, selectSettings, selectFilter, selectSubjects } from '@/lib/features/ScheduleDataSlice';
+import { selectRows, selectSettings, selectFilter, selectSubjects, selectNames } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
 
 import { useContextMenu } from "react-contexify";  
@@ -11,7 +11,6 @@ import "react-contexify/dist/ReactContexify.css";
 const Rows = (
     props: {   
         heights: Array<number>, 
-        rowsName: string
         activeSelection: ActiveSelectionInterface | null
     }) => {
 
@@ -20,6 +19,7 @@ const Rows = (
     const filter = useAppSelector(selectFilter)
     const settings = useAppSelector(selectSettings)
     const subjects = useAppSelector(selectSubjects)
+    const names = useAppSelector(selectNames)
 
     const subjectsObject = subjects.reduce((acc: any, item) => {
         acc[item.name] = item.color
@@ -31,7 +31,7 @@ const Rows = (
         <div className='rows-container' key={1}>
             <div className={"rows-header"}>
                 {rows.length >= 1 
-                ? <p>{props.rowsName}</p>
+                ? <p>{names.rows}</p>
                 : <p>No Rows Found</p>}
             </div>
 
@@ -46,12 +46,14 @@ const Rows = (
                     });
                 }
 
-                const isSubjectNone = !subjects.some((subject) => subject.name === row.subject)
+                // const isSubjectNone = !subjects.some((subject) => subject.name === row.subject)
                 
                 return (                    
-                    (filter.rows.searchTerm === "" || (row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
-                    && 
-                    (filter.rows.subjects.length === 0 || filter.rows.subjects.includes(row.subject) || isSubjectNone) ?
+                    (filter.rows.searchTerm === "" || 
+                        (row.name.trim().toLowerCase()).includes(filter.rows.searchTerm.trim().toLowerCase()))
+                    &&
+                    (filter.rows.subjects.length === 0 || 
+                        filter.rows.subjects.includes(row.subject)) ?
                     
                     <div className={"single-row-container"} 
                         id={"row-" + row.id}

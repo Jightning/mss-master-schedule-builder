@@ -2,6 +2,7 @@ import React, { ReactElement, useRef, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
+    addState,
     newColumns, 
     newRows, 
     newSelections, 
@@ -14,6 +15,7 @@ import {
 import { 
     Column, 
     Row, 
+    ScheduleBuilderAction, 
     Selection,
     Subject
 } from '@/types';
@@ -62,10 +64,11 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
     const setRows: any = (val: any) => dispatch(newRows(val))
     const setSelections: any = (val: any) => dispatch(newSelections(val))
     const setSubjects: any = (val: any) => dispatch(newSubjects(val))
+    const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
 
-    const rows = useAppSelector(selectRows)
-    const columns = useAppSelector(selectColumns)
-    const selections = useAppSelector(selectSelections)
+    const rows: Array<Row> = useAppSelector(selectRows)
+    const columns: Array<Column> = useAppSelector(selectColumns)
+    const selections: Array<Selection> = useAppSelector(selectSelections)
     const subjects = useAppSelector(selectSubjects)
     const subject_object = [...subjects.map((subject: Subject) => ({
         value: subject.name,
@@ -88,35 +91,50 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
         if (columns.findIndex((col) => col.name === newValue?.name && col.id !== newValue?.id) !== -1) {
             return
         }
+
+        let nColumns: any = [...columns]
+        let message = "unknown"
         if (currentEdit?.value) {
-            setColumns(columns.map((column) => {
+            nColumns = columns.map((column) => {
                 if (column.oddEven === "ODD" && column.id.slice(0, column.id.length - 4) === String(currentEdit?.value?.id).slice(0, column.id.length - 4)) {
                     return {...newValue, id: column.id, name: newValue?.name + " Odd"}
                 } else if (column.oddEven === "EVEN" && column.id.slice(0, column.id.length - 5) === String(currentEdit?.value?.id).slice(0, column.id.length - 5)) {
                     return {...newValue, id: newValue?.id + "-even", name: newValue?.name + " Even", oddEven: "EVEN"}
                 } else if (column.id === newValue?.id) {return newValue}
                 else { return column }
-            })) 
+            })
+
+            message = `Modified Column ${currentEdit?.value?.name}`
         } else {
             let newId = uuidv4();
             while (newId.endsWith("odd") || newId.endsWith('even')) {
                 newId = uuidv4()
             }
-            setColumns([...columns, {...newValue, id: newId, oddEven: false}])
+            nColumns = [...columns, {...newValue, id: newId, oddEven: false}]
+            message = `Added Column ${newValue?.name}`
         }
 
+        addHistoryState({
+            type: "POST",
+            message,
+            action: {rows: rows, columns: nColumns, selections: selections}
+        })
         setCurrentEdit(undefined)
         setNewValue(undefined)
     }
     const deleteColumn = () => {
-        setColumns(
-            columns.filter((column) => 
-                column.id !== currentEdit?.value?.id &&
-                !(column.oddEven === "EVEN" && 
-                    column.id.slice(0, column.id.length - 5) === String(currentEdit?.value?.id).slice(0, column.id.length - 5)
-                )
+        let nColumns = columns.filter((column) => 
+            column.id !== currentEdit?.value?.id &&
+            !(column.oddEven === "EVEN" && 
+                column.id.slice(0, column.id.length - 5) === String(currentEdit?.value?.id).slice(0, column.id.length - 5)
             )
         )
+
+        addHistoryState({
+            type: "POST", 
+            message: `Deleted Column ${currentEdit?.value?.name}`,
+            action: {rows: rows, columns: nColumns, selections: selections}
+        })
         setCurrentEdit(undefined)
         setNewValue(undefined)
     }
@@ -138,15 +156,24 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
             ]
         }, columns)
 
-        setColumns(importedData);
+        // setColumns(importedData);
+        addHistoryState({
+            type: "POST", 
+            message: "Imported Column Data",
+            action: {rows: rows, columns: importedData, selections: selections}
+        })
+
     } 
 
     // Rows
     const editRow = () => {
+        let nRows: any = [...rows]
+        let message = "unknown"
         if (currentEdit?.value) {
-            setRows(rows.map((row) => row.id === newValue?.id ? newValue :row)) 
+            nRows = rows.map((row) => row.id === newValue?.id ? newValue : row)
+            message = `Modified Row ${currentEdit?.value?.name}`
         } else {
-            setRows([...rows, 
+            nRows = [...rows, 
                 {...newValue, 
                     subject: (newValue as Row).subject ? (newValue as Row).subject : "none", 
                     id: uuidv4(),
@@ -155,15 +182,25 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                         acc[column.id] = defaultSelection
                         return acc
                     }, {})
-                }])
+                }]
+            message = `Added Row ${newValue?.name}`
         }
 
+        addHistoryState({
+            type: "POST", 
+            message,
+            action: {rows: nRows, columns: columns, selections: selections}
+        })
         setCurrentEdit(undefined)
         setNewValue(undefined)
     }
     const deleteRow = () => {
-        setRows([...rows.filter((row) => row.id !== currentEdit?.value?.id)])
-        
+        let nRows = [...rows.filter((row) => row.id !== currentEdit?.value?.id)]
+
+        addHistoryState({
+            type: "POST",
+            message: `Deleted Row ${currentEdit?.value?.name}`,
+            action: {rows: nRows, columns: columns, selections: selections}})
         setCurrentEdit(undefined)
         setNewValue(undefined)
         return
@@ -200,40 +237,62 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
             return newData
         }, rows)
 
-        setRows(importedData);
+        // setRows(importedData);
+        addHistoryState({
+            type: "POST", 
+            message: "Imported Row Data",
+            action: {rows: importedData, columns: columns, selections: selections}
+        })
+
     } 
 
 
     // Selections
     const editSelection = () => {
+        let nSelections: any = [...selections];
+        let nRows = [...rows];
+        let message = "unknown"
         if (currentEdit?.value) {
-            setSelections(selections.map((selection) => selection.id === newValue?.id ? newValue : selection)) 
+            nSelections = selections.map((selection) => selection.id === newValue?.id ? newValue : selection) 
             // Change rows to update subject change in selection
             if ((currentEdit.value as Selection).subject !== (newValue as Selection).subject) {
-                setRows(rows.map((row: Row) => {
+                nRows = rows.map((row: Row) => {
                     const newColumns = Object.keys(row.columns).reduce((acc: Row["columns"], item: any) => {
                         acc[item] = {...row.columns[item], subject: row.columns[item].id === newValue?.id ? (newValue as Selection).subject : row.columns[item].subject}
                         return acc
                     }, {})
 
                     return {...row, columns: newColumns}
-                }))
+                })
             }
 
+            message = `Modified Selection ${currentEdit?.value?.name}`
+
         } else {
-            setSelections([...selections, 
+            nSelections = [...selections, 
                 {...newValue,
                     subject: (newValue as Row).subject ? (newValue as Row).subject : "none", 
                     id: uuidv4()
-                }])
+                }]
+            message = `Added Selection ${newValue?.name}`
         }
 
+        addHistoryState({
+            type: "POST", 
+            message,
+            action: {rows: nRows, columns: columns, selections: nSelections}
+        })
         setCurrentEdit(undefined)
         setNewValue(undefined)
     }
     const deleteSelection = () => {
-        setSelections([...selections.filter((selection) => selection.id !== currentEdit?.value?.id)])
+        let nSelections = [...selections.filter((selection) => selection.id !== currentEdit?.value?.id)]
 
+        addHistoryState({
+            type: "POST", 
+            message: `Deleted Selection ${currentEdit?.value?.name}`,
+            action: {rows: rows, columns: columns, selections: nSelections}
+        })
         setCurrentEdit(undefined)
         setNewValue(undefined)
         return
@@ -263,7 +322,12 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
             return newData
         }, selections)
 
-        setSelections(importedData);
+        // setSelections(importedData);
+        addHistoryState({
+            type: "POST", 
+            message: "Imported Selection Data",
+            action: {rows: rows, columns: columns, selections: importedData}
+        })
     } 
     
     return (

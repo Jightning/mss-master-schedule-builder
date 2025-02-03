@@ -6,11 +6,12 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
     selectFilter, 
     newFilter, 
-    selectSubjects
+    selectSubjects,
+    selectNames
 } from '@/lib/features/ScheduleDataSlice';
 import { Subject } from '@/types';
 
-const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
+const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
     const filterRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
 
@@ -18,6 +19,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
     const setFilter: any = (val: string) => dispatch(newFilter(val))
 
     const subjects = useAppSelector(selectSubjects)
+    const names = useAppSelector(selectNames)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -40,16 +42,16 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
         };
     }, []);
 
-    const subject_object = [...subjects.map((subject: Subject) => ({
+    const subject_object = [...[...subjects.map((subject: Subject) => ({
         value: subject.name,
         label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
-    }))]
+    }))], {value: "none", label: "None"}]
 
     return (
         <div className="filter-dropdown" ref={filterRef}>
             <h2>Filter</h2>
             <div className="filter-rows" >
-                <h3>{props.rowsName}</h3>
+                <h3>{names.rows}</h3>
                 <ul>
                     <li>Search: <span className="underline">{filter.rows.searchTerm === "" ? "None" : filter.rows.searchTerm}</span></li>
                     <li>Subjects: 
@@ -65,7 +67,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
                 </ul>
             </div>
             <div className={"filter-selections"}>
-                <h3>{props.selectionsName}</h3>
+                <h3>{names.selections}</h3>
                 <ul>
                     <li>Search: <span className="underline">{filter.selections.searchTerm === "" ? "None" : filter.selections.searchTerm}</span></li>
                     <li>Subjects: 
@@ -74,7 +76,7 @@ const Filter = (props: {setIsFilterOpen: React.Dispatch<React.SetStateAction<boo
                             value={filter.selections.subjects.map((subject) => ({value: subject, label: subject.charAt(0).toUpperCase() + subject.slice(1)}))} 
                             options={subject_object} 
                             isMulti 
-                            backspaceRemovesValue 
+                            backspaceRemovesValue
                             onChange={(newSubjects) => setFilter({...filter, selections: {...filter.selections, subjects: newSubjects.map((newSubject) => newSubject["value"])}})} />        
                     </li>
 

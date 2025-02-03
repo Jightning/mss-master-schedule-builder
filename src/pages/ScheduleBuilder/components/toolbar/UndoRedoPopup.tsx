@@ -10,6 +10,13 @@ export const UndoPopup = (props: {closePopup: any}) => {
     const history = useAppSelector(selectHistory)
 
     const undo: any = (val?: any) => dispatch(undoState(val))
+    
+    // Just in case -> Should already be covered by the onClick
+    useEffect(() => {
+        if (currentStep === -1) {
+            props.closePopup()
+        }
+    }, [currentStep])
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -38,7 +45,10 @@ export const UndoPopup = (props: {closePopup: any}) => {
                     </div>
                 )
             })}
-            <div onClick={() => {undo({step: -1})}} className="history-item">
+            <div onClick={() => {
+                undo({step: -1});
+                if (currentStep === -1) props.closePopup()
+            }} className="history-item">
                 <p className="history-text">Original State</p>
             </div>
         </div>
@@ -53,6 +63,13 @@ export const RedoPopup = (props: {closePopup: any}) => {
     const history = useAppSelector(selectHistory)
 
     const redo: any = (val?: any) => dispatch(redoState(val))
+
+    // Just in case -> Should already be covered by the onClick
+    useEffect(() => {
+        if (currentStep === history.length - 1) {
+            props.closePopup()
+        }
+    }, [currentStep])
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -75,8 +92,11 @@ export const RedoPopup = (props: {closePopup: any}) => {
             {history && [...history].map((hist, index) => {
                 if (currentStep < index)
                 return (
-                    <div onClick={() => {redo({step: index})}} className="history-item">
-                        <p className="history-text">{hist.message}</p>
+                    <div onClick={() => {
+                            redo({step: index}); 
+                            if (currentStep === history.length - 1) props.closePopup()
+                        }} className="history-item">
+                            <p className="history-text">{hist.message}</p>
                     </div>
                 )
             })}

@@ -552,8 +552,9 @@
     top: 45px !important;
     left: 15px;
     z-index: 50;
+    font-size: small;
 
-    width: 100px;
+    width: 150px;
     height: fit-content;
     max-height: 200px;
 

@@ -8,8 +8,7 @@ import {
     ScheduleBuilderAction,
     Subject
 } from "@/types"
-import { defaultSelection, modifyRows } from "./Utilities"
-// TODO The import by JSON replaces everything instead of adding on
+import { modifyRows } from "./Utilities"
 
 interface InitialStateType {
     settings: Settings,
@@ -18,8 +17,9 @@ interface InitialStateType {
     columns: Array<Column>,
     selections: Array<Selection>,
     subjects: Array<Subject>,
-    history: Array<{message: string, rows: Array<Row>, columns: Array<Column>}>,
-    currentStep: number
+    history: Array<{message: string, rows: Array<Row>, columns: Array<Column>, selections?: Array<Selection>}>,
+    currentStep: number,
+    names: {rows: string, columns: string, selections: string}
 }
 
 const defaultSettings: Settings = {
@@ -124,11 +124,12 @@ const initialState: InitialStateType =
     //     { name: "AP Physics 38", subject: "science", id: '33424228108' },
     //     { name: "AP Physics 39", subject: "science", id: '33424228118' }
     // ],
-    subjects: parseLocalStorage("subjects") ?? [{name: "none", color: "#000000"}],
+    subjects: parseLocalStorage("subjects") ?? [],
     // subjects: [{name: "math", color: "#EB144C"}, {name: "english", color: "#FCB900"}, {name: "science", color: "#00D084"}],
     history: [],
     // settingsHistory: [{...defaultSettings, step: -1}],
-    currentStep: -1
+    currentStep: -1,
+    names: {rows: "Teachers", columns: "Periods", selections: "Classes"}
 }
 
 export const scheduleDataSlice = createSlice({
@@ -137,33 +138,36 @@ export const scheduleDataSlice = createSlice({
     reducers: {
         newSettings: (state, action) => {
             state.settings = action.payload
-            localStorage.setItem("settings", JSON.stringify(state.settings))
+            localStorage.setItem("settings", JSON.stringify(action.payload))
             // state.settingsHistory.push({...state.settings, step: state.currentStep})
         },
         newFilter: (state, action) => {
             state.filter = action.payload
-            localStorage.setItem("filters", JSON.stringify(state.filter))
+            localStorage.setItem("filters", JSON.stringify(action.payload))
         },
         newRows: (state, action: {payload: Array<Row>}) => {
             state.rows = action.payload
-            localStorage.setItem("rows", JSON.stringify(state.rows))
+            localStorage.setItem("rows", JSON.stringify(action.payload))
         },
         newColumns: (state, action: {payload: Array<Column>}) => {
             state.columns = action.payload
-            localStorage.setItem("columns", JSON.stringify(state.columns))
+            localStorage.setItem("columns", JSON.stringify(action.payload))
         },
         newSelections: (state, action: {payload: Array<Selection>}) => {
             state.selections = action.payload
-            localStorage.setItem("selections", JSON.stringify(state.selections))
+            localStorage.setItem("selections", JSON.stringify(action.payload))
         },
         newSubjects: (state, action: {payload: Array<Subject>}) => {
             state.subjects = Array.from(new Set(action.payload))
             localStorage.setItem("subjects", JSON.stringify(state.subjects))
         },
+        newNames: (state, action: {payload: {rows: string, columns: string, selections: string}}) => {
+            state.names = action.payload
+            localStorage.setItem("names", JSON.stringify(action.payload))
+        },
         // History Reducers  
         // BUG when setting autoassign and using it to split something, then moving the things, then disabling autoassign and then enabling copy selection to then replace on the of the things with the other, it wont work
         addState: (state, action: {payload: ScheduleBuilderAction}) => {
-            console.log(action.payload, "here")
             const modifications = modifyRows(action.payload, state.rows, state.columns, state.settings)
             if (modifications.failed) {
                 return
@@ -184,7 +188,7 @@ export const scheduleDataSlice = createSlice({
             localStorage.setItem("columns", JSON.stringify(state.columns))
 
             if (!action.payload.action.ignoreHistory)
-                state.history = [...state.history.slice(0, state.currentStep + 1), {message: action.payload.message || "Unknown", rows: modifications.rows, columns: modifications.columns}]
+                state.history = [...state.history.slice(0, state.currentStep + 1), {message: action.payload.message || "Unknown", rows: modifications.rows, columns: modifications.columns, selections: modifications.selections}]
 
             state.currentStep = state.history.length - 1
         },
@@ -198,13 +202,17 @@ export const scheduleDataSlice = createSlice({
 
                     state.rows = currentState.rows
                     state.columns = currentState.columns
+                    state.selections = currentState.selections ?? state.selections
 
+                
+                // Going back to the initial state
                 } else if (state.currentStep === 0) {
                     state.currentStep--;
 
                     state.rows = initialState.rows
                     state.columns = initialState.columns
-                    state.settings = initialState.settings
+                    state.selections = initialState.selections
+                    // state.settings = initialState.settings
 
                     break
                 }
@@ -225,6 +233,7 @@ export const scheduleDataSlice = createSlice({
 
                     state.rows = currentState.rows
                     state.columns = currentState.columns
+                    state.selections = currentState.selections ?? state.selections
                 }
 
                 if (!action.payload) break
@@ -238,7 +247,7 @@ export const scheduleDataSlice = createSlice({
     },
 })
 
-export const { newRows, newColumns, newSelections, newFilter, newSettings, newSubjects } = scheduleDataSlice.actions
+export const { newRows, newColumns, newSelections, newFilter, newSettings, newSubjects, newNames } = scheduleDataSlice.actions
 export const { addState, undoState, redoState, resetHistory } = scheduleDataSlice.actions
 
 // The function below is called a selector and allows us to select a value from
@@ -254,6 +263,7 @@ export const selectSettings = (state: { scheduleData: { settings: Settings } }) 
 
 export const selectCurrentStep = (state: { scheduleData: { currentStep: number } }) => state.scheduleData.currentStep
 export const selectHistory = (state: { scheduleData: { history: Array<{message: string, rows: Array<Row>, columns: Array<Column>}> } }) => state.scheduleData.history
+export const selectNames = (state: { scheduleData: { names: {selections: string, rows: string, columns: string} } }) => state.scheduleData.names
 
 
 export default scheduleDataSlice.reducer

@@ -1,4 +1,4 @@
-import { selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice';
+import { selectNames, selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice';
 import { selectionCountValue } from '@/lib/features/Utilities';
 import { useAppSelector } from '@/lib/hooks';
 import { Row } from '@/types'
@@ -9,9 +9,10 @@ import {
 import "react-contexify/dist/ReactContexify.css";
 
 const RowHeaderContextMenu = (
-        { rowId, row, selectionsName }: 
-        { rowId: Row["id"], row: Row, selectionsName: string }) => {
-        
+        { rowId, row }: 
+        { rowId: Row["id"], row: Row }) => {
+    
+    const names = useAppSelector(selectNames)
     const subjects = useAppSelector(selectSubjects)
     const subjectsObject = subjects.reduce((acc: any, item) => {
         acc[item.name] = item.color
@@ -24,7 +25,7 @@ const RowHeaderContextMenu = (
         <Menu id={"row-header-" + rowId} className="context-menu-container border-none" >
             <Item disabled={true} className='information-section css-reset'>
                 <p className='info-name'>{row.name}</p>
-                <p className='info-subject'>{selectionsName}: {Math.round(row.selectionCount * (10**countDigits))/(10**countDigits)}</p>
+                <p className='info-subject'>{names.selections}: {Math.round(row.selectionCount * (10**countDigits))/(10**countDigits)}</p>
                 <p className='info-subject' style={{color: subjectsObject[row.subject]}}>{row.subject.charAt(0).toUpperCase() + row.subject.slice(1)}</p>
             </Item>
         </Menu>

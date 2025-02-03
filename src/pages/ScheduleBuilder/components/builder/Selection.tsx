@@ -26,6 +26,16 @@ const Selection = (props:
         return
     }
 
+    function calculateBrightness(color: any) {
+        // Convert RGB color to perceived brightness
+        const rgb = color
+          .match(/\d+/g)
+          .map(Number)
+          .slice(0, 3); // Extract only RGB values
+      
+        return (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+    }
+
     const settings = useAppSelector(selectSettings)
     const subjects = useAppSelector(selectSubjects)
 
@@ -58,7 +68,8 @@ const Selection = (props:
     const style = {
         transform: CSS.Translate.toString(transform),
         display: (props.selection.name === 'none' ? "none" : "block"),
-        backgroundColor: (settings.isColorSelectionSubjects ? subjectsObject[props.selection.subject] : "")
+        backgroundColor: (settings.isColorSelectionSubjects ? subjectsObject[props.selection.subject] : ""),
+        color: (settings.isColorSelectionSubjects && subjectsObject[props.selection.subject] ? (calculateBrightness(subjectsObject[props.selection.subject]) > 180 ? "black" : "white") : "")
     }
 
     return (
@@ -72,7 +83,7 @@ const Selection = (props:
                 {...listeners} 
                 {...attributes}
                 onContextMenu={displayMenu}>
-                    {props.selection.name}
+                    <p>{props.selection.name}</p>
             </div>
         </>
 

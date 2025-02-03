@@ -14,6 +14,7 @@ import {
     selectRows, 
     selectSelections, 
 } from '@/lib/features/ScheduleDataSlice';
+import { message } from "@tauri-apps/api/dialog";
 
 export const convertStringToBoolean = (value: string): string | boolean => {
     if (typeof value == "string") {
@@ -173,7 +174,11 @@ export const ImportAll = () => {
                     const json = JSON.parse(ev.target.result);
 
                     if (json.rows && json.columns && json.selections){
-                        addHistoryState({type: "POST", action: {rows: json.rows, columns: json.columns, selections: json.selections}})
+                        addHistoryState({
+                            type: "POST", 
+                            message: "Imported from JSON",
+                            action: {rows: json.rows, columns: json.columns, selections: json.selections}
+                        })
                     } else {
                         console.error("Invalid JSON format");
                     }

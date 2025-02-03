@@ -32,7 +32,7 @@ import Filter from './components/toolbar/Filter';
 import SearchBar from './components/toolbar/SearchBar';
 import UndoRedo from './components/toolbar/UndoRedo';
 
-import { newRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { newRows, selectNames, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import { selectRows, selectColumns } from '@/lib/features/ScheduleDataSlice';
 import { useAppSelector } from '@/lib/hooks';
@@ -54,11 +54,9 @@ const ScheduleBuilder = () => {
     const columns = useAppSelector(selectColumns)
     const settings = useAppSelector(selectSettings)
     const addHistoryState: any = (val: ScheduleBuilderAction) => dispatch(addState(val))
+    const names = useAppSelector(selectNames)
 
     // \Redux\
-
-    const [rowsName, _setRowsName] = useState("Teachers")
-    const [selectionsName, _setSelectionsName] = useState("Classes")
 
     const [activeSelection, setActiveSelection] = useState<ActiveSelectionInterface | null>(null);
     const [heights, setHeights] = useState<Array<number>>([])
@@ -393,8 +391,8 @@ const ScheduleBuilder = () => {
                     
                     {isImportOpen && <Import setIsImportOpen={setIsImportOpen} />}
                     {isExportOpen && <Export setIsExportOpen={setIsExportOpen} />}
-                    {isFilterOpen && <Filter setIsFilterOpen={setIsFilterOpen} rowsName={rowsName} selectionsName={selectionsName} />}
-                    {isSettingsOpen && <Settings setIsSettingsOpen={setIsSettingsOpen} rowsName={rowsName} selectionsName={selectionsName} />}
+                    {isFilterOpen && <Filter setIsFilterOpen={setIsFilterOpen} />}
+                    {isSettingsOpen && <Settings setIsSettingsOpen={setIsSettingsOpen} />}
 
                     <div className="toolbar">
                         <ul>
@@ -437,7 +435,6 @@ const ScheduleBuilder = () => {
                     <div className='schedule-container' {...(activeSelection ? null : {...events})} ref={drag_scroll_ref}>
                         <Rows 
                             heights={heights} 
-                            rowsName={rowsName}
                             activeSelection={activeSelection}  />
                         <ScheduleTable 
                             activeSelection={activeSelection} 
@@ -447,7 +444,7 @@ const ScheduleBuilder = () => {
 
                 <div className="selections-container">
                     <div className="selection-header">
-                        <h4>{selectionsName}</h4>
+                        <h4>{names.selections}</h4>
                     </div>
                     <div className='selection-search search-box rounded-tr-md rounded-br-md'>
                         <SearchBar searchLocation='selections'/>
@@ -458,7 +455,7 @@ const ScheduleBuilder = () => {
                             
                 {/* Context menu for each row (here for absolute positioning) */}
                 {rows.map((row: Row) => (
-                    <RowHeaderContextMenu rowId={row.id} key={row.id} row={row} selectionsName={selectionsName} />
+                    <RowHeaderContextMenu rowId={row.id} key={row.id} row={row} />
                 ))}
 
                 {/* To allow the selection to drag over its current div

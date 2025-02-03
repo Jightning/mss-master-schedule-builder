@@ -4,10 +4,10 @@ import React, { useRef, useEffect } from 'react'
 import Switch from "react-switch";
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { newSettings, selectColumns, selectRows, selectSettings } from '@/lib/features/ScheduleDataSlice';
+import { newSettings, selectColumns, selectNames, selectSettings } from '@/lib/features/ScheduleDataSlice';
 import { selectionCountValue } from '@/lib/features/Utilities';
 
-const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>, rowsName: string, selectionsName: string}) => {
+const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
     const settingsRef = useRef<HTMLDivElement>(null)
     const dispatch = useAppDispatch()
     
@@ -15,6 +15,7 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
 
     const settings = useAppSelector(selectSettings)
     const setSettings: any = (val: string) => dispatch(newSettings(val))
+    const names = useAppSelector(selectNames)
 
     useEffect(() => {
         // To close the filter dropdown when the user clicks outside of it
@@ -112,10 +113,10 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                     <h4>Color</h4>
                     <div className='flex flex-row justify-center'>
                         <li>
-                            <h4>{props.rowsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.isColorRowSubjects} /></div>
+                            <h4>{names.rows}</h4><div className='li-switch'><Switch onChange={() => toggle("color-row-subjects")} checked={settings.isColorRowSubjects} /></div>
                         </li>
                         <li>
-                            <h4>{props.selectionsName}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.isColorSelectionSubjects} /></div>
+                            <h4>{names.selections}</h4><div className='li-switch'><Switch onChange={() => toggle("color-column-subjects")} checked={settings.isColorSelectionSubjects} /></div>
                         </li>
                     </div>
                 </li>
