@@ -1,4 +1,4 @@
-import { selectNames, selectSettings, selectSubjects } from '@/lib/features/ScheduleDataSlice';
+import { selectNames, selectSubjects } from '@/lib/features/ScheduleDataSlice';
 import { selectionCountValue } from '@/lib/features/Utilities';
 import { useAppSelector } from '@/lib/hooks';
 import { Row } from '@/types'

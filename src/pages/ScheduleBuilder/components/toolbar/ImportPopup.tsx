@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState } from 'react'
+import React, { ReactElement, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
@@ -8,6 +8,7 @@ import {
     newSelections, 
     newSubjects, 
     selectColumns, 
+    selectNames, 
     selectRows, 
     selectSelections, 
     selectSubjects
@@ -70,6 +71,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
     const columns: Array<Column> = useAppSelector(selectColumns)
     const selections: Array<Selection> = useAppSelector(selectSelections)
     const subjects = useAppSelector(selectSubjects)
+    const names = useAppSelector(selectNames)
     const subject_object = [...subjects.map((subject: Subject) => ({
         value: subject.name,
         label: subject.name.charAt(0).toUpperCase() + subject.name.slice(1)
@@ -469,7 +471,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 {/* Main body */}
                 <div className='imports-choices'>
                     <div className='choice'>
-                        <h3>Columns</h3>
+                        <h3>{names.columns}</h3>
                         <div className="choice-elements-container">
                             <div className="choice-top-sticky top-0 sticky">
                                 <textarea className="choice-search search-input" onChange={(e) => {setColumnSearch(e.target.value)}} value={columnSearch} placeholder='Search' />
@@ -494,7 +496,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
 
 
                     <div className='choice'>
-                        <h3>Rows</h3>
+                        <h3>{names.rows}</h3>
                         <div className="choice-elements-container">
                             <div className="choice-top-sticky top-0 sticky">
                                 <textarea className="choice-search search-input" onChange={(e) => {setRowSearch(e.target.value)}} value={rowSearch} placeholder='Search' />
@@ -515,7 +517,7 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
 
 
                     <div className='choice'>
-                        <h3>Selections</h3>
+                        <h3>{names.selections}</h3>
                         <div className="choice-elements-container">
                             <div className="choice-top-sticky top-0 sticky">
                                 <textarea className="choice-search search-input" onChange={(e) => {setSelectionSearch(e.target.value)}} value={selectionSearch} placeholder='Search' />

@@ -14,7 +14,6 @@ import {
     selectRows, 
     selectSelections, 
 } from '@/lib/features/ScheduleDataSlice';
-import { message } from "@tauri-apps/api/dialog";
 
 export const convertStringToBoolean = (value: string): string | boolean => {
     if (typeof value == "string") {

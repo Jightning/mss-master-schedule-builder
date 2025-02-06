@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import Selection from './Selection'
 import { 
@@ -44,7 +44,6 @@ const Cell = ({activeSelection, heights, index, columnId, row}: any) => {
     const setRows: any = (val: Array<Row>) => dispatch(newRows(val))
 
     const filter = useAppSelector(selectFilter)
-    const subjects = useAppSelector(selectSubjects)
     
     const {setNodeRef, isOver} = useDroppable({
         id: columnId + "-" + row.id,

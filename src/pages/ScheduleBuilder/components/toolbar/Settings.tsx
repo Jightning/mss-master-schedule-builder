@@ -54,7 +54,7 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
             case "evenodd-autosplit":   
 				setSettings({...settings, isOddEvenAutoAssign: !settings.isOddEvenAutoAssign})
                 break
-            case "has-subject-limit":
+            case "has-selection-limit":
                 setSettings({...settings, hasSelectionLimit: !settings.hasSelectionLimit})
                 break
             case "copy-selection":
@@ -85,10 +85,10 @@ const Settings = (props: {setIsSettingsOpen: React.Dispatch<React.SetStateAction
                 </li>
                 <li className='border-solid rounded-lg flex items-center justify-between'>
                     <li>
-                        <div className='subject-limit flex items-center'>
-                            <h4>Subject Limit: </h4>
-                            <div className="li-switch subject-limit-switch">
-                                <Switch onChange={() => toggle("has-subject-limit")} checked={settings.hasSelectionLimit} />
+                        <div className='selection-limit flex items-center'>
+                            <h4>Selection Limit: </h4>
+                            <div className="li-switch selection-limit-switch">
+                                <Switch onChange={() => toggle("has-selection-limit")} checked={settings.hasSelectionLimit} />
                             </div>
                         </div>
                         <input

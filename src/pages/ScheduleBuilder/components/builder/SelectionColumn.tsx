@@ -5,9 +5,6 @@ import { selectFilter, selectSelections } from '@/lib/features/ScheduleDataSlice
 const SelectionColumn = () => {
     const selections = useAppSelector(selectSelections)
     const filter = useAppSelector(selectFilter)
-    // const subjects = useAppSelector(selectSubjects)
-
-    console.log(filter)
 
     return ( 
         <div className='selections-column-container' key={1}>

@@ -5,9 +5,6 @@ import { Subject } from "@/types"
 import { useEffect, useState } from "react"
 import { SliderPicker } from "react-color"
 
-
-
-
 export const EditSubjectPopup = (props: {setIsEditSubjectsOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
     const subjects = useAppSelector(selectSubjects)
     

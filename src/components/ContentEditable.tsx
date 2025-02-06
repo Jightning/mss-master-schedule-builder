@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Basically because changing textarea css is way too annoying
 const ContentEditable = ({ html, onChange, placeholder, className }: any) => {
