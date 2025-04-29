@@ -31,14 +31,14 @@ import { EditSubjectPopup } from './EditSubjectPopup';
 import { ImportAll, ImportOneDataByCSV, ImportOneDataByJSON } from './ImportAll';
 import { ExportOneDataByCSV, ExportOneDataByJSON } from './Export';
 
-const Edit = (props: {children: React.ReactNode, onConfirm: any, onDelete: () => void, setValue?: React.Dispatch<React.SetStateAction<any>>, closeEdit: () => void, disabled: boolean}) => { 
+const Edit = (props: {children: React.ReactNode, deleteDisabled?: boolean, onConfirm: any, onDelete: () => void, setValue?: React.Dispatch<React.SetStateAction<any>>, closeEdit: () => void, disabled: boolean}) => { 
     return (
         <div className='shade' onClick={props.closeEdit}>
             <div className="edit-container relative" onClick={(e) => e.stopPropagation()}>
                 {props.children}
-                <div className="flex flex-row">
-                    <div className={"confirmation-btn y-confirmation " + (!props.disabled && "highlight")} onClick={() => {props.onConfirm()}}>Confirm</div>
-                    <div className={"confirmation-btn n-confirmation " + (!props.disabled && "highlight")} onClick={() => {props.onDelete()}}>Delete</div>
+                <div className="flex flex-row justify-center">
+                    <div className={"confirmation-btn y-confirmation w-1/2 " + (!props.disabled && "highlight")} onClick={() => {props.onConfirm()}}>Confirm</div>
+                    {!props.deleteDisabled && <div className={"confirmation-btn n-confirmation " + (!props.disabled && "highlight")} onClick={() => {props.onDelete()}}>Delete</div>}
                 </div>
             </div>
         </div>
@@ -349,10 +349,11 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 <Edit 
                     closeEdit={() => {setCurrentEdit(undefined); setNewValue(undefined)}}
                     disabled={newValue?.name.trim() === ""}
+                    deleteDisabled={!currentEdit?.value}
                     onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
                         <div>
-                            <h3>Confirm Change Column Name?</h3>
+                            <h3>{currentEdit?.value ? "Confirm Edit Column Name?" : "Add New Column?"}</h3>
                         </div>), onConfirm: editColumn})
                     }}
                     onDelete={() => {setOpenConfirmationPopup({
@@ -383,10 +384,11 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 <Edit 
                     closeEdit={() => {setCurrentEdit(undefined); setNewValue(undefined)}}
                     disabled={newValue?.name.trim() === ""}
+                    deleteDisabled={!currentEdit?.value}
                     onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
                         <div>
-                            <h3>Confirm Change Rows?</h3>
+                            <h3>{currentEdit?.value ? "Confirm Edit Row?" : "Add New Row?"}</h3>
                         </div>), onConfirm: editRow
                     })}}
                     onDelete={() => {setOpenConfirmationPopup({
@@ -424,10 +426,11 @@ const ImportPopup = (props: {setIsImportOpen: React.Dispatch<React.SetStateActio
                 <Edit 
                     closeEdit={() => {setCurrentEdit(undefined); setNewValue(undefined)}}
                     disabled={newValue?.name.trim() === ""}
+                    deleteDisabled={!currentEdit?.value}
                     onConfirm={() => {newValue?.name.trim() !== "" && setOpenConfirmationPopup({
                         children: (
                         <div>
-                            <h3>Confirm Change Selection?</h3>
+                            <h3>{currentEdit?.value ? "Confirm Edit Selection?" : "Add New Selection?"}</h3>
                         </div>), onConfirm: editSelection
                     })}}
                     onDelete={() => {setOpenConfirmationPopup({
